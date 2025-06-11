@@ -1,28 +1,20 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
+import { LIST_ROUTES } from "./routes/routes";
 
 function App() {
+  console.log("LIST_ROUTES: ", LIST_ROUTES);
   return (
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+        {LIST_ROUTES.map((route) => (
+          <Route key={route.name} path={route.url} element={route.element} />
+        ))}
       </Routes>
     </>
   );
-}
-
-function Home() {
-  return <h1>Home Page</h1>;
-}
-function About() {
-  return <h1>About Page</h1>;
-}
-function Contact() {
-  return <h1>Contact Page</h1>;
 }
 
 export default App;
