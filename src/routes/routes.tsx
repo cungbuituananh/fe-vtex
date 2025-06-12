@@ -11,12 +11,12 @@ import US from "country-flag-icons/react/3x2/US";
 import VN from "country-flag-icons/react/3x2/VN";
 import i18n from "../i18n";
 import { Route } from "react-router-dom";
-import LoginPage from "../pages/Login";
 
 const MapPage = lazy(() => import("../pages/Map"));
 const ContactPage = lazy(() => import("../pages/Contact"));
 const IntroPage = lazy(() => import("../pages/Intro"));
 const NewsPage = lazy(() => import("../pages/News"));
+const LoginPage = lazy(() => import("../pages/Login"));
 
 export const PATH_ROUTES = {
   HOME: "/",
@@ -42,13 +42,14 @@ export const LIST_ROUTES = [
     icon: <FaMapMarkedAlt />,
   },
   {
-    name: "intro",
+    name: "contact",
+    element: <ContactPage />,
     icon: <FaUserFriends />,
     children: [
       {
-        name: "intro",
-        url: "/intro",
-        element: <IntroPage />,
+        name: "contact",
+        url: "/contact",
+        element: <ContactPage />,
         icon: <FaUserFriends />,
       },
     ],
@@ -88,7 +89,7 @@ export const LIST_ROUTES = [
   },
   {
     name: "contact",
-    url: "/contact",
+    url: "/news",
     icon: <FaEnvelope />,
   },
   {
@@ -107,18 +108,6 @@ export const LIST_ROUTES = [
         element: <NewsPage />,
         icon: <FaDatabase />,
       },
-      // {
-      //   name: "news",
-      //   url: "/news",
-      //   element: <NewsPage />,
-      //   icon: <FaDatabase />,
-      // },
-      // {
-      //   name: "news",
-      //   url: "/news",
-      //   element: <NewsPage />,
-      //   icon: <FaDatabase />,
-      // },
     ],
   },
 ];
