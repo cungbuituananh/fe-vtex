@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
