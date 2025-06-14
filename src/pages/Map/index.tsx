@@ -7,6 +7,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 function MapPage() {
   const mapContainerRef = useRef(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   useEffect(() => {
     // Initialize the map

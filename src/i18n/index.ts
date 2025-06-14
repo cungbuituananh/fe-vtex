@@ -5,13 +5,17 @@ import Backend from "i18next-http-backend";
 
 // Translation files
 import enCommon from "./locales/en/common.json";
+import enMenu from "./locales/en/menu.json";
 import viCommon from "./locales/vi/common.json";
+import viMenu from "./locales/vi/menu.json";
 const resources = {
   en: {
     common: enCommon,
+    menu: enMenu,
   },
   vi: {
     common: viCommon,
+    menu: viMenu,
   },
 };
 
@@ -30,6 +34,7 @@ i18n
 
     // Common namespace used if not specified
     defaultNS: "common",
+    ns: ["common", "menu"],
 
     interpolation: {
       escapeValue: false, // React already does escaping
