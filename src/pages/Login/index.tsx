@@ -1,5 +1,6 @@
-import { Form, Input, Button, Checkbox, Typography } from "antd";
+import { Form, Button, Checkbox, Typography } from "antd";
 import "./index.css";
+import InputCommon from "../../components/FormElement/InputCommon";
 const { Title } = Typography;
 
 function LoginPage() {
@@ -10,22 +11,13 @@ function LoginPage() {
           Đăng nhập
         </Title>
         <Form name="login" layout="vertical" initialValues={{ remember: true }}>
-          <Form.Item
-            label="Tên tài khoản"
-            name="username"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên tài khoản!" },
-            ]}
-          >
-            <Input placeholder="Nhập tên tài khoản của bạn" />
-          </Form.Item>
-          <Form.Item
+          <InputCommon label="Tên tài khoản" name="username" />
+          <InputCommon
             label="Mật khẩu"
             name="password"
+            type="password"
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-          >
-            <Input.Password placeholder="Nhập mật khẩu của bạn" />
-          </Form.Item>
+          />
           <Form.Item>
             <div className="login-options">
               <Form.Item name="remember" valuePropName="checked" noStyle>

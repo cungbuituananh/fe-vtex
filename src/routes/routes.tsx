@@ -15,6 +15,7 @@ import LoginPage from "../pages/Login";
 
 const MapPage = lazy(() => import("../pages/Map"));
 const ContactPage = lazy(() => import("../pages/Contact"));
+const IntroPage = lazy(() => import("../pages/Intro"));
 const NewsPage = lazy(() => import("../pages/News"));
 
 export const PATH_ROUTES = {
@@ -38,7 +39,7 @@ export const LIST_ROUTES = [
       {
         name: "intro",
         url: "/intro",
-        element: <ContactPage />,
+        element: <IntroPage />,
         icon: <FaUserFriends />,
       },
     ],
