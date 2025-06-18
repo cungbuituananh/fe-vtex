@@ -25,6 +25,15 @@ export const PATH_ROUTES = {
   NEWS: "/news",
 };
 
+// interface RouteConfig {
+//   name: string;
+//   url?: string;
+//   element?: ReactNode;
+//   icon?: ReactNode;
+//   children?: RouteConfig[];
+//   event?: () => void;
+// }
+
 export const LIST_ROUTES = [
   {
     name: "map",
