@@ -11,9 +11,11 @@ import US from "country-flag-icons/react/3x2/US";
 import VN from "country-flag-icons/react/3x2/VN";
 import i18n from "../i18n";
 import { Route } from "react-router-dom";
+import LoginPage from "../pages/Login";
 
 const MapPage = lazy(() => import("../pages/Map"));
 const ContactPage = lazy(() => import("../pages/Contact"));
+const IntroPage = lazy(() => import("../pages/Intro"));
 const NewsPage = lazy(() => import("../pages/News"));
 
 export const PATH_ROUTES = {
@@ -37,7 +39,7 @@ export const LIST_ROUTES = [
       {
         name: "intro",
         url: "/intro",
-        element: <ContactPage />,
+        element: <IntroPage />,
         icon: <FaUserFriends />,
       },
     ],
@@ -87,7 +89,7 @@ export const LIST_ROUTES = [
       {
         name: "login",
         url: "/login",
-        element: <NewsPage />,
+        element: <LoginPage />,
         icon: <FaDatabase />,
       },
       {

@@ -1,3 +1,7 @@
 {
-    "ok": "Đồng ý"
+    "ok": "Đồng ý",
+      "placeholder": {
+        "username": "Nhập tên tài khoản",
+        "password": "Nhập mật khẩu"
+    }
 }

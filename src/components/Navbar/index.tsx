@@ -11,10 +11,10 @@ function Navbar() {
 
   return (
     <nav
-      className=" bg-white shadow px-6 mx-auto"
+      className="bg-white shadow px-6 mx-auto "
       style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
     >
-      <div className="flex items-center justify-between max-w-10xl mx-auto">
+      <div className=" max-w-[1600px] flex items-center justify-between max-w-10xl mx-auto">
         <button
           className="flex items-center gap-2 focus:outline-none"
           onClick={() => {
