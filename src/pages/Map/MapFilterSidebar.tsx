@@ -90,34 +90,33 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
     <div className="relative">
       {/* Sidebar */}
       <div
-        className={`bg-[#F6F8FB] rounded-xl shadow p-5 w-80 max-w-[90vw] m-3 z-10`}
+        className={`bg-[#F6F8FB] rounded-xl shadow  w-80 max-w-[90vw] m-3 z-10`}
         style={{ position: "relative" }}
       >
-        <div className="flex items-center mb-4">
+        <div className="flex items-center py-1">
           {/* <MenuOutlined
             className="text-lg mr-2 cursor-pointer"
             onClick={() => setShow(!show)}
           /> */}
-          <Button
-            type="text"
+          <div
+            className="cursor-pointer py-2 px-5"
             onClick={() => setShow(!show)}
-            className="flex items-center justify-center"
           >
             {show ? (
               <MdOutlineFormatIndentIncrease style={{ fontSize: "20px" }} />
             ) : (
               <MdOutlineFormatIndentDecrease style={{ fontSize: "20px" }} />
             )}
-          </Button>
+          </div>
           <span className="font-semibold text-base">Bộ lọc tìm kiếm</span>
         </div>
-
         <div
           className={`transition-all duration-500 ease-in-out overflow-hidden ${
-            show ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+            show ? " max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="py-1">
+          <hr />
+          <div className=" p-5 ">
             <Form
               form={form}
               layout="vertical"

@@ -34,10 +34,24 @@ export const PATH_ROUTES = {
 //   event?: () => void;
 // }
 
+export const ROUTE_PATH = {
+  HOME: "/",
+  MAP: "/map",
+  CONTACT: "/contact",
+  NEWS: "/news",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
+  USER_INFO: "/user-info",
+  DASHBOARD: "/dashboard",
+  PROFILE: "/profile",
+};
+
 export const LIST_ROUTES = [
   {
     name: "map",
-    url: "/map",
+    url: ROUTE_PATH.MAP,
     element: <MapPage />,
     icon: <FaMapMarkedAlt />,
   },
@@ -48,7 +62,7 @@ export const LIST_ROUTES = [
     children: [
       {
         name: "contact",
-        url: "/contact",
+        url: ROUTE_PATH.CONTACT,
         element: <ContactPage />,
         icon: <FaUserFriends />,
       },
@@ -61,7 +75,7 @@ export const LIST_ROUTES = [
     children: [
       {
         name: "news",
-        url: "/news",
+        url: ROUTE_PATH.NEWS,
         element: <NewsPage />,
         icon: <FaDatabase />,
       },
@@ -88,8 +102,8 @@ export const LIST_ROUTES = [
     ],
   },
   {
-    name: "contact",
-    url: "/news",
+    name: "news",
+    url: ROUTE_PATH.NEWS,
     icon: <FaEnvelope />,
   },
   {
@@ -98,25 +112,32 @@ export const LIST_ROUTES = [
     children: [
       {
         name: "login",
-        url: "/login",
+        url: ROUTE_PATH.LOGIN,
         element: <LoginPage />,
         icon: <FaDatabase />,
       },
       {
         name: "userInfo",
-        url: "/user-info",
+        url: ROUTE_PATH.USER_INFO,
         element: <NewsPage />,
         icon: <FaDatabase />,
+      },
+      {
+        name: "register",
+        url: ROUTE_PATH.REGISTER,
+        element: <LoginPage />,
+        icon: <FaDatabase />,
+        invisible: true, // This route is not visible in the menu
       },
     ],
   },
 ];
 
 export const ROUTES_WITHOUT_LAYOUT = {
-  LOGIN: "/login",
-  REGISTER: "/register",
-  FORGOT_PASSWORD: "/forgot-password",
-  RESET_PASSWORD: "/reset-password",
+  LOGIN: ROUTE_PATH.LOGIN,
+  REGISTER: ROUTE_PATH.REGISTER,
+  FORGOT_PASSWORD: ROUTE_PATH.FORGOT_PASSWORD,
+  RESET_PASSWORD: ROUTE_PATH.RESET_PASSWORD,
 };
 
 export const ROUTES_WITH_LAYOUT = {

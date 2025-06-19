@@ -1,48 +1,18 @@
-import { Form, Button, Checkbox, Typography } from "antd";
+import { useLocation } from "react-router-dom";
 import "./index.css";
-import InputCommon from "../../components/FormElement/InputCommon";
-const { Title } = Typography;
+import LoginComponent from "./Login";
+import { ROUTE_PATH } from "@/routes/routes";
+import RegisterComponent from "./Register";
 
 function LoginPage() {
+  const path = useLocation().pathname;
+  console.log("path: ", path);
   return (
     <div className="login-bg ">
-      <div className="login-container  bg-white shadow">
-        <Title level={2} className="login-title ">
-          Đăng nhập
-        </Title>
-        <Form name="login" layout="vertical" initialValues={{ remember: true }}>
-          <InputCommon label="Tên tài khoản" name="username" />
-          <InputCommon
-            label="Mật khẩu"
-            name="password"
-            type="password"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
-          />
-          <Form.Item>
-            <div className="login-options">
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Nhớ tài khoản</Checkbox>
-              </Form.Item>
-              <a className="login-forgot" href="#">
-                Bạn quên mật khẩu?
-              </a>
-            </div>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Đăng nhập
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button block>Đăng ký</Button>
-          </Form.Item>
-        </Form>
-        <div className="login-info">
-          <p>Bạn có thể đăng nhập với</p>
-          <ul>
-            <li>Quản trị viên (tài khoản="admin" và mật khẩu="admin")</li>
-            <li>Người dùng (tài khoản="user" và mật khẩu="user")</li>
-          </ul>
+      <div className="h-[82vh]">
+        <div className="login-container bg-white shadow pt-10  shadow-[inset_0_5px_5px_-5px_rgba(0,0,0,0.8),inset_0_-5px_5px_-5px_rgba(0,0,0,0.8)]">
+          {path === ROUTE_PATH.LOGIN && <LoginComponent />}
+          {path === ROUTE_PATH.REGISTER && <RegisterComponent />}
         </div>
       </div>
     </div>
