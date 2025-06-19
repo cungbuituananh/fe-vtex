@@ -1,34 +1,19 @@
 .login-bg {
-  height: 100vh;
-  width: 100vw;
   background: url("../../assets/imgs/background.png") no-repeat center center
     fixed;
-
   background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: -1;
+  position: relative;
 }
 
 .login-container {
-  height: 100%;
-  padding: 40px 32px 24px 32px;
-  width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  width: 22vw;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: center;
   position: absolute;
   left: 10%;
-  /* top: 50%; */
-  /* border-radius: 8px; */
-  /* transform: translate(-150%, 0%); */
+  background-color: #f3f8ff;
+  height: 100%;
 }
 
 .login-title {
@@ -71,7 +56,8 @@
 .login-forgot {
   color: #2563eb;
   text-decoration: none;
-  font-weight: 500;
+  font-size: 14px;
+  /* font-weight: 500; */
 }
 
 .login-btn {

@@ -4,6 +4,7 @@ import { LIST_ROUTES } from "../../routes/routes";
 import { useTranslation } from "react-i18next";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
+import { PRIMARY_COLOR } from "@/constants/color";
 
 function Navbar() {
   const { t } = useTranslation("menu");
@@ -19,7 +20,7 @@ function Navbar() {
 
   return (
     <nav
-      className="bg-white shadow px-6 mx-auto "
+      className="bg-[] shadow px-6 mx-auto "
       style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
     >
       <div className="flex items-center justify-between max-w-10xl mx-auto">
@@ -41,7 +42,7 @@ function Navbar() {
                 className={`relative py-4 
                  ${
                    isActiveRoute || isChildActive
-                     ? "text-blue-600 font-bold"
+                     ? `text-[${PRIMARY_COLOR}]`
                      : "text-[#4F4F4F]"
                  }
                 `}
@@ -86,7 +87,7 @@ function Navbar() {
                 )}
                 {route.children && (
                   <ul
-                    className={`absolute left-0 mt-2 min-w-[150px] bg-white shadow-lg rounded z-10 ${
+                    className={`absolute left-0 mt-2 min-w-[130px] bg-white shadow-lg rounded z-10 ${
                       openDropdown === route.name ? "block" : "hidden"
                     }`}
                     style={{
@@ -95,53 +96,58 @@ function Navbar() {
                       borderRadius: "10px",
                     }}
                   >
-                    {route.children.map((child: any, index) => {
-                      const isOnlyOne = route.children.length === 1;
-                      const isLast =
-                        index === route.children.length - 1 && !isOnlyOne;
-                      const isFirst = index === 0 && !isOnlyOne;
+                    {route.children
+                      .filter((item: any) => !item.invisible)
+                      .map((child: any, index) => {
+                        const countLength = route.children.filter(
+                          (item: any) => !item.invisible
+                        ).length;
+                        const isOnlyOne = countLength === 1;
 
-                      const styleBorder = isFirst
-                        ? { borderRadius: "10px 10px 0 0" }
-                        : isLast
-                        ? { borderRadius: "0 0 10px 10px" }
-                        : isOnlyOne
-                        ? { borderRadius: "10px" }
-                        : {};
+                        const isLast = index === countLength - 1 && !isOnlyOne;
+                        const isFirst = index === 0 && !isOnlyOne;
 
-                      const isActiveChild = isActive(child.url || "");
+                        const styleBorder = isFirst
+                          ? { borderRadius: "10px 10px 0 0" }
+                          : isLast
+                          ? { borderRadius: "0 0 10px 10px" }
+                          : isOnlyOne
+                          ? { borderRadius: "10px" }
+                          : {};
 
-                      return (
-                        <li key={child.name}>
-                          {"url" in child ? (
-                            <Link
-                              to={child.url}
-                              className={`flex items-center gap-2 block px-4 py-2 hover:bg-[#2F5597] hover:text-[#FFF] ${
-                                isActiveChild
-                                  ? "bg-[#2F5597] text-[#FFF]"
-                                  : "text-[#4F4F4F]"
-                              } w-full text-left`}
-                              tabIndex={0}
-                              style={styleBorder}
-                            >
-                              <span>{child.icon || null}</span>
-                              {t(child.name)}
-                            </Link>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={child.event}
-                              className={`flex items-center gap-2 block px-4 py-2 hover:bg-[#2F5597] hover:text-[#FFF] text-gray-700 w-full text-left`}
-                              tabIndex={0}
-                              style={styleBorder}
-                            >
-                              <span>{child.icon || null}</span>
-                              {t(child.name)}
-                            </button>
-                          )}
-                        </li>
-                      );
-                    })}
+                        const isActiveChild = isActive(child.url || "");
+
+                        return (
+                          <li key={child.name}>
+                            {"url" in child ? (
+                              <Link
+                                to={child.url}
+                                className={`flex items-center gap-2 block px-2 py-2 hover:bg-[#2F5597] hover:text-[#FFF] ${
+                                  isActiveChild
+                                    ? "bg-[#2F5597] text-[#FFF]"
+                                    : "text-[#4F4F4F]"
+                                } w-full text-left`}
+                                tabIndex={0}
+                                style={styleBorder}
+                              >
+                                <span>{child.icon || null}</span>
+                                {t(child.name)}
+                              </Link>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={child.event}
+                                className={`flex items-center gap-2 block px-4 py-2 hover:bg-[#2F5597] hover:text-[#FFF] text-gray-700 w-full text-left`}
+                                tabIndex={0}
+                                style={styleBorder}
+                              >
+                                <span>{child.icon || null}</span>
+                                {t(child.name)}
+                              </button>
+                            )}
+                          </li>
+                        );
+                      })}
                   </ul>
                 )}
               </li>
