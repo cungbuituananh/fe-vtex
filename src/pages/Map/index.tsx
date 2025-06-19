@@ -1,12 +1,19 @@
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import mapboxgl from "mapbox-gl";
-import { useEffect, useRef, useState } from "react";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef, useState } from "react";
+import MapFilterSidebar from "./MapFilterSidebar";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 
 function MapPage() {
   const mapContainerRef = useRef(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
+
+  const handleMapboxSearch = (result: any) => {
+    console.log("result: ", result);
+    // setSearchResults((prev) => [...prev, result]);
+  };
 
   useEffect(() => {
     // Initialize the map
@@ -21,6 +28,7 @@ function MapPage() {
         [102.14441, 8.1952], // Southwest coordinates (approx. SW Vietnam)
         [109.4642, 23.3934], // Northeast coordinates (approx. NE Vietnam)
       ],
+      style: "mapbox://styles/mapbox/streets-v12", // Set map type to satellite-streets
     });
 
     // Add navigation controls
@@ -42,23 +50,28 @@ function MapPage() {
       },
     });
 
+    geocoder.on("result", (e) => {
+      handleMapboxSearch(e.result); // Call the handler
+      // ...existing marker code...
+    });
+
     // // Add the geocoder to the map
-    map.addControl(geocoder, "top-left");
+    // map.addControl(geocoder, "top-left");
 
     // Listen for the `result` event from the geocoder
-    geocoder.on("result", (e) => {
-      // You can access the selected result details here
-      console.log("Search result:", e.result);
-      setSearchResults([...searchResults, e.result]);
+    // geocoder.on("result", (e) => {
+    //   // You can access the selected result details here
+    //   console.log("Search result:", e.result);
+    //   setSearchResults([...searchResults, e.result]);
 
-      // Add a marker at the found location
-      new mapboxgl.Marker()
-        .setLngLat(e.result.center)
-        .setPopup(
-          new mapboxgl.Popup().setHTML(`<h3>${e.result.place_name}</h3>`)
-        )
-        .addTo(map);
-    });
+    //   // Add a marker at the found location
+    //   new mapboxgl.Marker()
+    //     .setLngLat(e.result.center)
+    //     .setPopup(
+    //       new mapboxgl.Popup().setHTML(`<h3>${e.result.place_name}</h3>`)
+    //     )
+    //     .addTo(map);
+    // });
 
     // Cleanup on component unmount
     return () => map.remove();
@@ -67,11 +80,13 @@ function MapPage() {
   return (
     <div
       style={{
-        width: "100vw",
-        height: "92vh", // Use dynamic viewport height for better fit on all devices
-        // overflow: "hidden",
+        height: "90vh",
+        position: "relative",
       }}
     >
+      <div style={{ position: "absolute", top: 0, left: 0, zIndex: 10 }}>
+        <MapFilterSidebar onSearch={handleMapboxSearch} />
+      </div>
       <div
         className="container-map"
         ref={mapContainerRef}

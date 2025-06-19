@@ -5,11 +5,25 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import "@ant-design/v5-patch-for-react-19";
 import "./i18n";
+import { ConfigProvider } from "antd";
+
+const theme = {
+  token: {
+    colorPrimary: "#2F5597", // Your primary color
+    colorSecondary: "#722ed1", // Your secondary color
+    colorInfo: "#1890ff",
+    colorSuccess: "#52c41a",
+    colorWarning: "#faad14",
+    colorError: "#f5222d",
+  },
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ConfigProvider theme={theme}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ConfigProvider>
   </StrictMode>
 );
