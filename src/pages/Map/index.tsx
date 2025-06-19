@@ -10,6 +10,8 @@ function MapPage() {
 
   useEffect(() => {
     // Initialize the map
+    mapboxgl.accessToken = "pk.eyJ1IjoiYW5oY2J0IiwiYSI6ImNtYWdodXlxNzAxN2oyd29rMDg1aGRkMXYifQ.jgSnB9tSRXYMB5ZD1iGGJg";
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
       center: [105.854444, 21.028511], // Center on Hanoi
