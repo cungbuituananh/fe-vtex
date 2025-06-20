@@ -4,14 +4,16 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import MapFilterSidebar from "./MapFilterSidebar";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import SearchResult from "./SearchResult";
 
 function MapPage() {
   const mapContainerRef = useRef(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   const handleMapboxSearch = (result: any) => {
-    console.log("result: ", result);
+    console.log("result>>>>: ", result);
     // setSearchResults((prev) => [...prev, result]);
   };
 
@@ -30,9 +32,12 @@ function MapPage() {
     });
 
     // Add navigation controls
-    map.addControl(new mapboxgl.NavigationControl(), "top-right");
-    map.addControl(new mapboxgl.FullscreenControl(), "top-right");
-    map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
+    map.addControl(
+      new mapboxgl.NavigationControl({ showCompass: false }),
+      "bottom-left"
+    );
+    // map.addControl(new mapboxgl.FullscreenControl(), "top-right");
+    // map.addControl(new mapboxgl.ScaleControl(), "bottom-right");
 
     // // Add the geocoder (search bar)
     const geocoder = new MapboxGeocoder({
@@ -53,7 +58,49 @@ function MapPage() {
       // ...existing marker code...
     });
 
-    // // Add the geocoder to the map
+    const locationPoints = [
+      { coordinates: [105.854444, 21.028511], label: "Hà Nội" },
+      { coordinates: [106.660172, 10.762622], label: "Hồ Chí Minh" },
+      { coordinates: [108.238889, 16.047079], label: "Đà Nẵng" },
+      { coordinates: [105.781111, 10.012222], label: "Cần Thơ" },
+      { coordinates: [106.683333, 20.864444], label: "Hải Phòng" },
+    ];
+
+    // Function to add multiple markers
+    const addMarkersToMap = (
+      map: mapboxgl.Map,
+      locations: typeof locationPoints
+    ) => {
+      const newMarkers: mapboxgl.Marker[] = [];
+
+      locations.forEach((location, index) => {
+        // Define different colors for different markers
+        const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"];
+        const markerColor = colors[index % colors.length];
+        const marker = new mapboxgl.Marker({ color: markerColor })
+          .setLngLat(location.coordinates as [number, number])
+          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${location.label}</h3>`))
+          .addTo(map);
+
+        newMarkers.push(marker);
+      });
+
+      setMarkers(newMarkers);
+    };
+
+    // Wait for map to load before adding markers
+    map.on("load", () => {
+      // Add all predefined markers
+      addMarkersToMap(map, locationPoints);
+    });
+
+    // Function to clear all markers
+    const clearAllMarkers = () => {
+      markers.forEach((marker) => marker.remove());
+      setMarkers([]);
+    };
+
+    // Add the geocoder to the map
     // map.addControl(geocoder, "top-left");
 
     // Listen for the `result` event from the geocoder
@@ -72,6 +119,7 @@ function MapPage() {
     // });
 
     // Cleanup on component unmount
+    clearAllMarkers();
     return () => map.remove();
   }, []);
 
@@ -82,14 +130,17 @@ function MapPage() {
         position: "relative",
       }}
     >
-      <div style={{ position: "absolute", top: 0, left: 0, zIndex: 10 }}>
+      {/* <div style={{ position: "absolute", top: 0, left: 0, zIndex: 10 }}>
         <MapFilterSidebar onSearch={handleMapboxSearch} />
-      </div>
+      </div> */}
       <div
         className="container-map"
         ref={mapContainerRef}
         style={{ width: "100%", height: "100%" }}
-      />
+      >
+        <MapFilterSidebar onSearch={handleMapboxSearch} />
+        <SearchResult />
+      </div>
     </div>
   );
 }
