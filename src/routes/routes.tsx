@@ -46,6 +46,7 @@ export const ROUTE_PATH = {
   USER_INFO: "/user-info",
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
+  INTRO: "/intro",
 };
 
 export const LIST_ROUTES = [
@@ -56,14 +57,13 @@ export const LIST_ROUTES = [
     icon: <FaMapMarkedAlt />,
   },
   {
-    name: "contact",
-    element: <ContactPage />,
+    name: "intro",
     icon: <FaUserFriends />,
     children: [
       {
-        name: "contact",
-        url: ROUTE_PATH.CONTACT,
-        element: <ContactPage />,
+        name: "intro",
+        url: ROUTE_PATH.INTRO,
+        element: <IntroPage />,
         icon: <FaUserFriends />,
       },
     ],
@@ -102,8 +102,8 @@ export const LIST_ROUTES = [
     ],
   },
   {
-    name: "news",
-    url: ROUTE_PATH.NEWS,
+    name: "contact",
+    url: ROUTE_PATH.CONTACT,
     icon: <FaEnvelope />,
   },
   {

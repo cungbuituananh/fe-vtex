@@ -20,7 +20,7 @@ function Navbar() {
 
   return (
     <nav
-      className="bg-[] shadow px-6 mx-auto "
+      className="shadow px-6 mx-auto "
       style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
     >
       <div className="flex items-center justify-between max-w-10xl mx-auto">

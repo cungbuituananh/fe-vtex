@@ -7,12 +7,10 @@ import RegisterComponent from "./Register";
 function LoginPage() {
   const path = useLocation().pathname;
   return (
-    <div className="login-bg ">
-      <div className="h-[82vh]">
-        <div className="login-container bg-white shadow pt-10  shadow-[inset_0_5px_5px_-5px_rgba(0,0,0,0.8),inset_0_-5px_5px_-5px_rgba(0,0,0,0.8)]">
-          {path === ROUTE_PATH.LOGIN && <LoginComponent />}
-          {path === ROUTE_PATH.REGISTER && <RegisterComponent />}
-        </div>
+    <div className="login-bg flex-1 flex items-center justify-center">
+      <div className="login-container bg-white p-10 rounded border-radius-[24px] shadow-lg shadow-white">
+        {path === ROUTE_PATH.LOGIN && <LoginComponent />}
+        {path === ROUTE_PATH.REGISTER && <RegisterComponent />}
       </div>
     </div>
   );
