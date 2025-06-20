@@ -10,10 +10,11 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  position: absolute;
-  left: 10%;
+  /* position: absolute; */
+  /* left: 10%; */
   background-color: #f3f8ff;
   height: 100%;
+  justify-content: center;
 }
 
 .login-title {
