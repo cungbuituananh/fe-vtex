@@ -6,11 +6,20 @@ import Footer from "./components/Navbar/Footer";
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 w-full z-50 bg-white shadow">
+        <Navbar />
+      </header>
       <Routes>{renderRoutes(LIST_ROUTES)}</Routes>
-      <Footer />
-    </>
+      <footer className="w-full bg-[#324150]">
+        <Footer />
+      </footer>
+    </div>
+    // <>
+    //   <Navbar />
+    //   <Routes>{renderRoutes(LIST_ROUTES)}</Routes>
+    //   <Footer />
+    // </>
   );
 }
 

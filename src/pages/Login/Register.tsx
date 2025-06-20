@@ -62,7 +62,7 @@ function RegisterComponent() {
               }: {
                 getFieldValue: (field: string) => any;
               }) => ({
-                validator(_, value) {
+                validator(_: any, value: any) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
