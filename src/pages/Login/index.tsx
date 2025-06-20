@@ -6,7 +6,6 @@ import RegisterComponent from "./Register";
 
 function LoginPage() {
   const path = useLocation().pathname;
-  console.log("path: ", path);
   return (
     <div className="login-bg ">
       <div className="h-[82vh]">
