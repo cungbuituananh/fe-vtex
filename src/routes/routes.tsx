@@ -2,14 +2,10 @@ import { lazy, type ReactNode } from "react";
 import {
   FaDatabase,
   FaEnvelope,
-  FaFlag,
   FaMapMarkedAlt,
   FaUser,
   FaUserFriends,
 } from "react-icons/fa";
-import US from "country-flag-icons/react/3x2/US";
-import VN from "country-flag-icons/react/3x2/VN";
-import i18n from "../i18n";
 import { Route } from "react-router-dom";
 
 const MapPage = lazy(() => import("../pages/Map"));
@@ -17,6 +13,7 @@ const ContactPage = lazy(() => import("../pages/Contact"));
 const IntroPage = lazy(() => import("../pages/Intro"));
 const NewsPage = lazy(() => import("../pages/News"));
 const LoginPage = lazy(() => import("../pages/Login"));
+const HomePage = lazy(() => import("../pages/Home"));
 
 export const PATH_ROUTES = {
   HOME: "/",
@@ -51,6 +48,12 @@ export const ROUTE_PATH = {
 
 export const LIST_ROUTES = [
   {
+    name: "home",
+    url: ROUTE_PATH.HOME,
+    element: <HomePage />,
+    invisible: true, // This route is not visible in the menu
+  },
+  {
     name: "map",
     url: ROUTE_PATH.MAP,
     element: <MapPage />,
@@ -81,26 +84,26 @@ export const LIST_ROUTES = [
       },
     ],
   },
-  {
-    name: "language",
-    icon: <FaFlag />,
-    children: [
-      {
-        name: "english",
-        icon: <US title="English" style={{ width: 24, height: 16 }} />,
-        event: () => {
-          i18n.changeLanguage("en");
-        },
-      },
-      {
-        name: "vietnamese",
-        icon: <VN title="Vietnamese" style={{ width: 24, height: 16 }} />,
-        event: () => {
-          i18n.changeLanguage("vi");
-        },
-      },
-    ],
-  },
+  // {
+  //   name: "language",
+  //   icon: <FaFlag />,
+  //   children: [
+  //     {
+  //       name: "eng",
+  //       icon: <US title="English" style={{ width: 16, height: 16 }} />,
+  //       event: () => {
+  //         i18n.changeLanguage("en");
+  //       },
+  //     },
+  //     {
+  //       name: "vn",
+  //       icon: <VN title="Vietnamese" style={{ width: 16, height: 16 }} />,
+  //       event: () => {
+  //         i18n.changeLanguage("vi");
+  //       },
+  //     },
+  //   ],
+  // },
   {
     name: "contact",
     url: ROUTE_PATH.CONTACT,

@@ -10,5 +10,10 @@
     "register": "Register",
     "dashboard": "Dashboard",
     "help": "Help",
-    "title": "e-Map Viet Nam"
+    "title": "e-Map Viet Nam",
+    "map": "Map",
+    "search": "Search",
+    "data": "Data",
+    "eng": "English",
+    "vn": "Vietnamese"
 }

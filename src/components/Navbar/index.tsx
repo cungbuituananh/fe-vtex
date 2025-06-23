@@ -5,12 +5,18 @@ import { useTranslation } from "react-i18next";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useState } from "react";
 import { PRIMARY_COLOR } from "@/constants/color";
+import { Button } from "antd";
+import { US, VN } from "country-flag-icons/react/1x1";
 
 function Navbar() {
-  const { t } = useTranslation("menu");
+  const { t, i18n } = useTranslation("menu");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const location = useLocation();
+
+  // Get current language
+  const currentLanguage = i18n.language;
+  console.log("currentLanguage: ", currentLanguage);
 
   // Helper to check if route is active
   const isActive = (url: string) => {
@@ -23,13 +29,13 @@ function Navbar() {
       className="shadow px-6 mx-auto "
       style={{ boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)" }}
     >
-      <div className="flex items-center justify-between max-w-10xl mx-auto">
+      <div className="flex px-5 items-center justify-between max-w-10xl mx-auto">
         <Link to="/" className="flex items-center gap-2 focus:outline-none">
           <img src={logo} alt="Logo" className="w-35" />
           <span className="text-[#2F5597]">{t("title")}</span>
         </Link>
         <ul className="flex gap-6 items-center text-[#4F4F4F] hidden md:flex">
-          {LIST_ROUTES.map((route) => {
+          {LIST_ROUTES.filter((item) => !item.invisible).map((route) => {
             // Determine if the route is active
             const isActiveRoute = isActive(route.url || "");
             const isChildActive = route.children?.some((child: any) =>
@@ -39,7 +45,7 @@ function Navbar() {
             return (
               <li
                 key={route.name}
-                className={`relative py-4 
+                className={`relative py-4  text-[14px] 
                  ${
                    isActiveRoute || isChildActive
                      ? `text-[${PRIMARY_COLOR}]`
@@ -59,7 +65,7 @@ function Navbar() {
                 {route.children ? (
                   <button
                     type="button"
-                    className="hover:text-blue-600 flex items-center gap-2 focus:outline-none group"
+                    className="hover:text-blue-600  flex items-center gap-2 focus:outline-none group"
                     onClick={() =>
                       setOpenDropdown(
                         openDropdown === route.name ? null : route.name
@@ -68,7 +74,7 @@ function Navbar() {
                     aria-haspopup="true"
                     aria-expanded={openDropdown === route.name}
                   >
-                    <span>{route.icon || null}</span>
+                    <span className="text-[16px]">{route.icon || null}</span>
                     <span>{t(route.name)}</span>
                     <IoMdArrowDropdown
                       className={`transition-colors group-hover:text-[#ED7D31] ${
@@ -81,13 +87,13 @@ function Navbar() {
                     to={route.url}
                     className="hover:text-blue-600 flex items-center gap-2"
                   >
-                    <span>{route.icon || null}</span>
+                    <span className="text-[16px]">{route.icon || null}</span>
                     <span>{t(route.name)}</span>
                   </Link>
                 )}
                 {route.children && (
                   <ul
-                    className={`absolute left-0 mt-2 min-w-[130px] bg-white shadow-lg rounded z-10 ${
+                    className={`absolute left-0 mt-2 min-w-[120px] text-nowrap bg-white shadow-lg rounded z-10 ${
                       openDropdown === route.name ? "block" : "hidden"
                     }`}
                     style={{
@@ -118,7 +124,7 @@ function Navbar() {
                         const isActiveChild = isActive(child.url || "");
 
                         return (
-                          <li key={child.name}>
+                          <li key={child.name} className="text-[14px]">
                             {"url" in child ? (
                               <Link
                                 to={child.url}
@@ -153,6 +159,25 @@ function Navbar() {
               </li>
             );
           })}
+          <li>
+            <Button
+              color="default"
+              variant="outlined"
+              onClick={() =>
+                i18n.changeLanguage(currentLanguage === "en" ? "vi" : "en")
+              }
+              className="max-w-[80px]"
+            >
+              <span>
+                {currentLanguage === "en" ? (
+                  <US title="Vietnamese" style={{ width: 16, height: 16 }} />
+                ) : (
+                  <VN title="English" style={{ width: 16, height: 16 }} />
+                )}
+              </span>
+              {currentLanguage === "en" ? "ENG" : "VIE"}
+            </Button>
+          </li>
         </ul>
       </div>
     </nav>
