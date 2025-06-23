@@ -122,7 +122,7 @@ function MapPage() {
     // Add navigation controls to avoid conflict with search
     map.addControl(
       new mapboxgl.NavigationControl({ showCompass: false }),
-      "top-right"
+      "bottom-left"
     );
 
     // Add the geocoder
