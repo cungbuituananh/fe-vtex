@@ -24,6 +24,7 @@ function MapPage() {
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   const handleMapboxSearch = (result: any) => {
+    console.log("searchResults: ", searchResults);
     console.log("result>>>>: ", result);
     setSearchResults((prev) => [...prev, result]);
   };
@@ -85,19 +86,19 @@ function MapPage() {
   };
 
   // Function to show all MOCK_DATA on map
-  const showAllLocations = () => {
-    setFilteredData(MOCK_DATA);
-    if (mapRef.current) {
-      addMarkersToMap(mapRef.current, MOCK_DATA);
+  // const showAllLocations = () => {
+  //   setFilteredData(MOCK_DATA);
+  //   if (mapRef.current) {
+  //     addMarkersToMap(mapRef.current, MOCK_DATA);
 
-      // Fit map to show all markers
-      const bounds = new mapboxgl.LngLatBounds();
-      MOCK_DATA.forEach((location) => {
-        bounds.extend(location.coordinates as [number, number]);
-      });
-      mapRef.current.fitBounds(bounds, { padding: 50 });
-    }
-  };
+  //     // Fit map to show all markers
+  //     const bounds = new mapboxgl.LngLatBounds();
+  //     MOCK_DATA.forEach((location) => {
+  //       bounds.extend(location.coordinates as [number, number]);
+  //     });
+  //     mapRef.current.fitBounds(bounds, { padding: 50 });
+  //   }
+  // };
 
   useEffect(() => {
     mapboxgl.accessToken =
@@ -127,14 +128,14 @@ function MapPage() {
     // Add the geocoder
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken as string,
-      mapboxgl: mapboxgl,
+      mapboxgl: mapboxgl as any,
       countries: "vn",
       placeholder: "Tìm kiếm địa điểm...",
       marker: false, // Disable default marker to use custom ones
       flyTo: {
         speed: 1.2,
         curve: 1.42,
-        easing: (t) => t,
+        easing: (t: any) => t,
       },
     });
 
