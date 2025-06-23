@@ -8,6 +8,11 @@ import {
 
 const filterOptions = [
   {
+    label: "Tên công ty/MST",
+    name: "name",
+    type: "text",
+  },
+  {
     label: "Quy mô doanh nghiệp",
     name: "size",
     options: [
@@ -123,21 +128,23 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
               onFinish={onSearch}
               className="space-y-3"
             >
-              {filterOptions.map((opt) => (
-                <Form.Item
-                  key={opt.name}
-                  name={opt.name}
-                  label={
-                    <span className="font-medium text-sm">{opt.label}</span>
-                  }
-                >
-                  <Select
-                    placeholder="Chọn......................."
-                    className="w-full"
-                    options={opt.options}
-                  />
-                </Form.Item>
-              ))}
+              {filterOptions.map((opt) => {
+                return (
+                  <Form.Item
+                    key={opt.name}
+                    name={opt.name}
+                    label={
+                      <span className="font-medium text-sm">{opt.label}</span>
+                    }
+                  >
+                    <Select
+                      placeholder="Chọn......................."
+                      className="w-full"
+                      options={opt.options}
+                    />
+                  </Form.Item>
+                );
+              })}
               <div className="flex gap-3 mt-2">
                 <Button
                   onClick={handleReset}

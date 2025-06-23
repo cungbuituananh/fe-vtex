@@ -105,6 +105,7 @@ export const LIST_ROUTES = [
     name: "contact",
     url: ROUTE_PATH.CONTACT,
     icon: <FaEnvelope />,
+    element: <ContactPage />,
   },
   {
     name: "account",
