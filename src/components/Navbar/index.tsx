@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/imgs/Logo.png";
+import logo from "../../assets/imgs/logo.png";
 import { LIST_ROUTES } from "../../routes/routes";
 import { useTranslation } from "react-i18next";
 import { IoMdArrowDropdown } from "react-icons/io";
