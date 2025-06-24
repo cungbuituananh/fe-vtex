@@ -98,21 +98,20 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
         className={`bg-[#F6F8FB] rounded-xl shadow  w-80 max-w-[90vw] m-3 z-10`}
         style={{ position: "relative" }}
       >
-        <div className="flex items-center py-1">
-          {/* <MenuOutlined
-            className="text-lg mr-2 cursor-pointer"
+        <div className="flex gap-3 items-center py-2 px-3">
+          <Button
+            type="text"
+            className="cursor-pointer"
             onClick={() => setShow(!show)}
-          /> */}
-          <div
-            className="cursor-pointer py-2 px-5"
-            onClick={() => setShow(!show)}
+            style={{ padding: 0 }}
           >
             {show ? (
               <MdOutlineFormatIndentIncrease style={{ fontSize: "20px" }} />
             ) : (
               <MdOutlineFormatIndentDecrease style={{ fontSize: "20px" }} />
             )}
-          </div>
+          </Button>
+          <span> | </span>
           <span className="font-semibold text-base">Bộ lọc tìm kiếm</span>
         </div>
         <div

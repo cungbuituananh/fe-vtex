@@ -125,6 +125,7 @@ export const LIST_ROUTES = [
         url: ROUTE_PATH.USER_INFO,
         element: <NewsPage />,
         icon: <FaDatabase />,
+        invisible: true,
       },
       {
         name: "register",

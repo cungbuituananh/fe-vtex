@@ -6,6 +6,7 @@ interface ModalCommonProps {
   handleCancel: () => void;
   title?: string;
   children?: React.ReactNode;
+  footer?: React.ReactNode | null;
 }
 function ModalCommon(props: ModalCommonProps) {
   const {
@@ -14,6 +15,7 @@ function ModalCommon(props: ModalCommonProps) {
     handleCancel,
     title = "",
     children,
+    footer = null,
   } = props;
 
   return (
@@ -23,6 +25,7 @@ function ModalCommon(props: ModalCommonProps) {
       open={isOpen}
       onOk={handleOk}
       onCancel={handleCancel}
+      footer={footer}
     >
       {children}
     </Modal>

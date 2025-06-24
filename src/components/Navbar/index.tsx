@@ -16,7 +16,6 @@ function Navbar() {
 
   // Get current language
   const currentLanguage = i18n.language;
-  console.log("currentLanguage: ", currentLanguage);
 
   // Helper to check if route is active
   const isActive = (url: string) => {
