@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import MapFilterSidebar from "./MapFilterSidebar";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import SearchResult from "./SearchResult";
+import "./map.css";
 
 const MOCK_DATA = [
   { coordinates: [105.854444, 21.028511], label: "Hà Nội", id: 1 },

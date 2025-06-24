@@ -35,9 +35,6 @@ function ProjectTimeline() {
         {/* Desktop Timeline */}
         <div className="hidden lg:block">
           <div className="relative">
-            {/* Timeline Line */}
-            {/* <div className="absolute top-6 left-0 w-full h-0.5 bg-gray-300 z-0"></div> */}
-
             {/* Timeline Items */}
             <div className="flex gap-10 z-10">
               {timelineData.map((item, index) => (
@@ -46,9 +43,6 @@ function ProjectTimeline() {
                   className="flex flex-1 flex-col items-start relative"
                 >
                   {/* Circle with Number */}
-                  {/* {index < timelineData.length - 1 && (
-                    <div className="absolute top-6 left-0 w-full h-0.5 bg-gray-300 z-0"></div>
-                  )} */}
 
                   {index < timelineData.length - 1 && (
                     <div
@@ -66,7 +60,7 @@ function ProjectTimeline() {
                           style={{
                             width: 0,
                             height: 0,
-                            borderLeft: "8px solid ##2F5597",
+                            borderLeft: "8px solid #2F5597",
                             borderTop: "4px solid transparent",
                             borderBottom: "4px solid transparent",
                           }}
@@ -85,15 +79,11 @@ function ProjectTimeline() {
                     </div>
                   )}
 
-                  <div
-                    className="z-1 w-12 h-12 rounded-full flex items-center justify-center mb-4 border-1 border-[#2F5597] shadow-lg"
-                    // style={{ backgroundColor: PRIMARY_COLOR }}
-                  >
+                  <div className="z-1 w-12 h-12 rounded-full flex items-center justify-center mb-4 border-1 border-[#2F5597] shadow-lg">
                     <p
                       className="rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-lg"
                       style={{ backgroundColor: PRIMARY_COLOR }}
                     >
-                      {" "}
                       {item.number}
                     </p>
                   </div>
