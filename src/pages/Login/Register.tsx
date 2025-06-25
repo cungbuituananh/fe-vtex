@@ -15,7 +15,7 @@ function RegisterComponent() {
       <Title level={2} className="login-title text-center mb-6">
         Đăng ký
       </Title>
-      <div className="px-[40px] mb-5">
+      <div className="px-[10px] mb-5">
         <Form
           name="register"
           layout="vertical"

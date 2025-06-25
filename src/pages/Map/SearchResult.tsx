@@ -20,24 +20,22 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
 
   return (
     <div
-      className={`transition-all duration-300 ease-in-out ${
-        show ? "translate-x-0" : ""
-      }`}
+      className={`transition-all duration-650 ease-in-out `}
       style={{
         position: "absolute",
         top: "0px",
-        right: "0px",
+        right: show ? "0px" : "-270px",
         zIndex: 40,
         borderRadius: "8px 0 0 8px",
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         overflowY: show ? "auto" : "hidden",
         overflowX: "hidden",
-        ...(show && { height: "100%", width: "300px", background: "white" }),
+        height: show ? "100%" : "6%",
+        width: "300px",
+        background: "white",
       }}
     >
-      <div
-        className={`${show && "flex items-center gap-3 py-2 px-3 border-b"}`}
-      >
+      <div className={"flex items-center gap-3 p-2 "}>
         <Button
           type="text"
           className="cursor-pointer flex-shrink-0"
@@ -62,7 +60,7 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
 
       {show && (
         <div
-          className="opacity-0 animate-fadeIn"
+          className="opacity-0 animate-fadeIn border-t"
           style={{
             animationDelay: "150ms",
             animationFillMode: "forwards",

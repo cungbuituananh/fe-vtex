@@ -1,26 +1,54 @@
-import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/imgs/logo.png";
-import { LIST_ROUTES } from "../../routes/routes";
-import { useTranslation } from "react-i18next";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { useState } from "react";
 import { PRIMARY_COLOR } from "@/constants/color";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "antd";
 import { US, VN } from "country-flag-icons/react/1x1";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../../assets/imgs/logo.png";
+import {
+  getVisibleRoutes,
+  ROUTE_CONFIGS,
+  type RouteConfig,
+} from "../../routes/routes";
 
 function Navbar() {
   const { t, i18n } = useTranslation("menu");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
+  const { user, isAuthenticated, logout } = useAuth();
+  // console.log("isAuthenticated: ", isAuthenticated);
   const location = useLocation();
 
   // Get current language
   const currentLanguage = i18n.language;
 
+  // Get visible routes based on authentication state
+  const visibleRoutes = getVisibleRoutes(
+    ROUTE_CONFIGS,
+    isAuthenticated,
+    user ? [user.role] : []
+  );
+
   // Helper to check if route is active
   const isActive = (url: string) => {
-    // Exact match or startsWith for parent routes
     return location.pathname === url;
+  };
+
+  const handleLogout = () => {
+    logout();
+    setOpenDropdown(null);
+    // navigate("/");
+  };
+
+  const handleMenuItemClick = (route: RouteConfig) => {
+    if (route.event) {
+      if (route.name === "logout") {
+        handleLogout();
+      } else {
+        route.event();
+      }
+    }
   };
 
   return (
@@ -32,12 +60,12 @@ function Navbar() {
         <Link to="/" className="flex items-center gap-2 focus:outline-none">
           <img src={logo} alt="Logo" className="w-35" />
           <span className="text-[#2F5597]">{t("title")}</span>
-        </Link>
+        </Link>{" "}
         <ul className="flex gap-6 items-center text-[#4F4F4F] hidden md:flex">
-          {LIST_ROUTES.filter((item) => !item.invisible).map((route) => {
+          {visibleRoutes.map((route) => {
             // Determine if the route is active
             const isActiveRoute = isActive(route.url || "");
-            const isChildActive = route.children?.some((child: any) =>
+            const isChildActive = route.children?.some((child: RouteConfig) =>
               isActive(child.url || "")
             );
 
@@ -74,7 +102,10 @@ function Navbar() {
                     aria-expanded={openDropdown === route.name}
                   >
                     <span className="text-[16px]">{route.icon || null}</span>
-                    <span>{t(route.name)}</span>
+                    {/* <span>{t(route.name)}</span> */}
+                    {isAuthenticated && user && route.name === "account"
+                      ? `Welcome, ${user.username} (${user.role})`
+                      : t(route.name)}
                     <IoMdArrowDropdown
                       className={`transition-colors group-hover:text-[#ED7D31] ${
                         isActiveRoute || isChildActive ? "text-[#ED7D31]" : ""
@@ -83,7 +114,7 @@ function Navbar() {
                   </button>
                 ) : (
                   <Link
-                    to={route.url}
+                    to={route.url || ""}
                     className="hover:text-blue-600 flex items-center gap-2"
                   >
                     <span className="text-[16px]">{route.icon || null}</span>
@@ -104,12 +135,15 @@ function Navbar() {
                     {route.children
                       .filter((item: any) => !item.invisible)
                       .map((child: any, index) => {
-                        const countLength = route.children.filter(
+                        const countLength = route.children?.filter(
                           (item: any) => !item.invisible
                         ).length;
                         const isOnlyOne = countLength === 1;
 
-                        const isLast = index === countLength - 1 && !isOnlyOne;
+                        const isLast =
+                          countLength &&
+                          index === countLength - 1 &&
+                          !isOnlyOne;
                         const isFirst = index === 0 && !isOnlyOne;
 
                         const styleBorder = isFirst
@@ -141,7 +175,7 @@ function Navbar() {
                             ) : (
                               <button
                                 type="button"
-                                onClick={child.event}
+                                onClick={() => handleMenuItemClick(child)}
                                 className={`flex items-center gap-2 block px-4 py-2 hover:bg-[#2F5597] hover:text-[#FFF] text-gray-700 w-full text-left`}
                                 tabIndex={0}
                                 style={styleBorder}
@@ -158,6 +192,7 @@ function Navbar() {
               </li>
             );
           })}
+
           <li>
             <Button
               color="default"

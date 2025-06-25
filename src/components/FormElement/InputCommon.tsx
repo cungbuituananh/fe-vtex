@@ -21,15 +21,23 @@ function InputCommon(props: InputCommonProps) {
   } = props;
   return (
     <Form.Item label={label} name={name} rules={rules}>
-      <Input
-        {...props}
-        type={type}
-        placeholder={placeholder || `Nhập ${label.toLowerCase()}`}
-        disabled={disabled}
-        style={{
-          height: "50px",
-        }}
-      />
+      {type === "password" ? (
+        <Input.Password
+          style={{
+            height: "50px",
+          }}
+        />
+      ) : (
+        <Input
+          {...props}
+          type={type}
+          placeholder={placeholder || `Nhập ${label.toLowerCase()}`}
+          disabled={disabled}
+          style={{
+            height: "50px",
+          }}
+        />
+      )}
     </Form.Item>
   );
 }

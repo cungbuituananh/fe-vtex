@@ -95,10 +95,10 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
     <div className="relative">
       {/* Sidebar */}
       <div
-        className={`bg-[#F6F8FB] rounded-xl shadow  w-80 max-w-[90vw] m-3 z-10`}
+        className={`bg-[#F6F8FB] rounded-xl shadow w-80 max-w-[90vw] m-3 z-10`}
         style={{ position: "relative" }}
       >
-        <div className="flex gap-3 items-center py-2 px-3">
+        <div className="flex gap-3 items-center py-2 px-3 ">
           <Button
             type="text"
             className="cursor-pointer"
