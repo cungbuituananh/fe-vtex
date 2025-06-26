@@ -16,6 +16,7 @@ const IntroPage = lazy(() => import("../pages/Intro"));
 const NewsPage = lazy(() => import("../pages/News"));
 const LoginPage = lazy(() => import("../pages/Login"));
 const HomePage = lazy(() => import("../pages/Home"));
+const CompanyDetailPage = lazy(() => import("../pages/Company/CompanyDetail"));
 
 export const PATH_ROUTES = {
   HOME: "/",
@@ -54,6 +55,8 @@ export const ROUTE_PATH = {
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
   INTRO: "/intro",
+  COMPANY: "/company",
+  COMPANY_DETAIL: "/company/:id",
 };
 
 // Improved route configuration with clear separation of concerns
@@ -143,6 +146,13 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         showOnlyWhenAuthenticated: true, // Only show when logged in
       },
     ],
+  },
+  {
+    name: "company",
+    url: ROUTE_PATH.COMPANY_DETAIL,
+    element: <CompanyDetailPage />,
+    hiddenInMenu: true, // Don't show in navigation menu
+    requireAuth: false,
   },
 ];
 

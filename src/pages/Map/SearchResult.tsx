@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 interface SearchResultProps {
   results: any[];
@@ -68,27 +69,38 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
         >
           {results.map((location) => (
             <div
-              key={location.id}
-              onClick={() => onResultClick(location)}
               style={{
                 padding: "8px",
                 cursor: "pointer",
                 borderBottom: "1px solid #eee",
                 transition: "background-color 0.2s",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#f5f5f5";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "white";
-              }}
+              key={location.id}
             >
-              <strong>{location.label}</strong>
-              <br />
-              <small style={{ color: "#666" }}>
-                {location.coordinates[1].toFixed(4)},{" "}
-                {location.coordinates[0].toFixed(4)}
-              </small>
+              <div
+                onClick={() => onResultClick(location)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f5f5f5";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white";
+                }}
+              >
+                <strong>{location.label}</strong>
+                <br />
+                <small style={{ color: "#666" }}>
+                  {location.coordinates[1].toFixed(4)},{" "}
+                  {location.coordinates[0].toFixed(4)}
+                </small>
+              </div>
+              <div className="mt-1">
+                <Link
+                  to={`/company/${location.id}`}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Xem chi tiết
+                </Link>
+              </div>
             </div>
           ))}
         </div>
