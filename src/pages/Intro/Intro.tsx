@@ -1,13 +1,13 @@
-import { Typography, Row, Col, Button } from "antd";
-import "./intro.css";
-import minimap from "../../assets/imgs/mini-map.png";
-import fullmap from "../../assets/imgs/full-map.png";
-import { PRIMARY_COLOR } from "@/constants/color";
-import { IoExpand } from "react-icons/io5";
-import ProjectTimeline from "./ProjectTimeline";
+import { STYLE_TITLE_COMMON } from "@/constants/color";
 import { useControlModal } from "@/hooks/useControlModal";
-import { IoIosCloseCircleOutline } from "react-icons/io";
+import { Button, Col, Row, Typography } from "antd";
 import { useEffect } from "react";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { IoExpand } from "react-icons/io5";
+import fullmap from "../../assets/imgs/full-map.png";
+import minimap from "../../assets/imgs/mini-map.png";
+import "./intro.css";
+import ProjectTimeline from "./ProjectTimeline";
 
 const { Title, Paragraph } = Typography;
 
@@ -43,12 +43,7 @@ function IntroComp() {
               <div className="">
                 {/* Header Section */}
                 <div className="mb-4">
-                  <p
-                    className="font-medium mb-3 text-[18px] "
-                    style={{ color: PRIMARY_COLOR }}
-                  >
-                    Giới thiệu
-                  </p>
+                  <p className={STYLE_TITLE_COMMON}>Giới thiệu</p>
 
                   <p className="text-gray-800  font-bold text-[26px]">
                     Bản đồ số

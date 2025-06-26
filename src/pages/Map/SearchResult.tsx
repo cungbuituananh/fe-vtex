@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 interface SearchResultProps {
   results: any[];
@@ -20,24 +21,22 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
 
   return (
     <div
-      className={`transition-all duration-300 ease-in-out ${
-        show ? "translate-x-0" : ""
-      }`}
+      className={`transition-all duration-650 ease-in-out `}
       style={{
         position: "absolute",
         top: "0px",
-        right: "0px",
+        right: show ? "0px" : "-270px",
         zIndex: 40,
         borderRadius: "8px 0 0 8px",
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         overflowY: show ? "auto" : "hidden",
         overflowX: "hidden",
-        ...(show && { height: "100%", width: "300px", background: "white" }),
+        height: show ? "100%" : "6%",
+        width: "300px",
+        background: "white",
       }}
     >
-      <div
-        className={`${show && "flex items-center gap-3 py-2 px-3 border-b"}`}
-      >
+      <div className={"flex items-center gap-3 p-2 "}>
         <Button
           type="text"
           className="cursor-pointer flex-shrink-0"
@@ -62,7 +61,7 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
 
       {show && (
         <div
-          className="opacity-0 animate-fadeIn"
+          className="opacity-0 animate-fadeIn border-t"
           style={{
             animationDelay: "150ms",
             animationFillMode: "forwards",
@@ -70,27 +69,38 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
         >
           {results.map((location) => (
             <div
-              key={location.id}
-              onClick={() => onResultClick(location)}
               style={{
                 padding: "8px",
                 cursor: "pointer",
                 borderBottom: "1px solid #eee",
                 transition: "background-color 0.2s",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#f5f5f5";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "white";
-              }}
+              key={location.id}
             >
-              <strong>{location.label}</strong>
-              <br />
-              <small style={{ color: "#666" }}>
-                {location.coordinates[1].toFixed(4)},{" "}
-                {location.coordinates[0].toFixed(4)}
-              </small>
+              <div
+                onClick={() => onResultClick(location)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f5f5f5";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "white";
+                }}
+              >
+                <strong>{location.label}</strong>
+                <br />
+                <small style={{ color: "#666" }}>
+                  {location.coordinates[1].toFixed(4)},{" "}
+                  {location.coordinates[0].toFixed(4)}
+                </small>
+              </div>
+              <div className="mt-1">
+                <Link
+                  to={`/company/${location.id}`}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Xem chi tiết
+                </Link>
+              </div>
             </div>
           ))}
         </div>

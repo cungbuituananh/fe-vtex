@@ -16,7 +16,7 @@ function HomePage() {
     <div className="mt-3  mt-10">
       <img src={banner} alt="Intro" className="w-full h-auto" />
 
-      <Title level={2} className="text-center underline my-5">
+      <Title level={2} className="text-center my-5">
         VITEX SDS CO.,LTD
       </Title>
       <div className="flex justify-center flex-wrap gap-8 my-10">
