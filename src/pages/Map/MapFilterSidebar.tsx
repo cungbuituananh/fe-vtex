@@ -7,11 +7,11 @@ import {
 } from "react-icons/md";
 
 const filterOptions = [
-  {
-    label: "Tên công ty/MST",
-    name: "name",
-    type: "text",
-  },
+  // {
+  //   label: "Tên công ty/MST",
+  //   name: "name",
+  //   type: "text",
+  // },
   {
     label: "Quy mô doanh nghiệp",
     name: "size",
@@ -137,7 +137,7 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
                     }
                   >
                     <Select
-                      placeholder="Chọn......................."
+                      placeholder={`Chọn ${opt.label.toLowerCase()}`}
                       className="w-full"
                       options={opt.options}
                     />

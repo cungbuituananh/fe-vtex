@@ -6,6 +6,7 @@ import MapFilterSidebar from "./MapFilterSidebar";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import SearchResult from "./SearchResult";
 import "./map.css";
+import { MOCKDATA_COMPANY } from "../Company/mockdata";
 
 const MOCK_DATA = [
   { coordinates: [105.854444, 21.028511], label: "Hà Nội", id: 1 },
@@ -42,12 +43,12 @@ function MapPage() {
     //   item.label.toLowerCase().includes(searchTerm.toLowerCase())
     // );
 
-    setFilteredData(MOCK_DATA);
+    setFilteredData(MOCKDATA_COMPANY);
 
     // Add markers for filtered results
     if (mapRef.current) {
-      addMarkersToMap(mapRef.current, MOCK_DATA);
-      if (MOCK_DATA.length > 0) {
+      addMarkersToMap(mapRef.current, MOCKDATA_COMPANY);
+      if (MOCKDATA_COMPANY.length > 0) {
         // Fit map to show filtered results
         const bounds = new mapboxgl.LngLatBounds();
         MOCK_DATA.forEach((location) => {
@@ -102,8 +103,7 @@ function MapPage() {
   // };
 
   useEffect(() => {
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoiYW5oY2J0IiwiYSI6ImNtYWdodXlxNzAxN2oyd29rMDg1aGRkMXYifQ.jgSnB9tSRXYMB5ZD1iGGJg";
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
