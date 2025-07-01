@@ -92,7 +92,7 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
   // };
 
   return (
-    <div className="relative">
+    <div className="relative h-[90vh] ">
       {/* Sidebar */}
       <div
         className={`bg-[#F6F8FB] rounded-xl shadow w-80 max-w-[90vw] m-3 z-10`}

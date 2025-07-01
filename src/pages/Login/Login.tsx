@@ -61,11 +61,7 @@ function LoginComponent() {
           initialValues={{ remember: true }}
           onFinish={handleLogin}
         >
-          <InputCommon
-            label="Tên tài khoản"
-            name="username"
-            rules={[{ required: true, message: "Vui lòng nhập username!" }]}
-          />
+          <InputCommon label="Tên tài khoản" name="username" required={true} />
           <InputCommon
             label="Mật khẩu"
             name="password"
@@ -82,31 +78,31 @@ function LoginComponent() {
               </a>
             </div>
           </Form.Item>{" "}
-          <Form.Item className="text-center">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={isLoading}
-              style={{
-                borderRadius: "9999px",
-                height: "35px",
-                width: "180px",
-              }}
-            >
-              <FaSignInAlt className="inline" /> Đăng nhập
-            </Button>
-          </Form.Item>
-          <Form.Item className="text-center">
-            <Button
-              style={{
-                borderRadius: "9999px",
-                height: "35px",
-                width: "180px",
-              }}
-              onClick={() => navigate(ROUTE_PATH.REGISTER)}
-            >
-              Đăng ký
-            </Button>
+          <Form.Item className="text-center ">
+            <div className="flex justify-center mb-4 gap-4">
+              <Button
+                style={{
+                  borderRadius: "9999px",
+                  height: "35px",
+                  width: "180px",
+                }}
+                onClick={() => navigate(ROUTE_PATH.REGISTER)}
+              >
+                Đăng ký
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+                style={{
+                  borderRadius: "9999px",
+                  height: "35px",
+                  width: "180px",
+                }}
+              >
+                <FaSignInAlt className="inline" /> Đăng nhập
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>

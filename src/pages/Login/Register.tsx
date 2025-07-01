@@ -4,10 +4,12 @@ import Title from "antd/es/typography/Title";
 import { Link } from "react-router-dom";
 import { ROUTE_PATH } from "@/routes/routes";
 import PasswordInput from "@/components/FormElement/PasswordInput";
+import { registerAPI } from "@/services/apis/auth";
 
 function RegisterComponent() {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: any) => {
+    const data = await registerAPI(values);
+    console.log("data: ", data);
   };
 
   return (
@@ -50,10 +52,9 @@ function RegisterComponent() {
             ]}
           />
 
-          <InputCommon
+          <PasswordInput
             label="Xác nhận mật khẩu mới"
             name="confirmPassword"
-            type="password"
             placeholder="Nhập lại mật khẩu mới"
             rules={[
               { required: true, message: "Bạn phải xác nhận mật khẩu" },
@@ -79,10 +80,8 @@ function RegisterComponent() {
               htmlType="submit"
               style={{
                 borderRadius: "9999px",
-                height: "51px",
-                width: "220px",
-                fontSize: "16px",
-                fontWeight: "500",
+                height: "35px",
+                width: "180px",
               }}
             >
               Đăng ký

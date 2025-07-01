@@ -16,8 +16,13 @@ const MOCK_DATA = [
   { coordinates: [106.683333, 20.864444], label: "Hải Phòng", id: 5 },
 ];
 
-function MapPage() {
+interface MapPageProps {
+  isSelectScreen?: boolean; // Optional prop to determine if it's a selection screen
+}
+
+function MapPage({ isSelectScreen = false }: MapPageProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const selectedMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
@@ -33,16 +38,6 @@ function MapPage() {
 
   // Function to search in MOCK_DATA - only triggered on explicit search
   const handleLocalSearch = () => {
-    // if (!searchTerm.trim()) {
-    //   setFilteredData([]);
-    //   clearAllMarkers();
-    //   return;
-    // }
-
-    // const filtered = MOCK_DATA.filter((item) =>
-    //   item.label.toLowerCase().includes(searchTerm.toLowerCase())
-    // );
-
     setFilteredData(MOCKDATA_COMPANY);
 
     // Add markers for filtered results
@@ -57,6 +52,43 @@ function MapPage() {
         mapRef.current.fitBounds(bounds, { padding: 50 });
       }
     }
+  };
+
+  // Handle map click to add a marker
+  const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+    const { lng, lat } = e.lngLat;
+    console.log("Clicked coordinates:", { longitude: lng, latitude: lat });
+
+    // Remove existing selected marker if any
+    if (selectedMarkerRef.current) {
+      selectedMarkerRef.current.remove();
+    }
+
+    // Create and add new marker at clicked position
+    const newMarker = new mapboxgl.Marker({
+      color: "#FF0000", // Red color for the selected marker
+      draggable: true, // Make it draggable if needed
+    })
+      .setLngLat([lng, lat])
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 }).setHTML(`
+            <div>
+              <h4>Selected Location</h4>
+              <p>Lat: ${lat.toFixed(6)}</p>
+              <p>Lng: ${lng.toFixed(6)}</p>
+            </div>
+          `)
+      )
+      .addTo(mapRef.current!);
+
+    // Store the reference to the selected marker
+    selectedMarkerRef.current = newMarker;
+
+    // Optional: Add event listener for when marker is dragged
+    newMarker.on("dragend", () => {
+      const lngLat = newMarker.getLngLat();
+      console.log("Marker dragged to:", { lng: lngLat.lng, lat: lngLat.lat });
+    });
   };
 
   // Function to add multiple markers
@@ -87,21 +119,6 @@ function MapPage() {
     setMarkers([]);
   };
 
-  // Function to show all MOCK_DATA on map
-  // const showAllLocations = () => {
-  //   setFilteredData(MOCK_DATA);
-  //   if (mapRef.current) {
-  //     addMarkersToMap(mapRef.current, MOCK_DATA);
-
-  //     // Fit map to show all markers
-  //     const bounds = new mapboxgl.LngLatBounds();
-  //     MOCK_DATA.forEach((location) => {
-  //       bounds.extend(location.coordinates as [number, number]);
-  //     });
-  //     mapRef.current.fitBounds(bounds, { padding: 50 });
-  //   }
-  // };
-
   useEffect(() => {
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -126,6 +143,7 @@ function MapPage() {
       "bottom-left"
     );
 
+    map.on("click", (e) => handleMapClick(e));
     // Add the geocoder
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken as string,
@@ -140,35 +158,35 @@ function MapPage() {
       },
     });
 
-    geocoder.on("result", (e) => {
-      handleMapboxSearch(e.result);
-    });
-
-    // map.addControl(geocoder, "top-left");
-
-    // Load all locations initially
-    // map.on("load", () => {
-    //   showAllLocations();
-    // });
+    geocoder.on("result", handleMapboxSearch);
 
     return () => {
       clearAllMarkers();
+      if (selectedMarkerRef.current) {
+        selectedMarkerRef.current.remove();
+      }
       map.remove();
     };
   }, []);
 
   return (
-    <div style={{ height: "90vh", position: "relative" }}>
+    <div
+      style={{
+        // height: "90vh",
+        position: "relative",
+      }}
+    >
       <div
         className="container-map"
         ref={mapContainerRef}
         style={{ width: "100%", height: "100%" }}
       >
-        <MapFilterSidebar
-          onSearch={handleLocalSearch}
-          // onShowAll={showAllLocations}
-          // onClear={clearAllMarkers}
-        />
+        {isSelectScreen ? (
+          <div className="relative h-[500px] w-[1000px]"></div>
+        ) : (
+          <MapFilterSidebar onSearch={handleLocalSearch} />
+        )}
+
         {filteredData.length > 0 && (
           <SearchResult
             results={filteredData}

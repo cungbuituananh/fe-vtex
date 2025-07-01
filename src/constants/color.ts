@@ -8,3 +8,5 @@ export const STYLE_CONTAINER_BORDER =
 export const STYLE_TITLE_COMMON = `font-medium mb-3 text-[18px] text-[${PRIMARY_COLOR}]`;
 export const STYLE_SUB_TITLE_COMMON = `font-medium text-[14px] text-[${PRIMARY_COLOR}]`;
 export const STYLE_NAV_LINK = `hover:text-blue-500 hover:underline`;
+
+export const HEIGHT_INPUT = "45px";

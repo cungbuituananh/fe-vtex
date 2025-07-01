@@ -17,7 +17,7 @@ function Navbar() {
   const { t, i18n } = useTranslation("menu");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
-  // console.log("isAuthenticated: ", isAuthenticated);
+  console.log("isAuthenticated: ", isAuthenticated);
   const location = useLocation();
 
   // Get current language
@@ -38,16 +38,13 @@ function Navbar() {
   const handleLogout = () => {
     logout();
     setOpenDropdown(null);
-    // navigate("/");
   };
 
   const handleMenuItemClick = (route: RouteConfig) => {
-    if (route.event) {
-      if (route.name === "logout") {
-        handleLogout();
-      } else {
-        route.event();
-      }
+    if (route.name === "logout") {
+      handleLogout();
+    } else if (route.event) {
+      route.event();
     }
   };
 

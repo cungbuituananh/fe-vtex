@@ -9,5 +9,8 @@
 /* Alternative: Set it on specific elements */
 body {
   font-family: "Roboto", sans-serif;
-  background-color: #2f5597;
+}
+
+.ant-btn {
+  box-shadow: none !important;
 }

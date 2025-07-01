@@ -5,6 +5,7 @@ import React, {
   useEffect,
   type ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   id: string;
@@ -38,8 +39,8 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  console.log("user: ", user);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Check if user is logged in on app start
   useEffect(() => {
@@ -98,6 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     localStorage.removeItem("isLogin");
     localStorage.removeItem("userData");
+    navigate("/login");
   };
 
   const hasRole = (roles: string[]): boolean => {
