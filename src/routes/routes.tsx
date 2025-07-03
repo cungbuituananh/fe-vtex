@@ -20,6 +20,7 @@ const CompanyDetailPage = lazy(() => import("../pages/Company/CompanyDetail"));
 const RegisterCompanyPage = lazy(
   () => import("../pages/Company/RegisterComany")
 );
+const CompanyPage = lazy(() => import("../pages/Company/index"));
 
 export const PATH_ROUTES = {
   HOME: "/",
@@ -102,11 +103,12 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
       {
         name: "news",
         url: ROUTE_PATH.NEWS,
-        element: <NewsPage />,
+        element: <CompanyPage />,
         icon: <FaDatabase />,
         requireAuth: true,
         roles: ["admin", "user"],
       },
+
       {
         name: "registerCompany",
         url: ROUTE_PATH.REGISTER_COMPANY,

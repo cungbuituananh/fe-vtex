@@ -60,8 +60,7 @@ function InputCommon(props: InputCommonProps) {
   return (
     <Form.Item label={label} name={name} rules={buildRules()} colon={false}>
       {type === "password" && <Input.Password {...inputProps} />}
-      {type === "text" && <Input {...inputProps} />}
-      {type === "email" && <Input {...inputProps} />}
+      {(type === "text" || type === "email") && <Input {...inputProps} />}
     </Form.Item>
   );
 }

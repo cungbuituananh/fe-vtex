@@ -29,7 +29,7 @@ i18n
   // Initialize i18next
   .init({
     resources,
-    fallbackLng: "en",
+    fallbackLng: "vn",
     // debug: process.env.NODE_ENV === 'development',
 
     // Common namespace used if not specified
