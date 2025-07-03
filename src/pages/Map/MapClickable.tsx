@@ -1,14 +1,17 @@
 // components/MapClickable.tsx
-import React, { useEffect, useRef } from "react";
+import { Form } from "antd";
 import mapboxgl from "mapbox-gl";
+import { useEffect, useRef } from "react";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface MapClickableProps {
   visible: boolean;
+  onChangeLocation?: (location: [number, number]) => void;
 }
 
 const MapClickable = ({ visible }: MapClickableProps) => {
+  const form = Form.useFormInstance();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
@@ -60,6 +63,10 @@ const MapClickable = ({ visible }: MapClickableProps) => {
 
       map.on("click", (e) => {
         const { lng, lat } = e.lngLat;
+        const location: [number, number] = [lng, lat];
+
+        // Update local state
+        form.setFieldsValue({ location });
 
         // Update the marker source
         const source = map.getSource("marker-point") as mapboxgl.GeoJSONSource;
@@ -71,7 +78,7 @@ const MapClickable = ({ visible }: MapClickableProps) => {
                 type: "Feature",
                 geometry: {
                   type: "Point",
-                  coordinates: [lng, lat],
+                  coordinates: location,
                 },
                 properties: {},
               },
@@ -110,7 +117,11 @@ const MapClickable = ({ visible }: MapClickableProps) => {
     };
   }, []);
 
-  return <div ref={mapContainerRef} className="w-full h-[400px] rounded-lg" />;
+  return (
+    <>
+      <div ref={mapContainerRef} className="w-full h-[400px] rounded-lg" />
+    </>
+  );
 };
 
 export default MapClickable;

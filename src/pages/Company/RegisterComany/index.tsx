@@ -9,10 +9,15 @@ import InputCommon from "@/components/FormElement/InputCommon";
 
 function RegisterCompany() {
   const [isOpenMap, setIsOpenMap] = useState(false);
+  const [form] = Form.useForm();
 
-  const handleSubmit = async (values: any) => {
-    console.log("values: ", values);
+  const handleSubmit = async () => {
+    const values = form.getFieldsValue();
+    console.log("form values: ", values);
   };
+
+  // Get the current location from the form
+  const currentLocation = Form.useWatch("location", form);
 
   return (
     <div className={`${STYLE_CONTAINER_BORDER} my-5`}>
@@ -22,6 +27,7 @@ function RegisterCompany() {
         labelAlign="left"
         labelWrap
         wrapperCol={{ flex: 1 }}
+        form={form}
         onFinish={handleSubmit}
       >
         <div className="flex items-center justify-between  ">
@@ -42,46 +48,49 @@ function RegisterCompany() {
           {/* Left Column */}
 
           <Col span={12}>
-            <InputCommon label="Tên doanh nghiệp" name="companyName" required />
+            <InputCommon label="Tên doanh nghiệp" name="companyName" />
           </Col>
           <Col span={12}>
-            <InputCommon label="Tên viết tắt" name="shortName" required />
+            <InputCommon label="Tên viết tắt" name="shortName" />
           </Col>
           <Col span={12}>
-            <InputCommon label="Mã số thuế" name="taxCode" required />
-          </Col>
-
-          <Col span={12}>
-            <InputCommon label="Website" name="website" required />
+            <InputCommon label="Mã số thuế" name="taxCode" />
           </Col>
 
           <Col span={12}>
-            <InputCommon label="Email liên hệ" name="email" required />
-          </Col>
-          <Col span={12}>
-            <InputCommon
-              label="Điện thoại liên hệ"
-              name="mainAddress"
-              required
-            />
+            <InputCommon label="Website" name="website" />
           </Col>
 
           <Col span={12}>
-            <InputCommon
-              label="Điện thoại liên hệ"
-              name="mainAddress"
-              required
-            />
+            <InputCommon label="Email liên hệ" name="email" />
           </Col>
           <Col span={12}>
-            <Form.Item label=" " colon={false}>
+            <InputCommon label="Điện thoại liên hệ" name="mainAddress" />
+          </Col>
+
+          <Col span={12}>
+            <InputCommon label="Địa chỉ" name="address" />
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Vị trí bản đồ"
+              name="location"
+              help={
+                currentLocation
+                  ? `Tọa độ: [${currentLocation[0]?.toFixed(
+                      6
+                    )}, ${currentLocation[1]?.toFixed(6)}]`
+                  : "Chưa chọn vị trí"
+              }
+            >
               <Button type="primary" onClick={() => setIsOpenMap(true)}>
-                Chọn vị trí trên bản đồ
+                {currentLocation
+                  ? "Thay đổi vị trí trên bản đồ"
+                  : "Chọn vị trí trên bản đồ"}
               </Button>
             </Form.Item>
           </Col>
           <Col span={24}>
-            {" "}
             <Form.List name="branches">
               {(fields, { add, remove }) => (
                 <>
@@ -142,7 +151,7 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Giới thiệu" name="description" required>
+            <Form.Item label="Giới thiệu" name="description">
               <Input.TextArea
                 rows={4}
                 placeholder="Giới thiệu/mô tả về doanh nghiệp"
@@ -151,12 +160,12 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Video đính kèm" name="videos" required>
+            <Form.Item label="Video đính kèm" name="videos">
               <Input placeholder="Nhập địa chỉ" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Ảnh logo" name="logo" required>
+            <Form.Item label="Ảnh logo" name="logo">
               <Upload
                 listType="picture-card"
                 showUploadList={true}
@@ -176,7 +185,7 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Ảnh" name="logo" required>
+            <Form.Item label="Ảnh" name="logo">
               <Upload
                 listType="picture-card"
                 showUploadList={true}
@@ -197,9 +206,9 @@ function RegisterCompany() {
 
           {/* Modal for map */}
           <Modal
+            title="Chọn vị trí trên bản đồ"
             open={isOpenMap}
             onCancel={() => setIsOpenMap(false)}
-            closeIcon={false}
             footer={null}
             width={1000}
             centered={true}
@@ -216,30 +225,22 @@ function RegisterCompany() {
             </p>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Lĩnh vực sản xuất"
-              name="productionField"
-              required
-            >
+            <Form.Item label="Lĩnh vực sản xuất" name="productionField">
               <Input placeholder="Nhập lĩnh vực sản xuất" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Mô hình sản xuất" name="productionModel" required>
+            <Form.Item label="Mô hình sản xuất" name="productionModel">
               <Input placeholder="Nhập mô hình sản xuất" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Sản phẩm chủ lực" name="mainProduct" required>
+            <Form.Item label="Sản phẩm chủ lực" name="mainProduct">
               <Input placeholder="Nhập sản phẩm chủ lực" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="Thị trường sản xuất"
-              name="productionMarket"
-              required
-            >
+            <Form.Item label="Thị trường sản xuất" name="productionMarket">
               <Input placeholder="Nhập thị trường sản xuất" />
             </Form.Item>
           </Col>
