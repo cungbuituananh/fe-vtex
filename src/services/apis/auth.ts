@@ -7,7 +7,7 @@ export const loginAPI = async ({
   username: string;
   password: string;
 }) => {
-  return await axiosInstance.post(`/auth/login`, {
+  return await axiosInstance.post(`/users/authorization`, {
     username,
     password,
   });

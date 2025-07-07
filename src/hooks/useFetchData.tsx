@@ -11,7 +11,6 @@ function useFetchData({ queryKey, queryFn }: UseFetchDataProps) {
     queryKey: Array.isArray(queryKey) ? queryKey : [queryKey],
     queryFn,
   });
-  console.log("error: ", error);
 
   return { data, error, isLoading, isError };
 }

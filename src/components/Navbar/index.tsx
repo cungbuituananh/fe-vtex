@@ -17,7 +17,6 @@ function Navbar() {
   const { t, i18n } = useTranslation("menu");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
-  console.log("isAuthenticated: ", isAuthenticated);
   const location = useLocation();
 
   // Get current language

@@ -1,3 +1,4 @@
+import { loginAPI } from "@/services/apis/auth";
 import React, {
   createContext,
   useContext,
@@ -69,27 +70,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<boolean> => {
     // Simulate API call
-    if (username === "admin" && password === "admin") {
-      const userData: User = {
-        id: "1",
-        username: "admin",
-        role: "admin",
-        email: "admin@example.com",
-      };
-      setUser(userData);
+    // const {
+    //   data: {
+    //     body: { user },
+    //   },
+    // } = await loginAPI({ username, password });
+    const user: User = {
+      id: "1",
+      username: "admin",
+      role: "admin",
+      email: "admin@example.com",
+    };
+    if (user) {
+      setUser(user);
       localStorage.setItem("isLogin", "true");
-      localStorage.setItem("userData", JSON.stringify(userData));
-      return true;
-    } else if (username === "user" && password === "user") {
-      const userData: User = {
-        id: "2",
-        username: "user",
-        role: "user",
-        email: "user@example.com",
-      };
-      setUser(userData);
-      localStorage.setItem("isLogin", "true");
-      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("userData", JSON.stringify(user));
       return true;
     }
     return false;

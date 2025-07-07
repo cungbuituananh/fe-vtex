@@ -6,7 +6,7 @@ import {
   MdOutlineFormatIndentIncrease,
 } from "react-icons/md";
 
-const filterOptions = [
+export const FILTER_OPTIONS = [
   // {
   //   label: "Tên công ty/MST",
   //   name: "name",
@@ -127,7 +127,7 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
               onFinish={onSearch}
               className="space-y-3"
             >
-              {filterOptions.map((opt) => {
+              {FILTER_OPTIONS.map((opt) => {
                 return (
                   <Form.Item
                     key={opt.name}

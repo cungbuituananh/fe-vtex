@@ -21,6 +21,10 @@ export const MOCKDATA_COMPANY = [
     hasLogo: true,
     additionalInfo: "Xem chi tiết",
     coordinates: [105.854444, 21.028511],
+    province: "Hà Nội",
+    workingStatus: true,
+    rate: 4.5,
+    numberOfEmployees: 500,
   },
   {
     id: 2,
@@ -42,6 +46,10 @@ export const MOCKDATA_COMPANY = [
     logoUrl: companyImages,
     additionalInfo: "Xem chi tiết",
     coordinates: [106.660172, 10.762622],
+    province: "Hà Nội",
+    workingStatus: true,
+    rate: 4.5,
+    numberOfEmployees: 500,
   },
   {
     id: 3,
@@ -63,6 +71,10 @@ export const MOCKDATA_COMPANY = [
     logoUrl: "/src/assets/imgs/company/logo_company.png",
     additionalInfo: "Xem chi tiết",
     coordinates: [106.683333, 20.864444],
+    province: "Hà Nội",
+    workingStatus: true,
+    rate: 4.5,
+    numberOfEmployees: 500,
   },
   {
     id: 4,
@@ -84,5 +96,9 @@ export const MOCKDATA_COMPANY = [
     logoUrl: "/src/assets/imgs/company/logo_company.png",
     additionalInfo: "Xem chi tiết",
     coordinates: [106.683333, 20.864444],
+    province: "Hà Nội",
+    workingStatus: true,
+    rate: 4.5,
+    numberOfEmployees: 500,
   },
 ];

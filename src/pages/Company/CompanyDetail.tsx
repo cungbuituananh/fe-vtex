@@ -44,7 +44,7 @@ function CompanyDetailPage() {
   }, []);
 
   return (
-    <div className={`${STYLE_CONTAINER_BORDER} my-5`}>
+    <div className={`${STYLE_CONTAINER_BORDER} my-5 `}>
       {dataDetail && (
         <Row gutter={[16, 16]}>
           <Col xs={24} md={10}>
