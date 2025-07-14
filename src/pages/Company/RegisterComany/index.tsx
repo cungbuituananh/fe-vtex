@@ -6,10 +6,16 @@ import MapClickable from "@/pages/Map/MapClickable";
 import "./register.css";
 import { STYLE_CONTAINER_BORDER } from "@/constants/color";
 import InputCommon from "@/components/FormElement/InputCommon";
+import { useAuth } from "@/contexts/AuthContext";
+import { ROLE_USER } from "@/constants/variables";
+import SelectCommon from "@/components/FormElement/SelectCommon";
 
 function RegisterCompany() {
   const [isOpenMap, setIsOpenMap] = useState(false);
   const [form] = Form.useForm();
+
+  const { user } = useAuth();
+  console.log('user: ', user);
 
   const handleSubmit = async () => {
     const values = form.getFieldsValue();
@@ -20,7 +26,7 @@ function RegisterCompany() {
   const currentLocation = Form.useWatch("location", form);
 
   return (
-    <div className={`${STYLE_CONTAINER_BORDER} my-5`}>
+    <div className={`${STYLE_CONTAINER_BORDER} w-[80vw] mx-auto my-5 p-6`}>
       <Form
         layout="horizontal"
         labelCol={{ flex: "150px" }}
@@ -75,15 +81,20 @@ function RegisterCompany() {
             <Form.Item
               label="Vị trí bản đồ"
               name="location"
-              help={
-                currentLocation
-                  ? `Tọa độ: [${currentLocation[0]?.toFixed(
-                      6
-                    )}, ${currentLocation[1]?.toFixed(6)}]`
-                  : "Chưa chọn vị trí"
-              }
+              // help={
+              //   currentLocation
+              //     ? `Tọa độ: [${currentLocation[0]?.toFixed(
+              //       6
+              //     )}, ${currentLocation[1]?.toFixed(6)}]`
+              //     : "Chưa chọn vị trí"
+              // }
+              colon={false}
             >
-              <Button type="primary" onClick={() => setIsOpenMap(true)}>
+              {currentLocation && <span className="mr-3 ">{currentLocation[0]?.toFixed(
+                6
+              )}, {currentLocation[1]?.toFixed(6)}</span>}
+
+              <Button className="" type="primary" onClick={() => setIsOpenMap(true)}>
                 {currentLocation
                   ? "Thay đổi vị trí trên bản đồ"
                   : "Chọn vị trí trên bản đồ"}
@@ -160,9 +171,8 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Video đính kèm" name="videos">
-              <Input placeholder="Nhập địa chỉ" />
-            </Form.Item>
+            <InputCommon label="Video đính kèm" name="videos" />
+
           </Col>
           <Col span={12}>
             <Form.Item label="Ảnh logo" name="logo">
@@ -225,35 +235,36 @@ function RegisterCompany() {
             </p>
           </Col>
           <Col span={12}>
-            <Form.Item label="Lĩnh vực sản xuất" name="productionField">
-              <Input placeholder="Nhập lĩnh vực sản xuất" />
-            </Form.Item>
+            <InputCommon label="Lĩnh vực sản xuất" name="productionField" />
+
           </Col>
           <Col span={12}>
-            <Form.Item label="Mô hình sản xuất" name="productionModel">
-              <Input placeholder="Nhập mô hình sản xuất" />
-            </Form.Item>
+            <InputCommon label="Mô tả năng lực sản xuất" name="productionDescription" />
+
           </Col>
           <Col span={12}>
-            <Form.Item label="Sản phẩm chủ lực" name="mainProduct">
-              <Input placeholder="Nhập sản phẩm chủ lực" />
-            </Form.Item>
+            <InputCommon label="Mô hình sản xuất" name="productionModel" />
+
           </Col>
           <Col span={12}>
-            <Form.Item label="Thị trường sản xuất" name="productionMarket">
-              <Input placeholder="Nhập thị trường sản xuất" />
-            </Form.Item>
+            <InputCommon label="Sản phẩm chủ lực" name="keyProducts" />
+
           </Col>
           <Col span={12}>
-            <Form.Item label="Công suất sản xuất/năm" name="productionCapacity">
-              <Input placeholder="Nhập công suất sản xuất/năm" />
-            </Form.Item>
+            <InputCommon label="Công suất sản xuất/năm" name="productionCapacity" />
           </Col>
+
           <Col span={12}>
-            <Form.Item label="Số lượng nhân công" name="workerCount">
-              <Input placeholder="Nhập số lượng nhân công" />
-            </Form.Item>
+            <InputCommon label="Số lượng nhân công" name="workerCount" />
           </Col>
+
+          <Col span={6}>
+            <InputCommon label="Quy mô sản xuất" name="workScope" />
+          </Col>
+          <Col span={6}>
+            <InputCommon label="Số lượng xưởng" name="numberShop" />
+          </Col>
+
 
           {/* ============================== */}
           <Col span={24}>
@@ -261,11 +272,13 @@ function RegisterCompany() {
               Chứng chỉ và tiêu chuẩn
             </p>
           </Col>
+
           <Col span={12}>
-            <Form.Item label="Loại chứng chỉ/tiêu chuẩn" name="certificateType">
-              <Input placeholder="Nhập loại chứng chỉ/tiêu chuẩn" />
-            </Form.Item>
+            <InputCommon label="Loại chứng chỉ/tiêu chuẩn" name="certificateType" />
           </Col>
+
+          {user?.role === ROLE_USER.ADMIN && <Col span={12}><SelectCommon options={[]} label="User" name="user" /></Col>}
+
         </Row>
       </Form>
     </div>

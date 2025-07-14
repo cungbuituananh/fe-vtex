@@ -1,0 +1,3 @@
+.my-custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #b7d9f6 !important; /* Light blue */
+}

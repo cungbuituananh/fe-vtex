@@ -12,8 +12,10 @@ function App() {
         <header className="sticky top-0 w-full z-50 bg-white shadow">
           <Navbar />
         </header>
-        <Routes>{renderRoutes(getAllRoutes())}</Routes>
-        <footer className="w-full bg-[#324150]">
+        <main className="flex-grow overflow-auto">
+          <Routes>{renderRoutes(getAllRoutes())}</Routes>
+        </main>
+        <footer className="w-full bg-[#324150] mt-auto z-50">
           <Footer />
         </footer>
       </div>

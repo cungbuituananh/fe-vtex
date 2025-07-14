@@ -6,6 +6,12 @@ export const LOCAL_STORAGE_KEY = {
   USER_INFO: "user_info",
 };
 
+export const ROLE_USER = {
+  ADMIN: "admin",
+  COMPANY: "company",
+  USER: "user",
+};
+
 export const SIZE_OPTIONS = [
   { label: "Siêu nhỏ", value: "micro" },
   { label: "Nhỏ", value: "small" },

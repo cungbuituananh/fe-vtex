@@ -10,6 +10,7 @@ interface InputCommonProps {
   placeholder?: string;
   className?: string;
   required?: boolean;
+  layout?: 'horizontal' | 'vertical'; // Add layout prop
 }
 
 function InputCommon(props: InputCommonProps) {
@@ -21,7 +22,7 @@ function InputCommon(props: InputCommonProps) {
     type = "text",
     placeholder,
     required,
-    className,
+    className, // Default to horizontal layout
     ...restProps // Extract other props
   } = props;
 
@@ -57,8 +58,24 @@ function InputCommon(props: InputCommonProps) {
     restProps,
   };
 
+  // Style to make the label display in one line and align properly
+  const labelStyle = {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  };
+
   return (
-    <Form.Item label={label} name={name} rules={buildRules()} colon={false}>
+    <Form.Item
+      label={label}
+      name={name}
+      rules={buildRules()}
+      colon={false}
+      {...(props.layout === 'vertical' ? {} : {
+        labelCol: { span: 6, style: labelStyle },
+        wrapperCol: { span: 18 }
+      })}
+    >
       {type === "password" && <Input.Password {...inputProps} />}
       {(type === "text" || type === "email") && <Input {...inputProps} />}
     </Form.Item>

@@ -6,6 +6,8 @@ import { MOCKDATA_COMPANY } from "./mockdata";
 import { GoEye, GoSearch, GoPencil, GoSync, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import logo_company from "@/assets/imgs/company/logo_company.png";
+import "./styles.css";
 
 function CompanyPage() {
   const navigate = useNavigate();
@@ -23,6 +25,29 @@ function CompanyPage() {
       dataIndex: "name",
       key: "name",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      render(specificData: any, record: any) {
+        console.log('record: ', record);
+        return (
+          <Row>
+            <Col span={2}>
+              <img
+                src={logo_company}
+                alt="logo"
+                className="w-[80px] h-[80px] rounded-full"
+              />
+            </Col>
+            <Col span={22}>
+              <div className="flex flex-col">
+                <span className={`font-bold text-[${PRIMARY_COLOR}]`}>{record.shortName}</span>
+                <span className="text-gray-500">{record.name}</span>
+                <span className="text-gray-400">{record.taxCode}</span>
+                <span className="text-gray-400">{record.emailOwner}</span>
+              </div>
+            </Col>
+          </Row>
+
+        );
+      }
     },
     {
       title: "Tỉnh/Thành phố",
@@ -40,19 +65,19 @@ function CompanyPage() {
       dataIndex: "rate",
       key: "rate",
       sorter: (a: any, b: any) => a.rate - b.rate,
-      render: (_, record: any) => <Rate disabled defaultValue={record.rate} />,
+      render: (_: any, record: any) => <Rate disabled defaultValue={record.rate || 4} />,
     },
     {
       title: "",
       dataIndex: "action",
       key: "action",
       width: 160,
-      render: (_, record: any) => (
+      render: (_: any, record: any) => (
         <div className="flex gap-2 justify-center align-center">
           <Button
             type="link"
             onClick={() => navigate(`/company/${record.id}`)}
-            style={{ color: "#12aa51", padding: 0 }} // Primary color
+            style={{ color: "grey", padding: 0 }} // Primary color
           >
             <div className="flex flex-col items-center">
               <GoEye className="text-lg font-bold" />
@@ -62,7 +87,7 @@ function CompanyPage() {
           <Button
             type="link"
             onClick={() => console.log("View details", record)}
-            style={{ color: PRIMARY_COLOR, padding: 0 }} // Warning color
+            style={{ color: "grey", padding: 0 }} // Warning color
           >
             <div className="flex flex-col items-center">
               <GoPencil className="text-lg font-bold" />
@@ -72,7 +97,7 @@ function CompanyPage() {
           <Button
             type="link"
             onClick={() => handleDeleteCompany(record.id)}
-            style={{ color: "#ff4d4f", padding: 0 }} // Danger color
+            style={{ color: "grey", padding: 0 }} // Danger color
           >
             <div className="flex flex-col items-center">
               <GoTrash className="text-lg font-bold" />
@@ -85,14 +110,14 @@ function CompanyPage() {
   ];
 
   return (
-    <div className="p-6 min-h-[83vh] overflow-y-auto">
-      <div className="flex items-center justify-between  ">
+    <div className="p-6 overflow-y-auto">
+      <div className="flex items-center justify-between">
         <Title level={3}>Danh sách doanh nghiệp</Title>
       </div>
       <Form layout="vertical" labelAlign="left" wrapperCol={{ flex: 1 }}>
         <Row gutter={[12, 0]} align="bottom">
           <Col span={5}>
-            <InputCommon name="companyName" label="Tên viết tắt" />
+            <InputCommon name="companyName" label="Tên viết tắt" layout="vertical" />
           </Col>
           <Col span={5}>
             <Form.Item label="Tỉnh/Thành phố" name="province">
@@ -152,7 +177,12 @@ function CompanyPage() {
           </Col>
         </Row>
       </Form>
-      <Table dataSource={dataCompany} columns={columns} bordered />
+      <Table
+        className="my-custom-table"
+        dataSource={dataCompany}
+        columns={columns}
+      />
+
     </div>
   );
 }

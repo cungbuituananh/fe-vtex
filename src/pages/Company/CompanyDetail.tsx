@@ -96,10 +96,10 @@ function CompanyDetailPage() {
               </Row>
               <div className="py-1 flex justify-between items-center">
                 <p>
-                  <strong>Mở cửa:</strong> {dataDetail.workingHours.opening} -{" "}
-                  <strong>Đóng cửa:</strong> {dataDetail.workingHours.closing}
+                  <strong>Mở cửa:</strong> {dataDetail.workingHours?.opening || 8} -{" "}
+                  <strong>Đóng cửa:</strong> {dataDetail.workingHours?.closing || 17}
                 </p>
-                <p>({dataDetail.workingHours.workingDays})</p>
+                <p>({dataDetail.workingHours?.workingDays || 8})</p>
               </div>
               <p>
                 <strong>Văn phòng: </strong>
@@ -228,7 +228,7 @@ function CompanyDetailPage() {
                     <img
                       src={type.image}
                       alt={type.name}
-                      // className="w-[200px] h-[30px] mr-2"
+                    // className="w-[200px] h-[30px] mr-2"
                     />
                     <p className="text-center">{type.name}</p>
                   </div>

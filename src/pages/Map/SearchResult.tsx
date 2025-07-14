@@ -3,6 +3,7 @@ import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
+import logo_company from "@/assets/imgs/company/logo_company.png";
 
 interface SearchResultProps {
   results: any[];
@@ -88,7 +89,7 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
               }}
               className="p-3 hover:bg-gray-100"
             >
-              <div className="flex gap-6">
+              <div className="flex justify-between gap-6">
                 <div className="col-8">
                   <Link
                     to={`/company/${location.id}`}
@@ -126,25 +127,19 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
                   </div>
                 </div>
                 <div className="col-4">
-                  {location.hasLogo ? (
-                    <img
-                      src={location.logoUrl}
-                      alt={location.name}
-                      className="w-[100px] h-auto rounded-lg shadow-sm object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-auto bg-gray-200 flex items-center justify-center">
-                      <span>No Logo</span>
-                    </div>
-                  )}
+                  <img
+                    src={location.logoUrl || logo_company}
+                    alt={location.name}
+                    className="w-[80px] h-auto rounded-lg shadow-sm object-cover"
+                  />
                 </div>
               </div>
               <div className=" px-1 flex justify-between items-center">
-                <p>
+                {/* <p>
                   <strong>Mở cửa:</strong> {location.workingHours.opening} -{" "}
                   <strong>Đóng cửa:</strong> {location.workingHours.closing}
                 </p>
-                <p>({location.workingHours.workingDays})</p>
+                <p>({location.workingHours.workingDays})</p> */}
               </div>
 
               <div className="px-1">
