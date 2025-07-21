@@ -21,6 +21,7 @@ function LoginComponent() {
 
     try {
       const success = await login(username, password);
+      console.log("success: ", success);
 
       if (success) {
         messageApi.open({
@@ -51,7 +52,7 @@ function LoginComponent() {
   return (
     <>
       {contextHolder}
-      <Title level={2} className="login-title ">
+      <Title level={2} className="login-title">
         Đăng nhập
       </Title>
       <div className="px-[10px] mb-5">
@@ -61,12 +62,18 @@ function LoginComponent() {
           initialValues={{ remember: true }}
           onFinish={handleLogin}
         >
-          <InputCommon label="Tên tài khoản" name="username" required={true} />
+          <InputCommon
+            label="Tên tài khoản"
+            name="username"
+            required
+            fullWidth
+          />
           <InputCommon
             label="Mật khẩu"
             name="password"
             type="password"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            required
+            fullWidth
           />
           <Form.Item>
             <div className="login-options">
@@ -78,7 +85,7 @@ function LoginComponent() {
               </a>
             </div>
           </Form.Item>{" "}
-          <Form.Item className="text-center ">
+          <Form.Item className="text-center">
             <div className="flex justify-center mb-4 gap-4">
               <Button
                 style={{
@@ -106,7 +113,7 @@ function LoginComponent() {
           </Form.Item>
         </Form>
       </div>
-      <hr className="text-[#BDBDBD]" />
+      {/* <hr className="text-[#BDBDBD]" />
       <div className="mt-4 text-[#444] text-[14px]">
         <Title level={4} className="login-title ">
           Bạn có thể đăng nhập với
@@ -115,7 +122,7 @@ function LoginComponent() {
           <li>Quản trị viên (tài khoản="admin" và mật khẩu="admin")</li>
           <li>Người dùng (tài khoản="user" và mật khẩu="user")</li>
         </ul>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -11,8 +11,11 @@ import { useNavigate } from "react-router-dom";
 export interface User {
   id: string;
   username: string;
-  role: "admin" | "user";
+  roles: string[];
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  language?: string;
 }
 
 interface AuthContextType {
@@ -70,23 +73,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<boolean> => {
     // Simulate API call
-    // const {
-    //   data: {
-    //     body: { user },
-    //   },
-    // } = await loginAPI({ username, password });
-    const user: User = {
-      id: "1",
-      username: "admin",
-      role: "admin",
-      email: "admin@example.com",
-    };
-    if (user) {
-      setUser(user);
+    const {
+      data: { data },
+    } = await loginAPI({ username, password });
+
+    if (data) {
+      setUser(data);
       localStorage.setItem("isLogin", "true");
-      localStorage.setItem("userData", JSON.stringify(user));
+      localStorage.setItem("userData", JSON.stringify(data));
+      localStorage.setItem("accessToken", data.accessToken || "");
       return true;
     }
+
     return false;
   };
 
@@ -99,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
-    return roles.includes(user.role);
+    return roles.some((role) => user.roles.includes(role));
   };
 
   const value: AuthContextType = {

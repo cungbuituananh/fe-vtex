@@ -12,7 +12,16 @@ const axiosInstance = axios.create({
   },
 });
 
+export const axiosPublicInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
+
 setupInterceptorsRequest(axiosInstance);
 setupInterceptorsResponse(axiosInstance);
+setupInterceptorsResponse(axiosPublicInstance);
 
 export default axiosInstance;

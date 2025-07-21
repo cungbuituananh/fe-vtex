@@ -8,10 +8,13 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 interface MapClickableProps {
   visible: boolean;
   onChangeLocation?: (location: [number, number]) => void;
+  name: string; // Required name prop for form field
+  index?: number; // Optional index prop for handling multiple locations
 }
 
-const MapClickable = ({ visible }: MapClickableProps) => {
+const MapClickable = ({ visible, name, index }: MapClickableProps) => {
   const form = Form.useFormInstance();
+  const location = form.getFieldValue(name);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
@@ -29,7 +32,7 @@ const MapClickable = ({ visible }: MapClickableProps) => {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current!,
         style: "mapbox://styles/mapbox/streets-v12",
-        center: [105.8544441, 21.028511],
+        center: location || [105.854444, 21.028511], // Default to Vietnam if no location
         zoom: 13,
       });
 
@@ -59,6 +62,27 @@ const MapClickable = ({ visible }: MapClickableProps) => {
             "circle-stroke-color": "#FFFFFF",
           },
         });
+
+        // If location exists, show marker and center map
+        if (location && Array.isArray(location) && location.length === 2) {
+          const source = map.getSource(
+            "marker-point"
+          ) as mapboxgl.GeoJSONSource;
+          source.setData({
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: location,
+                },
+                properties: {},
+              },
+            ],
+          });
+          map.setCenter(location);
+        }
       });
 
       map.on("click", (e) => {
@@ -66,7 +90,14 @@ const MapClickable = ({ visible }: MapClickableProps) => {
         const location: [number, number] = [lng, lat];
 
         // Update local state
-        form.setFieldsValue({ location });
+        if (index === 0 || index) {
+          const currentList = form.getFieldValue(name) || [];
+          const newList = [...currentList];
+          newList[index || 0] = { ...newList[index || 0], location };
+          form.setFieldsValue({ companyBranchDtoList: newList });
+        } else {
+          form.setFieldsValue({ [name]: location });
+        }
 
         // Update the marker source
         const source = map.getSource("marker-point") as mapboxgl.GeoJSONSource;
@@ -91,7 +122,7 @@ const MapClickable = ({ visible }: MapClickableProps) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [visible]);
+  }, [visible, name, form]);
 
   // Clean up when component unmounts or becomes invisible
   useEffect(() => {
@@ -118,9 +149,7 @@ const MapClickable = ({ visible }: MapClickableProps) => {
   }, []);
 
   return (
-    <>
-      <div ref={mapContainerRef} className="w-full h-[400px] rounded-lg" />
-    </>
+    <div ref={mapContainerRef} className="w-full min-h-[400px] rounded-lg" />
   );
 };
 

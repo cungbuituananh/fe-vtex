@@ -1,3 +1,5 @@
+import useGetOptions from "@/hooks/useGetOptions";
+import { getListGroupAPI } from "@/services/apis/common";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Form, Select } from "antd";
 import { useState } from "react";
@@ -40,15 +42,15 @@ export const FILTER_OPTIONS = [
       { label: "Vải cotton", value: "cotton" },
     ],
   },
-  {
-    label: "Chứng chỉ",
-    name: "certificate",
-    options: [
-      { label: "ISO 9001", value: "iso9001" },
-      { label: "WRAP", value: "wrap" },
-      { label: "BSCI", value: "bsci" },
-    ],
-  },
+  // {
+  //   label: "Chứng chỉ",
+  //   name: "certificate",
+  //   options: [
+  //     { label: "ISO 9001", value: "iso9001" },
+  //     { label: "WRAP", value: "wrap" },
+  //     { label: "BSCI", value: "bsci" },
+  //   ],
+  // },
   {
     label: "Thị trường chính",
     name: "market",
@@ -74,17 +76,33 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
     form.resetFields();
   };
 
-  // Debounced search handler, memoized to avoid recreation on every render
-  // const debouncedSearch = useMemo(
-  //   () =>
-  //     debounce((values: any) => {
-  //       if (onSearch) {
-  //         onSearch(values); // Call the Mapbox search event here
-  //       }
-  //       // Optionally: console.log(values);
-  //     }, 500),
-  //   [onSearch]
-  // );
+  const { options: certificateOptions } = useGetOptions({
+    api: () => getListGroupAPI("CERT"), // Fetch major categories
+    queryKey: "getCertificateOptions",
+    labelValueType: ["name", "code"],
+  });
+
+  const { options: modelOptions } = useGetOptions({
+    api: () => getListGroupAPI("MODEL"), // Fetch major categories
+    queryKey: "getModalOptions",
+    labelValueType: ["name", "code"],
+  });
+
+  const { options: majorOptions } = useGetOptions({
+    api: () => getListGroupAPI("MAJOR"), // Fetch major categories
+    queryKey: "getMajorOptions",
+    labelValueType: ["name", "code"],
+  });
+  console.log("majorOptions: ", majorOptions);
+
+  const { options: primaryKeyOptions } = useGetOptions({
+    api: () => getListGroupAPI("P_KEY"), // Fetch major categories
+    queryKey: "getPrimaryKeyOptions",
+    labelValueType: ["name", "code"],
+  });
+  console.log("primaryKeyOptions: ", primaryKeyOptions);
+
+  // Handle form submission
 
   // // Call debouncedSearch on form submit
   // const handleSearch = (values: any) => {
@@ -127,7 +145,42 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
               onFinish={onSearch}
               className="space-y-3"
             >
-              {FILTER_OPTIONS.map((opt) => {
+              <Form.Item
+                key="model"
+                name="model"
+                label={<span className="font-medium text-sm">Mô hình</span>}
+              >
+                <Select
+                  placeholder={`Chọn mô hình`}
+                  className="w-full"
+                  options={modelOptions}
+                />
+              </Form.Item>
+
+              <Form.Item
+                key="size"
+                name="size"
+                label={<span className="font-medium text-sm">Kích thước</span>}
+              >
+                <Select
+                  placeholder={`Chọn kích thước`}
+                  className="w-full"
+                  options={certificateOptions}
+                />
+              </Form.Item>
+
+              <Form.Item
+                key="certificate"
+                name="certificate"
+                label={<span className="font-medium text-sm">Chứng chỉ</span>}
+              >
+                <Select
+                  placeholder={`Chọn chứng chỉ`}
+                  className="w-full"
+                  options={certificateOptions}
+                />
+              </Form.Item>
+              {/* {FILTER_OPTIONS.map((opt) => {
                 return (
                   <Form.Item
                     key={opt.name}
@@ -143,7 +196,7 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
                     />
                   </Form.Item>
                 );
-              })}
+              })} */}
               <div className="flex gap-3 mt-2">
                 <Button
                   onClick={handleReset}

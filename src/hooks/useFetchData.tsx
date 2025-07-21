@@ -1,18 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  type QueryFunctionContext,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 
-interface UseFetchDataProps {
+interface UseFetchDataProps<TData, TError> {
   queryKey: string | string[];
-  queryFn: () => Promise<any>;
+  queryFn: (context: QueryFunctionContext) => Promise<TData>;
+  options?: Omit<UseQueryOptions<TData, TError, TData>, "queryKey" | "queryFn">;
 }
 
-function useFetchData({ queryKey, queryFn }: UseFetchDataProps) {
+function useFetchData<TData = unknown, TError = unknown>({
+  queryKey,
+  queryFn,
+  options = {},
+}: UseFetchDataProps<TData, TError>) {
   // Access the client
   const { data, error, isLoading, isError } = useQuery({
     queryKey: Array.isArray(queryKey) ? queryKey : [queryKey],
     queryFn,
+    ...options,
   });
 
-  return { data, error, isLoading, isError };
+  return { data: data || [], error, isLoading, isError };
 }
 
 export default useFetchData;

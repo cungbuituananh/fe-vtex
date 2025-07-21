@@ -13,8 +13,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 const MapPage = lazy(() => import("../pages/Map"));
 const ContactPage = lazy(() => import("../pages/Contact"));
 const IntroPage = lazy(() => import("../pages/Intro"));
-const NewsPage = lazy(() => import("../pages/News"));
-const LoginPage = lazy(() => import("../pages/Login"));
+const UserInfo = lazy(() => import("../pages/Auth/UserInfo"));
+const LoginPage = lazy(() => import("../pages/Auth"));
 const HomePage = lazy(() => import("../pages/Home"));
 const CompanyDetailPage = lazy(() => import("../pages/Company/CompanyDetail"));
 const RegisterCompanyPage = lazy(
@@ -64,6 +64,11 @@ export const ROUTE_PATH = {
   REGISTER_COMPANY: "/register-company",
 };
 
+export const USER_ROLE = {
+  ADMIN: "ADMIN",
+  USER: "USER",
+};
+
 // Improved route configuration with clear separation of concerns
 export const ROUTE_CONFIGS: RouteConfig[] = [
   {
@@ -98,7 +103,7 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
     name: "data",
     icon: <FaDatabase />,
     requireAuth: true,
-    roles: ["admin", "user"],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
     children: [
       {
         name: "news",
@@ -106,7 +111,7 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         element: <CompanyPage />,
         icon: <FaDatabase />,
         requireAuth: true,
-        roles: ["admin", "user"],
+        roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
       },
 
       {
@@ -115,7 +120,7 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         element: <RegisterCompanyPage />,
         icon: <FaDatabase />,
         requireAuth: true,
-        roles: ["admin", "user"],
+        roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
       },
     ],
   },
@@ -149,7 +154,7 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
       {
         name: "userInfo",
         url: ROUTE_PATH.USER_INFO,
-        element: <NewsPage />,
+        element: <UserInfo />,
         icon: <FaUser />,
         showOnlyWhenAuthenticated: true, // Only show when logged in
         requireAuth: true,

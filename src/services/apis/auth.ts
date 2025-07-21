@@ -1,3 +1,4 @@
+import axios from "axios";
 import axiosInstance from "../axiosConfig";
 
 export const loginAPI = async ({
@@ -7,7 +8,7 @@ export const loginAPI = async ({
   username: string;
   password: string;
 }) => {
-  return await axiosInstance.post(`/users/authorization`, {
+  return await axiosInstance.post(`/auth/login`, {
     username,
     password,
   });
@@ -18,13 +19,11 @@ export const registerAPI = async (params: {
   email: string;
   password: string;
 }) => {
-  return await axiosInstance.post(`/user/register`, params);
+  return await axiosInstance.post(`/auth/register`, params);
 };
 
 export const refreshTokenAPI = async (refreshToken: string) => {
-  return await axiosInstance.post(`/auth/refresh-token`, {
-    refreshToken,
-  });
+  return await axiosInstance.post(`/auth/refresh-token`, { refreshToken });
 };
 
 export const logoutAPI = async () => {
@@ -40,5 +39,5 @@ export const updateUserInfoAPI = async (params: {
   email?: string;
   password?: string;
 }) => {
-  return await axiosInstance.put(`/auth/user-info`, params);
+  return await axiosInstance.post(`/user/user-info`, params);
 };

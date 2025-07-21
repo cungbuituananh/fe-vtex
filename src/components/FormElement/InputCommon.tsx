@@ -3,14 +3,18 @@ import { Form, Input } from "antd";
 
 interface InputCommonProps {
   label: string;
-  name: string;
+  name: any;
   rules?: any[];
   disabled?: boolean;
   type?: string;
   placeholder?: string;
   className?: string;
   required?: boolean;
-  layout?: 'horizontal' | 'vertical'; // Add layout prop
+  layout?: "horizontal" | "vertical"; // Add layout prop
+  labelCol?: any; // Additional props for Form.Item
+  fullWidth?: boolean; // Add fullWidth prop
+  labelAlign?: "left" | "right"; // Add label alignment prop
+  children?: React.ReactNode; // Allow children to be passed in
 }
 
 function InputCommon(props: InputCommonProps) {
@@ -23,6 +27,10 @@ function InputCommon(props: InputCommonProps) {
     placeholder,
     required,
     className, // Default to horizontal layout
+    labelCol = 6,
+    fullWidth = false,
+    labelAlign = "left", // Default label alignment
+    children, // Allow children to be passed in
     ...restProps // Extract other props
   } = props;
 
@@ -61,7 +69,7 @@ function InputCommon(props: InputCommonProps) {
   // Style to make the label display in one line and align properly
   const labelStyle = {
     whiteSpace: "nowrap",
-    overflow: "hidden",
+    // overflow: "hidden",
     textOverflow: "ellipsis",
   };
 
@@ -71,13 +79,30 @@ function InputCommon(props: InputCommonProps) {
       name={name}
       rules={buildRules()}
       colon={false}
-      {...(props.layout === 'vertical' ? {} : {
-        labelCol: { span: 6, style: labelStyle },
-        wrapperCol: { span: 18 }
-      })}
+      labelAlign={labelAlign}
+      {...(fullWidth
+        ? {}
+        : {
+            labelCol: { span: labelCol, style: labelStyle },
+            wrapperCol: { span: 24 - labelCol },
+          })}
     >
-      {type === "password" && <Input.Password {...inputProps} />}
-      {(type === "text" || type === "email") && <Input {...inputProps} />}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {type === "password" && (
+          <Input.Password
+            {...inputProps}
+            style={{ ...inputProps.style, flex: 1 }}
+          />
+        )}
+        {(type === "text" || type === "email" || type === "number") && (
+          <Input
+            type={type}
+            {...inputProps}
+            style={{ ...inputProps.style, flex: 1 }}
+          />
+        )}
+        {children}
+      </div>
     </Form.Item>
   );
 }

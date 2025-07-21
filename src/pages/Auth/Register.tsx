@@ -29,6 +29,7 @@ function RegisterComponent() {
             name="username"
             placeholder="Nhập tên tài khoản của bạn"
             rules={[{ required: true, message: "Bạn phải nhập tên tài khoản" }]}
+            fullWidth
           />
 
           <InputCommon
@@ -36,10 +37,8 @@ function RegisterComponent() {
             name="email"
             type="email"
             placeholder="Nhập email của bạn"
-            rules={[
-              { required: true, message: "Bạn phải nhập email" },
-              { type: "email", message: "Email không hợp lệ!" },
-            ]}
+            rules={[{ required: true, message: "Bạn phải nhập email" }]}
+            fullWidth
           />
 
           <PasswordInput

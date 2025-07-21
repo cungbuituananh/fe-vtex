@@ -26,7 +26,7 @@ function Navbar() {
   const visibleRoutes = getVisibleRoutes(
     ROUTE_CONFIGS,
     isAuthenticated,
-    user ? [user.role] : []
+    user ? user.roles : []
   );
 
   // Helper to check if route is active
@@ -100,7 +100,7 @@ function Navbar() {
                     <span className="text-[16px]">{route.icon || null}</span>
                     {/* <span>{t(route.name)}</span> */}
                     {isAuthenticated && user && route.name === "account"
-                      ? `Welcome, ${user.username} (${user.role})`
+                      ? `Welcome, ${user.username || "Unknown"} `
                       : t(route.name)}
                     <IoMdArrowDropdown
                       className={`transition-colors group-hover:text-[#ED7D31] ${

@@ -104,7 +104,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
 
       const marker = new mapboxgl.Marker({ color: markerColor })
         .setLngLat(location.coordinates as [number, number])
-        .setPopup(new mapboxgl.Popup().setHTML(`<h3>${location.label}</h3>`))
+        // .setPopup(new mapboxgl.Popup().setHTML(`<h3>${location.label}</h3>`))
         .addTo(map);
 
       newMarkers.push(marker);
