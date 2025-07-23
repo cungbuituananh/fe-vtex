@@ -12,6 +12,7 @@ export interface User {
   id: string;
   username: string;
   roles: string[];
+  role: string; // Assuming role is a single string, not an array
   email?: string;
   firstName?: string;
   lastName?: string;

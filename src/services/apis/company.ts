@@ -46,10 +46,7 @@ const getListCompanyAPI = async (params: any) => {
   return await axiosInstance.get(`/company`, { params });
 };
 
-const updateCompanyAPI = async (
-  companyId: string,
-  params: CreateCompanyParams
-) => {
+const updateCompanyAPI = async (params: CreateCompanyParams) => {
   return await axiosInstance.post(`/company/update`, params);
 };
 

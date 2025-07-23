@@ -13,9 +13,9 @@ function CompanyPage() {
   const navigate = useNavigate();
   const [dataCompany, setDataCompany] = useState(MOCKDATA_COMPANY);
 
-  const handleDeleteCompany = (id: number) => {
+  const handleDeleteCompany = (taxCode: string) => {
     setDataCompany((prevData) =>
-      prevData.filter((company) => company.id !== id)
+      prevData.filter((company) => company.taxCode !== taxCode)
     );
   };
 
@@ -26,6 +26,7 @@ function CompanyPage() {
       key: "name",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render(specificData: any, record: any) {
+        console.log('specificData: ', specificData);
         console.log('record: ', record);
         return (
           <Row>
@@ -76,7 +77,7 @@ function CompanyPage() {
         <div className="flex gap-2 justify-center align-center">
           <Button
             type="link"
-            onClick={() => navigate(`/company/${record.id}`)}
+            onClick={() => navigate(`/company/${record.taxCode}`)}
             style={{ color: "grey", padding: 0 }} // Primary color
           >
             <div className="flex flex-col items-center">
@@ -96,7 +97,7 @@ function CompanyPage() {
           </Button>
           <Button
             type="link"
-            onClick={() => handleDeleteCompany(record.id)}
+            onClick={() => handleDeleteCompany(record.taxCode)}
             style={{ color: "grey", padding: 0 }} // Danger color
           >
             <div className="flex flex-col items-center">
