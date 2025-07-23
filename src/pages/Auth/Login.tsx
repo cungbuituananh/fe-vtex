@@ -1,13 +1,11 @@
 import InputCommon from "@/components/FormElement/InputCommon";
 import { ROUTE_PATH } from "@/routes/routes";
-import { Button, Checkbox, Form, message, Typography } from "antd";
+import { Button, Checkbox, Form, message } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
 import logo from "../../assets/imgs/logo.png";
-
-const { Title } = Typography;
 
 function LoginComponent() {
   const navigate = useNavigate();

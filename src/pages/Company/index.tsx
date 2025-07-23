@@ -14,13 +14,14 @@ import {
   DEFAULT_PAGINATION,
   WORKING_STATUS_OPTIONS,
 } from "@/constants/variables";
-import { set } from "lodash";
 import { PlusOutlined } from "@ant-design/icons";
 
 function CompanyPage() {
   const navigate = useNavigate();
-  const [dataCompany, setDataCompany] = useState([]);
+
+  const [dataCompany, setDataCompany] = useState<any[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
+  console.log("pagination: ", pagination);
   const [form] = Form.useForm();
 
   const fetchData = async (params = {}) => {
@@ -33,21 +34,21 @@ function CompanyPage() {
     }
   };
 
-  const {
-    data: { data: dataProvince },
-  } = useFetchData({
+  const { data } = useFetchData({
     queryKey: ["provinceList"],
     queryFn: getListProvinceAPI,
   });
+
+  const dataProvince = Array.isArray(data) ? data : data?.data || [];
 
   const provinceOptions = dataProvince?.map((province: any) => ({
     value: province.provinceCode,
     label: province.provinceName,
   }));
 
-  const handleDeleteCompany = (id: number) => {
+  const handleDeleteCompany = (taxCode: string) => {
     setDataCompany((prevData) =>
-      prevData.filter((company) => company.id !== id)
+      prevData.filter((company) => company.taxCode !== taxCode)
     );
   };
 
@@ -64,6 +65,8 @@ function CompanyPage() {
       width: 800,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render(specificData: any, record: any) {
+        console.log("specificData: ", specificData);
+
         return (
           <Row>
             <Col span={3} style={{ display: "flex", alignItems: "center" }}>
@@ -122,7 +125,7 @@ function CompanyPage() {
         <div className="flex gap-2 justify-center align-center">
           <Button
             type="link"
-            onClick={() => navigate(`/company/${record.id}`)}
+            onClick={() => navigate(`/company/${record.taxCode}`)}
             style={{ color: "grey", padding: 0 }} // Primary color
           >
             <div className="flex flex-col items-center">
@@ -142,7 +145,7 @@ function CompanyPage() {
           </Button>
           <Button
             type="link"
-            onClick={() => handleDeleteCompany(record.id)}
+            onClick={() => handleDeleteCompany(record.taxCode)}
             style={{ color: "grey", padding: 0 }} // Danger color
           >
             <div className="flex flex-col items-center">

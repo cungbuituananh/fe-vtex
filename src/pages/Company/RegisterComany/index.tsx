@@ -424,7 +424,7 @@ function RegisterCompany() {
             </Form.Item>
           </Col>
 
-          {user?.role === ROLE_USER.ADMIN && (
+          {user?.roles?.includes(ROLE_USER.ADMIN) && (
             <Col span={12}>
               <SelectCommon options={[]} label="User" name="user" />
             </Col>

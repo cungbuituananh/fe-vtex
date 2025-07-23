@@ -1,5 +1,3 @@
-import { t } from "i18next";
-
 export const LOCAL_STORAGE_KEY = {
   ACCESS_TOKEN: "access_token",
   EXPIRE_TIME: "expire_time",

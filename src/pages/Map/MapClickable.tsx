@@ -81,7 +81,7 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
               },
             ],
           });
-          map.setCenter(location);
+          map.setCenter(location as [number, number]);
         }
       });
 
