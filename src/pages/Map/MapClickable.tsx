@@ -90,13 +90,14 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
         const location: [number, number] = [lng, lat];
 
         // Update local state
-        if (index === 0 || index) {
+        if (index && index >= 0) {
           const currentList = form.getFieldValue(name) || [];
           const newList = [...currentList];
           newList[index || 0] = { ...newList[index || 0], location };
           form.setFieldsValue({ companyBranchDtoList: newList });
         } else {
-          form.setFieldsValue({ [name]: location });
+          console.log("name: ", name);
+          form.setFieldsValue({ location: location });
         }
 
         // Update the marker source

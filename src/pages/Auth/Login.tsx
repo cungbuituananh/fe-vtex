@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
+import logo from "../../assets/imgs/logo.png";
 
 const { Title } = Typography;
 
@@ -52,9 +53,9 @@ function LoginComponent() {
   return (
     <>
       {contextHolder}
-      <Title level={2} className="login-title">
-        Đăng nhập
-      </Title>
+      <div className="flex flex-col items-center justify-center py-10">
+        <img src={logo} alt="Logo" className="w-45" />
+      </div>
       <div className="px-[10px] mb-5">
         <Form
           name="login"

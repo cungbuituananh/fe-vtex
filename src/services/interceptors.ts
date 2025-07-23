@@ -36,7 +36,13 @@ let isRefreshing = false;
 export const setupInterceptorsResponse = (axiosInstance: AxiosInstance) => {
   axiosInstance.interceptors.response.use(
     (response) => {
-      return response; // Return the data directly
+      if (response?.data?.data !== undefined) {
+        return response.data;
+      }
+      if (response?.data?.content !== undefined) {
+        return response.data.content;
+      }
+      return response.data;
     },
     async (error) => {
       const { status } = error;

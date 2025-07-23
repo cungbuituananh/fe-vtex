@@ -15,6 +15,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ROLE_USER } from "@/constants/variables";
 import SelectCommon from "@/components/FormElement/SelectCommon";
 import { getBase64 } from "@/utils/utilsCommon";
+import _ from "lodash";
+import { createCompanyAPI } from "@/services/apis/company";
 
 function RegisterCompany() {
   const [isOpenMap, setIsOpenMap] = useState(false);
@@ -26,7 +28,71 @@ function RegisterCompany() {
 
   const handleSubmit = async () => {
     const values = form.getFieldsValue();
-    console.log("form values: ", values);
+
+    const headOffice = {
+      branchName: values.name,
+      adress: values.address,
+      longitude: values.location[0],
+      latitude: values.location[1],
+      isHeadOffice: true,
+    };
+
+    const fileDtoList = [];
+
+    const params = {
+      ...values,
+      companyBranchDtoList: [headOffice],
+    };
+
+    if (values.companyBranchDtoList?.length > 0) {
+      const listBranch = _.cloneDeep(values.companyBranchDtoList).map(
+        (item: any) => {
+          const { branchName, location, adress } = item;
+          const [latitude, longitude] = location || [];
+          return {
+            branchName,
+            adress,
+            longitude,
+            latitude,
+            isHeaderOffice: false,
+          };
+        }
+      );
+      params.companyBranchDtoList.push(...listBranch);
+    }
+
+    if (values.logo) {
+      const temp = values.logo.fileList.map((file: any) => {
+        return {
+          fileName: file.name,
+          fileType: file.type,
+          base64: file.thumbUrl,
+          mediaTypeEnum: "LOGO",
+        };
+      });
+
+      fileDtoList.push(...temp);
+    }
+
+    if (values.productImage) {
+      const temp = values.productImage.fileList.map((file: any) => {
+        return {
+          fileName: file.name,
+          fileType: file.type,
+          base64: file.thumbUrl,
+          mediaTypeEnum: "IMAGE",
+        };
+      });
+      fileDtoList.push(...temp);
+    }
+
+    _.omit(params, ["location", "logo"]);
+
+    const { data } = await createCompanyAPI({
+      ...params,
+      fileDtoList,
+    });
+    console.log("data: ", data);
   };
 
   // Get the current location from the form
@@ -82,6 +148,7 @@ function RegisterCompany() {
               label="Điện thoại liên hệ"
               name="phoneNumber"
               type="number"
+              required
             />
           </Col>
 
@@ -91,7 +158,7 @@ function RegisterCompany() {
           <Col span={12}>
             <Form.Item
               label="Vị trí bản đồ"
-              // name="location"
+              name="location"
               // help={
               //   currentLocation
               //     ? `Tọa độ: [${currentLocation[0]?.toFixed(
@@ -115,6 +182,7 @@ function RegisterCompany() {
                 onClick={() => {
                   setIsOpenMap(true);
                   nameLocation.current = "location";
+                  selectedBranchIndex.current = -1;
                 }}
                 icon={<AimOutlined />}
               >
@@ -128,7 +196,6 @@ function RegisterCompany() {
           <Col span={24}>
             <Form.List name="companyBranchDtoList">
               {(fields, { add, remove }) => {
-                console.log("fields: ", fields);
                 return (
                   <>
                     {fields.map(({ key, name, ...restField }) => (
@@ -209,8 +276,7 @@ function RegisterCompany() {
                 listType="picture-card"
                 showUploadList={true}
                 beforeUpload={async (file) => {
-                  const base64 = await getBase64(file);
-                  console.log("Base64 string:", base64);
+                  await getBase64(file);
                   // Return false to prevent automatic upload
                   return false;
                 }}
@@ -225,13 +291,13 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Ảnh" name="logo" labelCol={{ span: 6 }}>
+            <Form.Item label="Ảnh" name="productImage" labelCol={{ span: 6 }}>
               <Upload
                 listType="picture-card"
                 showUploadList={true}
                 beforeUpload={async (file) => {
-                  const base64 = await getBase64(file);
-                  console.log("Base64 string:", base64);
+                  await getBase64(file);
+
                   // Return false to prevent automatic upload
                   return false;
                 }}
@@ -350,12 +416,6 @@ function RegisterCompany() {
               labelCol={{ span: 6 }}
               colon={false}
             >
-              {currentLocation && (
-                <span className="mr-3 ">
-                  {currentLocation[0]?.toFixed(6)},{" "}
-                  {currentLocation[1]?.toFixed(6)}
-                </span>
-              )}
               <Upload>
                 <Button type="primary" icon={<UploadOutlined />}>
                   Tải lên hồ sơ

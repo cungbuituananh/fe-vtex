@@ -93,14 +93,17 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
     queryKey: "getMajorOptions",
     labelValueType: ["name", "code"],
   });
-  console.log("majorOptions: ", majorOptions);
 
-  const { options: primaryKeyOptions } = useGetOptions({
-    api: () => getListGroupAPI("P_KEY"), // Fetch major categories
-    queryKey: "getPrimaryKeyOptions",
+  const { options: marketOptions } = useGetOptions({
+    api: () => getListGroupAPI("MARKET"), // Fetch major categories
+    queryKey: "getMarketOptions",
     labelValueType: ["name", "code"],
   });
-  console.log("primaryKeyOptions: ", primaryKeyOptions);
+  const { options: productKeyOptions } = useGetOptions({
+    api: () => getListGroupAPI("P_KEY"), // Fetch major categories
+    queryKey: "getProductKeyOptions",
+    labelValueType: ["name", "code"],
+  });
 
   // Handle form submission
 
@@ -146,26 +149,47 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
               className="space-y-3"
             >
               <Form.Item
-                key="model"
-                name="model"
-                label={<span className="font-medium text-sm">Mô hình</span>}
+                key="productionScale"
+                name="productionScale"
+                label={
+                  <span className="font-medium text-sm">
+                    Quy mô doanh nghiệp
+                  </span>
+                }
               >
                 <Select
-                  placeholder={`Chọn mô hình`}
+                  placeholder={`Chọn quy mô doanh nghiệp`}
                   className="w-full"
                   options={modelOptions}
                 />
               </Form.Item>
-
               <Form.Item
-                key="size"
-                name="size"
-                label={<span className="font-medium text-sm">Kích thước</span>}
+                key="manufacturingSector"
+                name="manufacturingSector"
+                label={
+                  <span className="font-medium text-sm">
+                    Lĩnh vực hoạt động
+                  </span>
+                }
               >
                 <Select
-                  placeholder={`Chọn kích thước`}
+                  placeholder={`Chọn Lĩnh vực hoạt động`}
                   className="w-full"
-                  options={certificateOptions}
+                  options={majorOptions}
+                />
+              </Form.Item>
+
+              <Form.Item
+                key="keyProducts"
+                name="keyProducts"
+                label={
+                  <span className="font-medium text-sm">Sản phẩm chủ lực</span>
+                }
+              >
+                <Select
+                  placeholder={`Chọn Sản phẩm chủ lực`}
+                  className="w-full"
+                  options={productKeyOptions}
                 />
               </Form.Item>
 
@@ -175,9 +199,23 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
                 label={<span className="font-medium text-sm">Chứng chỉ</span>}
               >
                 <Select
-                  placeholder={`Chọn chứng chỉ`}
+                  placeholder={`Chọn Chứng chỉ`}
                   className="w-full"
                   options={certificateOptions}
+                />
+              </Form.Item>
+
+              <Form.Item
+                key="manufacturingMarket"
+                name="manufacturingMarket"
+                label={
+                  <span className="font-medium text-sm">Thị trường chính</span>
+                }
+              >
+                <Select
+                  placeholder={`Chọn Thị trường chính`}
+                  className="w-full"
+                  options={marketOptions}
                 />
               </Form.Item>
               {/* {FILTER_OPTIONS.map((opt) => {

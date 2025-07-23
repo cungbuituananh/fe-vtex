@@ -8,4 +8,8 @@ const getListGroupAPI = async (type: string) => {
   return await axiosInstance.get(`category/list?groupCategory=${type}`);
 };
 
-export { getListMajorAPI, getListGroupAPI };
+const getListProvinceAPI = async () => {
+  return await axiosInstance.get(`province/list`);
+};
+
+export { getListMajorAPI, getListGroupAPI, getListProvinceAPI };

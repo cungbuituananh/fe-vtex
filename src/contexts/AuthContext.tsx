@@ -1,4 +1,4 @@
-import { loginAPI } from "@/services/apis/auth";
+import { loginAPI, logoutAPI } from "@/services/apis/auth";
 import React, {
   createContext,
   useContext,
@@ -73,9 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<boolean> => {
     // Simulate API call
-    const {
-      data: { data },
-    } = await loginAPI({ username, password });
+    const { data } = await loginAPI({ username, password });
 
     if (data) {
       setUser(data);
@@ -88,7 +86,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { data } = await logoutAPI();
+    console.log("data: ", data);
     setUser(null);
     localStorage.removeItem("isLogin");
     localStorage.removeItem("userData");

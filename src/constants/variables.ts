@@ -1,3 +1,5 @@
+import { t } from "i18next";
+
 export const LOCAL_STORAGE_KEY = {
   ACCESS_TOKEN: "access_token",
   EXPIRE_TIME: "expire_time",
@@ -40,3 +42,18 @@ export const MARKET_OPTIONS = [
   { label: "Nhật Bản", value: "japan" },
 ];
 export const HEIGHT_INPUT = "40px";
+
+export const WORKING_STATUS = {
+  1: "Active",
+  2: "Inactive",
+};
+
+export const WORKING_STATUS_OPTIONS = [
+  { label: "Đang hoạt động", value: 2 },
+  { label: "Ngừng hoạt động", value: 1 },
+];
+
+export const DEFAULT_PAGINATION = {
+  pageSize: 10,
+  page: 0,
+};

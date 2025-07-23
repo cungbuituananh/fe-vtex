@@ -38,12 +38,12 @@ interface CreateCompanyParams {
   fileDtoList: CompanyFile[];
 }
 
-const createCompanyAPI = async (company: CreateCompanyParams) => {
+const createCompanyAPI = async (company: any) => {
   return await axiosInstance.post(`/company/create`, company);
 };
 
 const getListCompanyAPI = async (params: any) => {
-  return await axiosInstance.get(`/company`, { params });
+  return await axiosInstance.get(`/company/list`, { params });
 };
 
 const updateCompanyAPI = async (

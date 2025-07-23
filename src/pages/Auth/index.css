@@ -6,7 +6,7 @@
 }
 
 .login-container {
-  width: 30vw;
+  min-width: 20vw;
   background-color: #f3f8ff;
 }
 

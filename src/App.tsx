@@ -11,8 +11,6 @@ function App() {
   const location = useLocation();
   const isHiddenFooter = PATH_HIDDEN_FOOTER.includes(location.pathname);
 
-  console.log("location: ", location);
-
   return (
     <AuthProvider>
       <div className="flex flex-col min-h-screen">

@@ -2,16 +2,48 @@ import InputCommon from "@/components/FormElement/InputCommon";
 import { HEIGHT_INPUT, PRIMARY_COLOR } from "@/constants/color";
 import { Button, Col, Form, Rate, Row, Select, Table } from "antd";
 import Title from "antd/es/typography/Title";
-import { MOCKDATA_COMPANY } from "./mockdata";
 import { GoEye, GoSearch, GoPencil, GoSync, GoTrash } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo_company from "@/assets/imgs/company/logo_company.png";
 import "./styles.css";
+import { getListCompanyAPI } from "@/services/apis/company";
+import useFetchData from "@/hooks/useFetchData";
+import { getListProvinceAPI } from "@/services/apis/common";
+import {
+  DEFAULT_PAGINATION,
+  WORKING_STATUS_OPTIONS,
+} from "@/constants/variables";
+import { set } from "lodash";
+import { PlusOutlined } from "@ant-design/icons";
 
 function CompanyPage() {
   const navigate = useNavigate();
-  const [dataCompany, setDataCompany] = useState(MOCKDATA_COMPANY);
+  const [dataCompany, setDataCompany] = useState([]);
+  const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
+  const [form] = Form.useForm();
+
+  const fetchData = async (params = {}) => {
+    const {
+      data: { content },
+    } = await getListCompanyAPI(params);
+
+    if (content.length > 0) {
+      setDataCompany(content);
+    }
+  };
+
+  const {
+    data: { data: dataProvince },
+  } = useFetchData({
+    queryKey: ["provinceList"],
+    queryFn: getListProvinceAPI,
+  });
+
+  const provinceOptions = dataProvince?.map((province: any) => ({
+    value: province.provinceCode,
+    label: province.provinceName,
+  }));
 
   const handleDeleteCompany = (id: number) => {
     setDataCompany((prevData) =>
@@ -19,53 +51,67 @@ function CompanyPage() {
     );
   };
 
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    fetchData(values);
+  };
+
   const columns = [
     {
       title: "Tên doanh nghiệp",
       dataIndex: "name",
       key: "name",
+      width: 800,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render(specificData: any, record: any) {
-        console.log('record: ', record);
         return (
           <Row>
-            <Col span={2}>
+            <Col span={3} style={{ display: "flex", alignItems: "center" }}>
               <img
                 src={logo_company}
                 alt="logo"
                 className="w-[80px] h-[80px] rounded-full"
               />
             </Col>
-            <Col span={22}>
+            <Col span={19}>
               <div className="flex flex-col">
-                <span className={`font-bold text-[${PRIMARY_COLOR}]`}>{record.shortName}</span>
+                <span className={`font-bold text-[${PRIMARY_COLOR}]`}>
+                  {record.shortName}
+                </span>
                 <span className="text-gray-500">{record.name}</span>
-                <span className="text-gray-400">{record.taxCode}</span>
-                <span className="text-gray-400">{record.emailOwner}</span>
+                <span className="text-gray-400">{record.address}</span>
               </div>
             </Col>
           </Row>
-
         );
-      }
+      },
     },
     {
       title: "Tỉnh/Thành phố",
-      dataIndex: "province",
-      key: "province",
-      sorter: (a: any, b: any) => a.province.localeCompare(b.province),
+      dataIndex: "provinceName",
+      key: "provinceName",
+      sorter: (a: any, b: any) => a.provinceName.localeCompare(b.provinceName),
     },
     {
       title: "Trạng thái",
-      dataIndex: "workingStatus",
-      key: "workingStatus",
+      dataIndex: "status",
+      key: "status",
+      sorter: (a: any, b: any) => a.status - b.status,
+      render: (status: number) => {
+        const statusText = WORKING_STATUS_OPTIONS.find(
+          (option) => option.value === status
+        )?.label;
+        return <span>{statusText}</span>;
+      },
     },
     {
       title: "Đánh giá",
       dataIndex: "rate",
       key: "rate",
       sorter: (a: any, b: any) => a.rate - b.rate,
-      render: (_: any, record: any) => <Rate disabled defaultValue={record.rate || 4} />,
+      render: (_: any, record: any) => (
+        <Rate disabled defaultValue={record.rate || 4} />
+      ),
     },
     {
       title: "",
@@ -109,18 +155,63 @@ function CompanyPage() {
     },
   ];
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="p-6 overflow-y-auto">
-      <div className="flex items-center justify-between">
-        <Title level={3}>Danh sách doanh nghiệp</Title>
-      </div>
-      <Form layout="vertical" labelAlign="left" wrapperCol={{ flex: 1 }}>
+      <Form
+        layout="vertical"
+        labelAlign="left"
+        wrapperCol={{ flex: 1 }}
+        form={form}
+        onFinish={handleSearch}
+      >
+        <div className="flex items-center justify-between">
+          <Title level={3}>Danh sách doanh nghiệp</Title>
+          <div>
+            <Button
+              style={{ height: HEIGHT_INPUT, marginRight: "8px" }}
+              type="primary"
+              icon={<GoSearch />}
+              htmlType="submit"
+            >
+              Tìm kiếm
+            </Button>
+            <Button
+              type="dashed"
+              style={{ height: HEIGHT_INPUT }}
+              onClick={() => navigate("/company/register")}
+              icon={<PlusOutlined />}
+            >
+              Thêm mới doanh nghiệp
+            </Button>
+          </div>
+        </div>
         <Row gutter={[12, 0]} align="bottom">
           <Col span={5}>
-            <InputCommon name="companyName" label="Tên viết tắt" layout="vertical" />
+            <InputCommon name="companyName" label="Tên viết tắt" fullWidth />
           </Col>
           <Col span={5}>
             <Form.Item label="Tỉnh/Thành phố" name="province">
+              <Select
+                style={{ height: HEIGHT_INPUT, width: "100%" }}
+                // onChange={handleChange}
+                options={provinceOptions}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={5}>
+            <Form.Item label="Trạng thái" name="status">
+              <Select
+                style={{ height: HEIGHT_INPUT, width: "100%" }}
+                options={WORKING_STATUS_OPTIONS}
+              />
+            </Form.Item>
+          </Col>
+          {/* <Col span={5}>
+            <Form.Item label="Đánh giá" name="averageRating">
               <Select
                 style={{ height: HEIGHT_INPUT, width: "100%" }}
                 // onChange={handleChange}
@@ -131,48 +222,24 @@ function CompanyPage() {
                 ]}
               />
             </Form.Item>
-          </Col>
-          <Col span={5}>
-            <Form.Item label="Tỉnh/Thành phố" name="province">
-              <Select
-                style={{ height: HEIGHT_INPUT, width: "100%" }}
-                // onChange={handleChange}
-                options={[
-                  { value: "jack", label: "Jack" },
-                  { value: "lucy", label: "Lucy" },
-                  { value: "Yiminghe", label: "yiminghe" },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={5}>
-            <Form.Item label="Tỉnh/Thành phố" name="province">
-              <Select
-                style={{ height: HEIGHT_INPUT, width: "100%" }}
-                // onChange={handleChange}
-                options={[
-                  { value: "jack", label: "Jack" },
-                  { value: "lucy", label: "Lucy" },
-                  { value: "Yiminghe", label: "yiminghe" },
-                ]}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item label="" name="province" style={{ textAlign: "right" }}>
-              <Button
+          </Col> */}
+          <Col span={9}>
+            <Form.Item label="" name="" style={{ textAlign: "right" }}>
+              {/* <Button
                 style={{ height: HEIGHT_INPUT }}
                 type="primary"
                 icon={<GoSearch />}
                 htmlType="submit"
               >
                 Tìm kiếm
-              </Button>
+              </Button> */}
               <Button
                 style={{ height: HEIGHT_INPUT }}
                 className="ml-2"
                 icon={<GoSync />}
-              ></Button>
+              >
+                Đặt lại
+              </Button>
             </Form.Item>
           </Col>
         </Row>
@@ -181,8 +248,13 @@ function CompanyPage() {
         className="my-custom-table"
         dataSource={dataCompany}
         columns={columns}
+        onChange={(tablePagination) => {
+          setPagination({
+            page: tablePagination.current ? tablePagination.current - 1 : 0,
+            pageSize: tablePagination.pageSize || DEFAULT_PAGINATION.pageSize,
+          });
+        }}
       />
-
     </div>
   );
 }

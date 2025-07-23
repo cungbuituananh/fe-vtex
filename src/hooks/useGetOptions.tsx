@@ -13,9 +13,7 @@ function useGetOptions({
 }) {
   const [options, setOptions] = useState([]);
 
-  const {
-    data: { data },
-  } = useFetchData({
+  const { data } = useFetchData({
     queryKey,
     queryFn: api,
   });
