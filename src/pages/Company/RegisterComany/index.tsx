@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 function RegisterCompany() {
   const [isOpenMap, setIsOpenMap] = useState(false);
   const navigate = useNavigate();
-  const nameLocation = useRef("");
+  const [nameLocation, setNameLocation] = useState("");
   const selectedBranchIndex = useRef(0);
   const [form] = Form.useForm();
 
@@ -90,14 +90,13 @@ function RegisterCompany() {
 
     _.omit(params, ["location", "logo"]);
 
-    const { data, code } = await createCompanyAPI({
+    const { code } = await createCompanyAPI({
       ...params,
       fileDtoList,
     });
-    console.log("code: ", code);
     if (code === 200) {
+      navigate("/news");
     }
-    console.log("data: ", data);
   };
 
   // Get the current location from the form
@@ -186,14 +185,12 @@ function RegisterCompany() {
                 type="primary"
                 onClick={() => {
                   setIsOpenMap(true);
-                  nameLocation.current = "location";
+                  setNameLocation("location");
                   selectedBranchIndex.current = -1;
                 }}
                 icon={<AimOutlined />}
               >
-                {currentLocation
-                  ? "Thay đổi vị trí trên bản đồ"
-                  : "Chọn vị trí trên bản đồ"}
+                {currentLocation ? "Thay đổi tọa độ" : "Chọn tọa độ"}
               </Button>
             </Form.Item>
           </Col>
@@ -204,6 +201,10 @@ function RegisterCompany() {
                 return (
                   <>
                     {fields.map(({ key, name, ...restField }) => {
+                      const branchLocation =
+                        form.getFieldValue("companyBranchDtoList")?.[name]
+                          ?.location || [];
+
                       return (
                         <Row gutter={[26, 0]} key={key}>
                           <Col span={12}>
@@ -220,20 +221,31 @@ function RegisterCompany() {
                               required
                               {...restField}
                             >
-                              <Button
-                                className=""
-                                type="primary"
-                                onClick={() => {
-                                  setIsOpenMap(true);
-                                  nameLocation.current = `companyBranchDtoList[${name}]`;
-                                  selectedBranchIndex.current = name; // Store the index for later use
-                                }}
-                                icon={<AimOutlined />}
-                              >
-                                {currentLocation
-                                  ? "Thay đổi vị trí trên bản đồ"
-                                  : "Chọn vị trí trên bản đồ"}
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                {branchLocation.length > 0 && (
+                                  <span className="ml-2">
+                                    {branchLocation[0]?.toFixed(6)},{" "}
+                                    {branchLocation[1]?.toFixed(6)}
+                                  </span>
+                                )}
+                                <Button
+                                  className=""
+                                  type="primary"
+                                  onClick={() => {
+                                    setIsOpenMap(true);
+                                    setNameLocation(
+                                      `companyBranchDtoList[${name}]`
+                                    );
+                                    selectedBranchIndex.current = name; // Store the index for later use
+                                  }}
+                                  icon={<AimOutlined />}
+                                >
+                                  {branchLocation.length > 0
+                                    ? "Thay đổi tọa độ"
+                                    : "Chọn tọa độ"}
+                                </Button>
+                              </div>
+
                               <Button
                                 danger
                                 onClick={() => remove(name)}
@@ -331,7 +343,7 @@ function RegisterCompany() {
           >
             <MapClickable
               visible={isOpenMap}
-              name={nameLocation.current}
+              name={nameLocation}
               index={selectedBranchIndex.current}
             />
           </Modal>

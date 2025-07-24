@@ -13,11 +13,27 @@ interface MapClickableProps {
 }
 
 const MapClickable = ({ visible, name, index }: MapClickableProps) => {
-  console.log("name: ", name);
   const form = Form.useFormInstance();
-  const location = form.getFieldValue(name);
+  // const location = form.getFieldValue(name);
+  const isBranch = name.includes("companyBranchDtoList");
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+
+  // Get the correct location based on the data structure
+  const getLocation = () => {
+    if (index !== undefined && index >= 0) {
+      // For array case (companyDtoList)
+      const currentList =
+        form.getFieldValue(isBranch ? "companyBranchDtoList" : name) || [];
+      return currentList[index]?.location;
+    } else {
+      // For simple location case
+      return form.getFieldValue(name);
+    }
+  };
+
+  const _location = getLocation();
 
   useEffect(() => {
     if (!visible || !mapContainerRef.current) return;
@@ -33,7 +49,7 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current!,
         style: "mapbox://styles/mapbox/streets-v12",
-        center: location || [105.854444, 21.028511], // Default to Vietnam if no location
+        center: _location || [105.854444, 21.028511], // Default to Vietnam if no location
         zoom: 13,
       });
 
@@ -65,7 +81,7 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
         });
 
         // If location exists, show marker and center map
-        if (location && Array.isArray(location) && location.length === 2) {
+        if (_location && Array.isArray(_location) && _location.length === 2) {
           const source = map.getSource(
             "marker-point"
           ) as mapboxgl.GeoJSONSource;
@@ -76,13 +92,13 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
                 type: "Feature",
                 geometry: {
                   type: "Point",
-                  coordinates: location,
+                  coordinates: _location as [number, number],
                 },
                 properties: {},
               },
             ],
           });
-          map.setCenter(location as [number, number]);
+          map.setCenter(_location as [number, number]);
         }
       });
 
@@ -91,13 +107,13 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
         const location: [number, number] = [lng, lat];
 
         // Update local state
-        if (index && index >= 0) {
-          const currentList = form.getFieldValue(name) || [];
+        if (index !== undefined && index >= 0) {
+          const currentList =
+            form.getFieldValue(isBranch ? "companyBranchDtoList" : name) || [];
           const newList = [...currentList];
-          newList[index || 0] = { ...newList[index || 0], location };
+          newList[index] = { ...newList[index], location };
           form.setFieldsValue({ companyBranchDtoList: newList });
         } else {
-          console.log("name: ", name);
           form.setFieldsValue({ location: location });
         }
 

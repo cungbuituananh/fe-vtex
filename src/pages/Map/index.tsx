@@ -32,8 +32,6 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
   const handleMapboxSearch = (result: any) => {
-    console.log("searchResults: ", searchResults);
-    console.log("result>>>>: ", result);
     setSearchResults((prev) => [...prev, result]);
   };
 
@@ -42,27 +40,32 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
     const {
       data: { content },
     } = await getListCompanyPublicAPI(values);
-    console.log("content: ", content);
-    setFilteredData(content);
 
-    // Add markers for filtered results
-    // if (mapRef.current) {
-    //   addMarkersToMap(mapRef.current, content);
-    //   if (content.length > 0) {
-    //     // Fit map to show filtered results
-    //     const bounds = new mapboxgl.LngLatBounds();
-    //     content.forEach((location) => {
-    //       bounds.extend(location.coordinates as [number, number]);
-    //     });
-    //     mapRef.current.fitBounds(bounds, { padding: 50 });
-    //   }
-    // }
+    if (content?.length > 0) {
+      const temp = content.map((item: any) => ({
+        ...item,
+        coordinates: [Number(item.longitude), Number(item.latitude)],
+      }));
+      setFilteredData(temp);
+
+      // Add markers for filtered results
+      if (mapRef.current) {
+        addMarkersToMap(mapRef.current, temp);
+        if (temp.length > 0) {
+          // Fit map to show filtered results
+          const bounds = new mapboxgl.LngLatBounds();
+          temp.forEach((location: any) => {
+            bounds.extend(location.coordinates as [number, number]);
+          });
+          mapRef.current.fitBounds(bounds, { padding: 50 });
+        }
+      }
+    }
   };
 
   // Handle map click to add a marker
   const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
     const { lng, lat } = e.lngLat;
-    console.log("Clicked coordinates:", { longitude: lng, latitude: lat });
 
     // Remove existing selected marker if any
     if (selectedMarkerRef.current) {
@@ -132,10 +135,10 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
       center: [105.854444, 21.028511],
       zoom: 6, // Increased zoom to better see Vietnam
       minZoom: 1,
-      maxBounds: [
-        [102.14441, 8.1952],
-        [109.4642, 23.3934],
-      ],
+      // maxBounds: [
+      //   [102.14441, 8.1952],
+      //   [109.4642, 23.3934],
+      // ],
       style: "mapbox://styles/mapbox/streets-v12",
     });
 
