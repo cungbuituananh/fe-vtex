@@ -17,9 +17,11 @@ import SelectCommon from "@/components/FormElement/SelectCommon";
 import { getBase64 } from "@/utils/utilsCommon";
 import _ from "lodash";
 import { createCompanyAPI } from "@/services/apis/company";
+import { useNavigate } from "react-router-dom";
 
 function RegisterCompany() {
   const [isOpenMap, setIsOpenMap] = useState(false);
+  const navigate = useNavigate();
   const nameLocation = useRef("");
   const selectedBranchIndex = useRef(0);
   const [form] = Form.useForm();
@@ -34,7 +36,7 @@ function RegisterCompany() {
       adress: values.address,
       longitude: values.location[0],
       latitude: values.location[1],
-      isHeadOffice: true,
+      headOffice: true,
     };
 
     const fileDtoList = [];
@@ -54,7 +56,7 @@ function RegisterCompany() {
             adress,
             longitude,
             latitude,
-            isHeaderOffice: false,
+            headOffice: false,
           };
         }
       );
@@ -88,10 +90,13 @@ function RegisterCompany() {
 
     _.omit(params, ["location", "logo"]);
 
-    const { data } = await createCompanyAPI({
+    const { data, code } = await createCompanyAPI({
       ...params,
       fileDtoList,
     });
+    console.log("code: ", code);
+    if (code === 200) {
+    }
     console.log("data: ", data);
   };
 
@@ -198,47 +203,49 @@ function RegisterCompany() {
               {(fields, { add, remove }) => {
                 return (
                   <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <Row gutter={[26, 0]} key={key}>
-                        <Col span={12}>
-                          <InputCommon
-                            label="Tên chi nhánh"
-                            name={[name, "branchName"]}
-                            required
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <InputCommon
-                            label="Địa chỉ"
-                            name={[name, "address"]}
-                            required
-                            {...restField}
-                          >
-                            <Button
-                              className=""
-                              type="primary"
-                              onClick={() => {
-                                setIsOpenMap(true);
-                                nameLocation.current = `companyBranchDtoList[${name}]`;
-                                selectedBranchIndex.current = name; // Store the index for later use
-                              }}
-                              icon={<AimOutlined />}
-                            >
-                              {currentLocation
-                                ? "Thay đổi vị trí trên bản đồ"
-                                : "Chọn vị trí trên bản đồ"}
-                            </Button>
-                            <Button
-                              danger
-                              onClick={() => remove(name)}
-                              icon={<PlusOutlined rotate={45} />}
-                              type="text"
+                    {fields.map(({ key, name, ...restField }) => {
+                      return (
+                        <Row gutter={[26, 0]} key={key}>
+                          <Col span={12}>
+                            <InputCommon
+                              label="Tên chi nhánh"
+                              name={[name, "branchName"]}
+                              required
                             />
-                          </InputCommon>
-                        </Col>
-                        <Col span={1} className="flex items-center"></Col>
-                      </Row>
-                    ))}
+                          </Col>
+                          <Col span={12}>
+                            <InputCommon
+                              label="Địa chỉ"
+                              name={[name, "address"]}
+                              required
+                              {...restField}
+                            >
+                              <Button
+                                className=""
+                                type="primary"
+                                onClick={() => {
+                                  setIsOpenMap(true);
+                                  nameLocation.current = `companyBranchDtoList[${name}]`;
+                                  selectedBranchIndex.current = name; // Store the index for later use
+                                }}
+                                icon={<AimOutlined />}
+                              >
+                                {currentLocation
+                                  ? "Thay đổi vị trí trên bản đồ"
+                                  : "Chọn vị trí trên bản đồ"}
+                              </Button>
+                              <Button
+                                danger
+                                onClick={() => remove(name)}
+                                icon={<PlusOutlined rotate={45} />}
+                                type="text"
+                              />
+                            </InputCommon>
+                          </Col>
+                          <Col span={1} className="flex items-center"></Col>
+                        </Row>
+                      );
+                    })}
                     <Form.Item>
                       <Button
                         type="dashed"

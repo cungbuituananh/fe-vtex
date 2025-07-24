@@ -12,3 +12,4 @@ export const STYLE_SUB_TITLE_COMMON = `font-medium text-[14px] text-[${PRIMARY_C
 export const STYLE_NAV_LINK = `hover:text-blue-500 hover:underline`;
 
 export const HEIGHT_INPUT = "45px";
+export const HEIGHT_ACTION_BUTTON = "36px";

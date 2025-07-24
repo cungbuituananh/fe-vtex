@@ -12,4 +12,13 @@ const getListProvinceAPI = async () => {
   return await axiosInstance.get(`province/list`);
 };
 
-export { getListMajorAPI, getListGroupAPI, getListProvinceAPI };
+const getListCompanyPublicAPI = async (params: any) => {
+  return await axiosInstance.get(`public/company/list`, { params });
+};
+
+export {
+  getListMajorAPI,
+  getListGroupAPI,
+  getListProvinceAPI,
+  getListCompanyPublicAPI,
+};

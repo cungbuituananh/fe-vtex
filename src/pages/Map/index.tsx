@@ -7,6 +7,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import SearchResult from "./SearchResult";
 import "./map.css";
 import { MOCKDATA_COMPANY } from "../Company/mockdata";
+import { getListCompanyPublicAPI } from "@/services/apis/common";
 
 const MOCK_DATA = [
   { coordinates: [105.854444, 21.028511], label: "Hà Nội", id: 1 },
@@ -37,21 +38,25 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   };
 
   // Function to search in MOCK_DATA - only triggered on explicit search
-  const handleLocalSearch = () => {
-    setFilteredData(MOCKDATA_COMPANY);
+  const handleLocalSearch = async (values: any) => {
+    const {
+      data: { content },
+    } = await getListCompanyPublicAPI(values);
+    console.log("content: ", content);
+    setFilteredData(content);
 
     // Add markers for filtered results
-    if (mapRef.current) {
-      addMarkersToMap(mapRef.current, MOCKDATA_COMPANY);
-      if (MOCKDATA_COMPANY.length > 0) {
-        // Fit map to show filtered results
-        const bounds = new mapboxgl.LngLatBounds();
-        MOCK_DATA.forEach((location) => {
-          bounds.extend(location.coordinates as [number, number]);
-        });
-        mapRef.current.fitBounds(bounds, { padding: 50 });
-      }
-    }
+    // if (mapRef.current) {
+    //   addMarkersToMap(mapRef.current, content);
+    //   if (content.length > 0) {
+    //     // Fit map to show filtered results
+    //     const bounds = new mapboxgl.LngLatBounds();
+    //     content.forEach((location) => {
+    //       bounds.extend(location.coordinates as [number, number]);
+    //     });
+    //     mapRef.current.fitBounds(bounds, { padding: 50 });
+    //   }
+    // }
   };
 
   // Handle map click to add a marker

@@ -1,13 +1,25 @@
 import InputCommon from "@/components/FormElement/InputCommon";
-import { HEIGHT_INPUT, PRIMARY_COLOR } from "@/constants/color";
+import {
+  HEIGHT_ACTION_BUTTON,
+  HEIGHT_INPUT,
+  PRIMARY_COLOR,
+} from "@/constants/color";
 import { Button, Col, Form, Rate, Row, Select, Table } from "antd";
 import Title from "antd/es/typography/Title";
-import { GoEye, GoSearch, GoPencil, GoSync, GoTrash } from "react-icons/go";
+import {
+  GoEye,
+  GoSearch,
+  GoPencil,
+  GoSync,
+  GoTrash,
+  GoCheck,
+  GoX,
+} from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo_company from "@/assets/imgs/company/logo_company.png";
 import "./styles.css";
-import { getListCompanyAPI } from "@/services/apis/company";
+import { deleteCompanyAPI, getListCompanyAPI } from "@/services/apis/company";
 import useFetchData from "@/hooks/useFetchData";
 import { getListProvinceAPI } from "@/services/apis/common";
 import {
@@ -15,13 +27,17 @@ import {
   WORKING_STATUS_OPTIONS,
 } from "@/constants/variables";
 import { PlusOutlined } from "@ant-design/icons";
+import { useAuth } from "@/contexts/AuthContext";
+import type { TableRowSelection } from "antd/es/table/interface";
+import type { DataSourceItemType } from "antd/es/auto-complete/AutoComplete";
 
 function CompanyPage() {
   const navigate = useNavigate();
 
+  const { user } = useAuth();
+
   const [dataCompany, setDataCompany] = useState<any[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
-  console.log("pagination: ", pagination);
   const [form] = Form.useForm();
 
   const fetchData = async (params = {}) => {
@@ -30,7 +46,12 @@ function CompanyPage() {
     } = await getListCompanyAPI(params);
 
     if (content.length > 0) {
-      setDataCompany(content);
+      // Add unique key to each row - use taxCode as the key
+      const dataWithKeys = content.map((item: any, index: number) => ({
+        ...item,
+        key: `${item.shortName}-${index}`, // or item.id if you have an id field
+      }));
+      setDataCompany(dataWithKeys);
     }
   };
 
@@ -46,10 +67,16 @@ function CompanyPage() {
     label: province.provinceName,
   }));
 
-  const handleDeleteCompany = (taxCode: string) => {
-    setDataCompany((prevData) =>
-      prevData.filter((company) => company.taxCode !== taxCode)
-    );
+  const handleDeleteCompany = async (taxCode: string) => {
+    try {
+      await deleteCompanyAPI(taxCode);
+      fetchData();
+      // setDataCompany((prevData) =>
+      //   prevData.filter((company) => company.taxCode !== taxCode)
+      // );
+    } catch (error) {
+      console.error("Error deleting company:", error);
+    }
   };
 
   const handleSearch = () => {
@@ -65,8 +92,6 @@ function CompanyPage() {
       width: 800,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render(specificData: any, record: any) {
-        console.log("specificData: ", specificData);
-
         return (
           <Row>
             <Col span={3} style={{ display: "flex", alignItems: "center" }}>
@@ -121,40 +146,45 @@ function CompanyPage() {
       dataIndex: "action",
       key: "action",
       width: 160,
-      render: (_: any, record: any) => (
-        <div className="flex gap-2 justify-center align-center">
-          <Button
-            type="link"
-            onClick={() => navigate(`/company/${record.taxCode}`)}
-            style={{ color: "grey", padding: 0 }} // Primary color
-          >
-            <div className="flex flex-col items-center">
-              <GoEye className="text-lg font-bold" />
-              <span className="font-medium">Xem</span>
-            </div>
-          </Button>
-          <Button
-            type="link"
-            onClick={() => console.log("View details", record)}
-            style={{ color: "grey", padding: 0 }} // Warning color
-          >
-            <div className="flex flex-col items-center">
-              <GoPencil className="text-lg font-bold" />
-              <span className="font-medium">Sửa</span>
-            </div>
-          </Button>
-          <Button
-            type="link"
-            onClick={() => handleDeleteCompany(record.taxCode)}
-            style={{ color: "grey", padding: 0 }} // Danger color
-          >
-            <div className="flex flex-col items-center">
-              <GoTrash className="text-lg font-bold" />
-              <span className="font-medium">Xóa</span>
-            </div>
-          </Button>
-        </div>
-      ),
+      render: (_: any, record: any) => {
+        console.log("record: ", record);
+        return (
+          <div className="flex gap-2 justify-center align-center">
+            <Button
+              type="link"
+              onClick={() => navigate(`/company/${record.taxCode}`)}
+              style={{ color: "grey", padding: 0 }} // Primary color
+            >
+              <div className="flex flex-col items-center">
+                <GoEye className="text-lg font-bold" />
+                <span className="font-medium">Xem</span>
+              </div>
+            </Button>
+            <Button
+              type="link"
+              onClick={() => console.log("View details", record)}
+              style={{ color: "grey", padding: 0 }} // Warning color
+            >
+              <div className="flex flex-col items-center">
+                <GoPencil className="text-lg font-bold" />
+                <span className="font-medium">Sửa</span>
+              </div>
+            </Button>
+            {user?.roles?.includes("ADMIN") && (
+              <Button
+                type="link"
+                onClick={() => handleDeleteCompany(record.companyDraftId)}
+                style={{ color: "grey", padding: 0 }} // Danger color
+              >
+                <div className="flex flex-col items-center">
+                  <GoTrash className="text-lg font-bold" />
+                  <span className="font-medium">Xóa</span>
+                </div>
+              </Button>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -162,6 +192,17 @@ function CompanyPage() {
     fetchData();
   }, []);
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection: TableRowSelection<any> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
   return (
     <div className="p-6 overflow-y-auto">
       <Form
@@ -175,7 +216,24 @@ function CompanyPage() {
           <Title level={3}>Danh sách doanh nghiệp</Title>
           <div>
             <Button
-              style={{ height: HEIGHT_INPUT, marginRight: "8px" }}
+              style={{ height: HEIGHT_ACTION_BUTTON, marginRight: "8px" }}
+              type="primary"
+              icon={<GoCheck />}
+              disabled={selectedRowKeys.length === 0}
+            >
+              Phê duyệt
+            </Button>
+            <Button
+              style={{ height: HEIGHT_ACTION_BUTTON, marginRight: "8px" }}
+              type="primary"
+              danger
+              icon={<GoX />}
+              disabled={selectedRowKeys.length === 0}
+            >
+              Từ chối
+            </Button>
+            <Button
+              style={{ height: HEIGHT_ACTION_BUTTON, marginRight: "8px" }}
               type="primary"
               icon={<GoSearch />}
               htmlType="submit"
@@ -184,8 +242,8 @@ function CompanyPage() {
             </Button>
             <Button
               type="dashed"
-              style={{ height: HEIGHT_INPUT }}
-              onClick={() => navigate("/company/register")}
+              style={{ height: HEIGHT_ACTION_BUTTON }}
+              onClick={() => navigate("/register-company")}
               icon={<PlusOutlined />}
             >
               Thêm mới doanh nghiệp
@@ -248,6 +306,7 @@ function CompanyPage() {
         </Row>
       </Form>
       <Table
+        rowSelection={user?.roles?.includes("ADMIN") ? rowSelection : undefined}
         className="my-custom-table"
         dataSource={dataCompany}
         columns={columns}

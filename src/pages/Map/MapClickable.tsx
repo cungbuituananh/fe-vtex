@@ -13,6 +13,7 @@ interface MapClickableProps {
 }
 
 const MapClickable = ({ visible, name, index }: MapClickableProps) => {
+  console.log("name: ", name);
   const form = Form.useFormInstance();
   const location = form.getFieldValue(name);
   const mapContainerRef = useRef<HTMLDivElement>(null);

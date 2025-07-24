@@ -50,4 +50,13 @@ const updateCompanyAPI = async (params: CreateCompanyParams) => {
   return await axiosInstance.post(`/company/update`, params);
 };
 
-export { createCompanyAPI, getListCompanyAPI, updateCompanyAPI };
+const deleteCompanyAPI = async (taxCode: string) => {
+  return await axiosInstance.delete(`/company/delete/${taxCode}`);
+};
+
+export {
+  createCompanyAPI,
+  getListCompanyAPI,
+  updateCompanyAPI,
+  deleteCompanyAPI,
+};
