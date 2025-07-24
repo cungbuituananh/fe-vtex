@@ -3,19 +3,10 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useRef, useState } from "react";
 import MapFilterSidebar from "./MapFilterSidebar";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+// import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import SearchResult from "./SearchResult";
 import "./map.css";
-import { MOCKDATA_COMPANY } from "../Company/mockdata";
 import { getListCompanyPublicAPI } from "@/services/apis/common";
-
-const MOCK_DATA = [
-  { coordinates: [105.854444, 21.028511], label: "Hà Nội", id: 1 },
-  { coordinates: [106.660172, 10.762622], label: "Hồ Chí Minh", id: 2 },
-  { coordinates: [108.238889, 16.047079], label: "Đà Nẵng", id: 3 },
-  { coordinates: [105.781111, 10.012222], label: "Cần Thơ", id: 4 },
-  { coordinates: [106.683333, 20.864444], label: "Hải Phòng", id: 5 },
-];
 
 interface MapPageProps {
   isSelectScreen?: boolean; // Optional prop to determine if it's a selection screen
@@ -25,15 +16,15 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const selectedMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
+  console.log("markers: ", markers);
 
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  const handleMapboxSearch = (result: any) => {
-    setSearchResults((prev) => [...prev, result]);
-  };
+  // const handleMapboxSearch = (result: any) => {
+  //   setSearchResults((prev) => [...prev, result]);
+  // };
 
   // Function to search in MOCK_DATA - only triggered on explicit search
   const handleLocalSearch = async (values: any) => {
@@ -44,7 +35,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
     if (content?.length > 0) {
       const temp = content.map((item: any) => ({
         ...item,
-        coordinates: [Number(item.longitude), Number(item.latitude)],
+        coordinates: [Number(item.latitude), Number(item.longitude)],
       }));
       setFilteredData(temp);
 
@@ -101,16 +92,18 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
 
   // Function to add multiple markers
   const addMarkersToMap = (map: mapboxgl.Map, locations: any[]) => {
+    console.log("locations: ", locations);
     // Clear existing markers first
     clearAllMarkers();
 
     const newMarkers: mapboxgl.Marker[] = [];
 
-    locations.forEach((location, index) => {
-      const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"];
-      const markerColor = colors[index % colors.length];
+    locations.forEach((location) => {
+      // const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"];
+      // const markerColor = colors[index % colors.length];
+      console.log("location.coordinates: ", location.coordinates);
 
-      const marker = new mapboxgl.Marker({ color: markerColor })
+      const marker = new mapboxgl.Marker({ color: "#0000FF" })
         .setLngLat(location.coordinates as [number, number])
         // .setPopup(new mapboxgl.Popup().setHTML(`<h3>${location.label}</h3>`))
         .addTo(map);
@@ -118,7 +111,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
       newMarkers.push(marker);
     });
 
-    setMarkers(newMarkers);
+    // setMarkers(newMarkers);
   };
 
   // Function to clear all markers
@@ -153,20 +146,20 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
 
     map.on("click", (e) => handleMapClick(e));
     // Add the geocoder
-    const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken as string,
-      mapboxgl: mapboxgl as any,
-      countries: "vn",
-      placeholder: "Tìm kiếm địa điểm...",
-      marker: false, // Disable default marker to use custom ones
-      flyTo: {
-        speed: 1.2,
-        curve: 1.42,
-        easing: (t: any) => t,
-      },
-    });
+    // const geocoder = new MapboxGeocoder({
+    //   accessToken: mapboxgl.accessToken as string,
+    //   mapboxgl: mapboxgl as any,
+    //   countries: "vn",
+    //   placeholder: "Tìm kiếm địa điểm...",
+    //   marker: false, // Disable default marker to use custom ones
+    //   flyTo: {
+    //     speed: 1.2,
+    //     curve: 1.42,
+    //     easing: (t: any) => t,
+    //   },
+    // });
 
-    geocoder.on("result", handleMapboxSearch);
+    // // geocoder.on("result", handleMapboxSearch);
 
     return () => {
       clearAllMarkers();

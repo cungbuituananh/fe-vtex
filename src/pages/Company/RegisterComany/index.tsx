@@ -34,8 +34,8 @@ function RegisterCompany() {
     const headOffice = {
       branchName: values.name,
       adress: values.address,
-      longitude: values.location[0],
-      latitude: values.location[1],
+      longitude: values.location[1],
+      latitude: values.location[0],
       headOffice: true,
     };
 
@@ -90,11 +90,11 @@ function RegisterCompany() {
 
     _.omit(params, ["location", "logo"]);
 
-    const { code } = await createCompanyAPI({
+    const response = await createCompanyAPI({
       ...params,
       fileDtoList,
     });
-    if (code === 200) {
+    if (response.data?.code === 200) {
       navigate("/news");
     }
   };

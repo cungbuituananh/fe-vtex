@@ -29,7 +29,6 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "@/contexts/AuthContext";
 import type { TableRowSelection } from "antd/es/table/interface";
-import type { DataSourceItemType } from "antd/es/auto-complete/AutoComplete";
 
 function CompanyPage() {
   const navigate = useNavigate();
@@ -38,6 +37,7 @@ function CompanyPage() {
 
   const [dataCompany, setDataCompany] = useState<any[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
+  console.log("pagination: ", pagination);
   const [form] = Form.useForm();
 
   const fetchData = async (params = {}) => {
@@ -92,6 +92,7 @@ function CompanyPage() {
       width: 800,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render(specificData: any, record: any) {
+        console.log("specificData: ", specificData);
         return (
           <Row>
             <Col span={3} style={{ display: "flex", alignItems: "center" }}>
