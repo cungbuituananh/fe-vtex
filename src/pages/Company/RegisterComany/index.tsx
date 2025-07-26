@@ -1,30 +1,88 @@
-import { Row, Col, Input, Button, Form, Upload, Modal } from "antd";
-import Title from "antd/es/typography/Title";
+import InputCommon from "@/components/FormElement/InputCommon";
+import SelectCommon from "@/components/FormElement/SelectCommon";
+import { STYLE_CONTAINER_BORDER } from "@/constants/color";
+import { ROLE_USER } from "@/constants/variables";
+import { useAuth } from "@/contexts/AuthContext";
+import useGetOptions from "@/hooks/useGetOptions";
+import MapClickable from "@/pages/Map/MapClickable";
+import { getListGroupAPI, getListUserAPI } from "@/services/apis/common";
+import {
+  createCompanyAPI,
+  getCompanyDetailAPI,
+  updateCompanyAPI,
+} from "@/services/apis/company";
+import { getBase64 } from "@/utils/utilsCommon";
 import {
   AimOutlined,
   DeleteOutlined,
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { useRef, useState } from "react";
-import MapClickable from "@/pages/Map/MapClickable";
-import "./register.css";
-import { STYLE_CONTAINER_BORDER } from "@/constants/color";
-import InputCommon from "@/components/FormElement/InputCommon";
-import { useAuth } from "@/contexts/AuthContext";
-import { ROLE_USER } from "@/constants/variables";
-import SelectCommon from "@/components/FormElement/SelectCommon";
-import { getBase64 } from "@/utils/utilsCommon";
+import { Button, Col, Form, Input, Modal, Row, Upload } from "antd";
+import Title from "antd/es/typography/Title";
 import _ from "lodash";
-import { createCompanyAPI } from "@/services/apis/company";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import "./register.css";
 
-function RegisterCompany() {
+interface RegisterCompanyProps {
+  isUpdate?: boolean;
+}
+
+function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
   const [isOpenMap, setIsOpenMap] = useState(false);
   const navigate = useNavigate();
   const [nameLocation, setNameLocation] = useState("");
   const selectedBranchIndex = useRef(0);
   const [form] = Form.useForm();
+  const { id: companyId } = useParams();
+
+  const fetchDetailData = async (id: string) => {
+    const { data } = await getCompanyDetailAPI(id);
+    if (data) {
+      console.log("data: ", data);
+      form.setFieldsValue(data);
+
+      console.log("Form values after set: ", form.getFieldsValue());
+      return data;
+    }
+    return null;
+  };
+
+  // const { options: certificateOptions } = useGetOptions({
+  //   api: () => getListGroupAPI("CERT"), // Fetch major categories
+  //   queryKey: "getCertificateOptions",
+  //   labelValueType: ["name", "code"],
+  // });
+
+  const { options: userOptions } = useGetOptions({
+    api: () => getListUserAPI(), // Fetch major categories
+    queryKey: "users",
+    labelValueType: ["email", "id"],
+  });
+
+  const { options: modelOptions } = useGetOptions({
+    api: () => getListGroupAPI("MODEL"), // Fetch major categories
+    queryKey: "getModalOptions",
+    labelValueType: ["name", "code"],
+  });
+
+  const { options: majorOptions } = useGetOptions({
+    api: () => getListGroupAPI("MAJOR"), // Fetch major categories
+    queryKey: "getMajorOptions",
+    labelValueType: ["name", "code"],
+  });
+
+  const { options: marketOptions } = useGetOptions({
+    api: () => getListGroupAPI("MARKET"), // Fetch major categories
+    queryKey: "getMarketOptions",
+    labelValueType: ["name", "code"],
+  });
+  const { options: productKeyOptions } = useGetOptions({
+    api: () => getListGroupAPI("P_KEY"), // Fetch major categories
+    queryKey: "getProductKeyOptions",
+    labelValueType: ["name", "code"],
+  });
 
   const { user } = useAuth();
 
@@ -88,12 +146,20 @@ function RegisterCompany() {
       fileDtoList.push(...temp);
     }
 
-    _.omit(params, ["location", "logo"]);
+    const requestParams = _.omit(params, ["location", "logo"]);
 
-    const response = await createCompanyAPI({
-      ...params,
+    const convertedRequestParams = {
+      ...requestParams,
+      manufacturingMarket: requestParams.manufacturingMarket?.join(","),
+      productionModels: requestParams.productionModels?.join(","),
+      manufacturingSector: requestParams.manufacturingSector?.join(","),
+      keyProducts: requestParams.keyProducts?.join(","),
       fileDtoList,
-    });
+    };
+
+    const response = isUpdate
+      ? await updateCompanyAPI(convertedRequestParams)
+      : await createCompanyAPI(convertedRequestParams);
     if (response.data?.code === 200) {
       navigate("/news");
     }
@@ -101,6 +167,12 @@ function RegisterCompany() {
 
   // Get the current location from the form
   const currentLocation = Form.useWatch("location", form);
+
+  useEffect(() => {
+    if (isUpdate && companyId) {
+      fetchDetailData(companyId);
+    }
+  }, [companyId]);
 
   return (
     <div className={`${STYLE_CONTAINER_BORDER} w-[80vw] mx-auto my-5 p-6`}>
@@ -157,7 +229,7 @@ function RegisterCompany() {
           </Col>
 
           <Col span={12}>
-            <InputCommon label="Địa chỉ trụ sở chính" name="address" />
+            <InputCommon label="Địa chỉ trụ sở chính" name="address" required />
           </Col>
           <Col span={12}>
             <Form.Item
@@ -278,6 +350,7 @@ function RegisterCompany() {
               label="Giới thiệu"
               name="introduction"
               labelCol={{ span: 6 }}
+              required
             >
               <Input.TextArea
                 rows={4}
@@ -294,6 +367,7 @@ function RegisterCompany() {
               <Upload
                 listType="picture-card"
                 showUploadList={true}
+                maxCount={1}
                 beforeUpload={async (file) => {
                   await getBase64(file);
                   // Return false to prevent automatic upload
@@ -301,10 +375,12 @@ function RegisterCompany() {
                 }}
                 accept="image/*"
               >
-                <div className="flex flex-col items-center justify-center">
-                  <PlusOutlined />
-                  <div className="mt-2">Tải ảnh lên</div>
-                </div>
+                {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
+                  <div className="flex flex-col items-center justify-center">
+                    <PlusOutlined />
+                    <div className="mt-2">Tải ảnh lên</div>
+                  </div>
+                )}
               </Upload>
             </Form.Item>
           </Col>
@@ -355,27 +431,39 @@ function RegisterCompany() {
             </p>
           </Col>
           <Col span={12}>
-            <InputCommon
+            <SelectCommon
               label="Lĩnh vực sản xuất"
+              options={modelOptions}
               name="manufacturingSector"
               required
+              isMultiple
             />
           </Col>
           <Col span={12}>
-            <InputCommon
+            <SelectCommon
               label="Mô hình sản xuất"
+              options={majorOptions}
               name="productionModels"
               required
+              isMultiple
             />
           </Col>
           <Col span={12}>
-            <InputCommon label="Sản phẩm chủ lực" name="keyProducts" required />
+            <SelectCommon
+              label="Sản phẩm chủ lực"
+              options={productKeyOptions}
+              name="keyProducts"
+              required
+              isMultiple
+            />
           </Col>
           <Col span={12}>
-            <InputCommon
+            <SelectCommon
               label="Thị trường sản xuất"
+              options={marketOptions}
               name="manufacturingMarket"
               required
+              isMultiple
             />
           </Col>
           <Col span={12}>
@@ -445,7 +533,7 @@ function RegisterCompany() {
 
           {user?.roles?.includes(ROLE_USER.ADMIN) && (
             <Col span={12}>
-              <SelectCommon options={[]} label="User" name="user" />
+              <SelectCommon options={userOptions} label="User" name="user" />
             </Col>
           )}
         </Row>

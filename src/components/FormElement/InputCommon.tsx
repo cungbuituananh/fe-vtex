@@ -1,4 +1,3 @@
-import { HEIGHT_INPUT } from "@/constants/color";
 import { Form, Input } from "antd";
 
 interface InputCommonProps {
@@ -60,10 +59,10 @@ function InputCommon(props: InputCommonProps) {
     placeholder: placeholder || `Nhập ${label.toLowerCase()}`,
     disabled,
     style: {
-      height: `${HEIGHT_INPUT}`,
+      // height: `${HEIGHT_INPUT}`,
     },
     className,
-    restProps,
+    // restProps,
   };
 
   // Style to make the label display in one line and align properly
@@ -73,6 +72,14 @@ function InputCommon(props: InputCommonProps) {
     textOverflow: "ellipsis",
   };
 
+  // If no children, render Input directly without wrapper div
+  const renderInput = () => {
+    if (type === "password") {
+      return <Input.Password {...inputProps} />;
+    }
+    return <Input type={type} {...inputProps} />;
+  };
+
   return (
     <Form.Item
       label={label}
@@ -80,6 +87,7 @@ function InputCommon(props: InputCommonProps) {
       rules={buildRules()}
       colon={false}
       labelAlign={labelAlign}
+      {...restProps} // FIXED: Move restProps here
       {...(fullWidth
         ? {}
         : {
@@ -87,22 +95,16 @@ function InputCommon(props: InputCommonProps) {
             wrapperCol: { span: 24 - labelCol },
           })}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        {type === "password" && (
-          <Input.Password
-            {...inputProps}
-            style={{ ...inputProps.style, flex: 1 }}
-          />
-        )}
-        {(type === "text" || type === "email" || type === "number") && (
-          <Input
-            type={type}
-            {...inputProps}
-            style={{ ...inputProps.style, flex: 1 }}
-          />
-        )}
-        {children}
-      </div>
+      {children ? (
+        // Only use wrapper div if there are children
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {renderInput()}
+          {children}
+        </div>
+      ) : (
+        // Render input directly for better form control
+        renderInput()
+      )}
     </Form.Item>
   );
 }

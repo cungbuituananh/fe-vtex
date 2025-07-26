@@ -64,13 +64,12 @@ export const FILTER_OPTIONS = [
 ];
 
 // Add prop type for onSearch
-interface MapFilterSidebarProps {
-  onSearch?: (values: any) => void;
-}
 
-const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
-  const [form] = Form.useForm();
+const MapFilterSidebar = () => {
+  // const [form] = Form.useForm();
   const [show, setShow] = useState(true);
+
+  const form = Form.useFormInstance();
 
   const handleReset = () => {
     form.resetFields();
@@ -142,118 +141,98 @@ const MapFilterSidebar = ({ onSearch }: MapFilterSidebarProps) => {
         >
           <hr />
           <div className=" p-5 ">
-            <Form
+            {/* <Form
               form={form}
               layout="vertical"
               onFinish={onSearch}
               className="space-y-3"
+            > */}
+            <Form.Item
+              key="productionScale"
+              name="productionScale"
+              label={
+                <span className="font-medium text-sm">Quy mô doanh nghiệp</span>
+              }
             >
-              <Form.Item
-                key="productionScale"
-                name="productionScale"
-                label={
-                  <span className="font-medium text-sm">
-                    Quy mô doanh nghiệp
-                  </span>
-                }
-              >
-                <Select
-                  placeholder={`Chọn quy mô doanh nghiệp`}
-                  className="w-full"
-                  options={modelOptions}
-                />
-              </Form.Item>
-              <Form.Item
-                key="manufacturingSector"
-                name="manufacturingSector"
-                label={
-                  <span className="font-medium text-sm">
-                    Lĩnh vực hoạt động
-                  </span>
-                }
-              >
-                <Select
-                  placeholder={`Chọn Lĩnh vực hoạt động`}
-                  className="w-full"
-                  options={majorOptions}
-                />
-              </Form.Item>
+              <Select
+                placeholder={`Chọn quy mô doanh nghiệp`}
+                className="w-full"
+                options={modelOptions}
+              />
+            </Form.Item>
+            <Form.Item
+              key="manufacturingSector"
+              name="manufacturingSector"
+              label={
+                <span className="font-medium text-sm">Lĩnh vực hoạt động</span>
+              }
+            >
+              <Select
+                placeholder={`Chọn Lĩnh vực hoạt động`}
+                className="w-full"
+                options={majorOptions}
+              />
+            </Form.Item>
 
-              <Form.Item
-                key="keyProducts"
-                name="keyProducts"
-                label={
-                  <span className="font-medium text-sm">Sản phẩm chủ lực</span>
-                }
-              >
-                <Select
-                  placeholder={`Chọn Sản phẩm chủ lực`}
-                  className="w-full"
-                  options={productKeyOptions}
-                />
-              </Form.Item>
+            <Form.Item
+              key="keyProducts"
+              name="keyProducts"
+              label={
+                <span className="font-medium text-sm">Sản phẩm chủ lực</span>
+              }
+            >
+              <Select
+                placeholder={`Chọn Sản phẩm chủ lực`}
+                className="w-full"
+                options={productKeyOptions}
+              />
+            </Form.Item>
 
-              <Form.Item
-                key="certificate"
-                name="certificate"
-                label={<span className="font-medium text-sm">Chứng chỉ</span>}
-              >
-                <Select
-                  placeholder={`Chọn Chứng chỉ`}
-                  className="w-full"
-                  options={certificateOptions}
-                />
-              </Form.Item>
+            <Form.Item
+              key="certificate"
+              name="certificate"
+              label={<span className="font-medium text-sm">Chứng chỉ</span>}
+            >
+              <Select
+                placeholder={`Chọn Chứng chỉ`}
+                className="w-full"
+                options={certificateOptions}
+              />
+            </Form.Item>
 
-              <Form.Item
-                key="manufacturingMarket"
-                name="manufacturingMarket"
-                label={
-                  <span className="font-medium text-sm">Thị trường chính</span>
-                }
+            <Form.Item
+              key="manufacturingMarket"
+              name="manufacturingMarket"
+              label={
+                <span className="font-medium text-sm">Thị trường chính</span>
+              }
+            >
+              <Select
+                placeholder={`Chọn Thị trường chính`}
+                className="w-full"
+                options={marketOptions}
+              />
+            </Form.Item>
+
+            <div className="flex gap-3 mt-2">
+              <Button
+                onClick={handleReset}
+                icon={<ReloadOutlined />}
+                className="flex-1 rounded-full border border-[#E0E3EB] bg-white text-[#222] font-medium flex items-center justify-center"
               >
-                <Select
-                  placeholder={`Chọn Thị trường chính`}
-                  className="w-full"
-                  options={marketOptions}
-                />
-              </Form.Item>
-              {/* {FILTER_OPTIONS.map((opt) => {
-                return (
-                  <Form.Item
-                    key={opt.name}
-                    name={opt.name}
-                    label={
-                      <span className="font-medium text-sm">{opt.label}</span>
-                    }
-                  >
-                    <Select
-                      placeholder={`Chọn ${opt.label.toLowerCase()}`}
-                      className="w-full"
-                      options={opt.options}
-                    />
-                  </Form.Item>
-                );
-              })} */}
-              <div className="flex gap-3 mt-2">
-                <Button
-                  onClick={handleReset}
-                  icon={<ReloadOutlined />}
-                  className="flex-1 rounded-full border border-[#E0E3EB] bg-white text-[#222] font-medium flex items-center justify-center"
-                >
-                  Đặt lại
-                </Button>
-                <Button
-                  htmlType="submit"
-                  type="primary"
-                  icon={<SearchOutlined />}
-                  className="flex-1 rounded-full bg-[#23407C] text-white font-semibold flex items-center justify-center border-none"
-                  style={{ background: "#23407C" }}
-                >
-                  Tìm kiếm
-                </Button>
-              </div>
-            </Form>
+                Đặt lại
+              </Button>
+              <Button
+                htmlType="submit"
+                type="primary"
+                icon={<SearchOutlined />}
+                className="flex-1 rounded-full bg-[#23407C] text-white font-semibold flex items-center justify-center border-none"
+                style={{ background: "#23407C" }}
+              >
+                Tìm kiếm
+              </Button>
+            </div>
+            {/* </Form> */}
           </div>
         </div>
       </div>

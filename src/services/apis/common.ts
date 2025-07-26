@@ -16,9 +16,14 @@ const getListCompanyPublicAPI = async (params: any) => {
   return await axiosInstance.get(`public/company/list`, { params });
 };
 
+const getListUserAPI = async () => {
+  return await axiosInstance.get(`user/list`);
+};
+
 export {
   getListMajorAPI,
   getListGroupAPI,
   getListProvinceAPI,
   getListCompanyPublicAPI,
+  getListUserAPI,
 };

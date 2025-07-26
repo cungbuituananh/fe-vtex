@@ -1,10 +1,6 @@
 import InputCommon from "@/components/FormElement/InputCommon";
-import {
-  HEIGHT_ACTION_BUTTON,
-  HEIGHT_INPUT,
-  PRIMARY_COLOR,
-} from "@/constants/color";
-import { Button, Col, Form, Rate, Row, Select, Table } from "antd";
+import { HEIGHT_ACTION_BUTTON, PRIMARY_COLOR } from "@/constants/color";
+import { Button, Col, Form, message, Rate, Row, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import {
   GoEye,
@@ -19,7 +15,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo_company from "@/assets/imgs/company/logo_company.png";
 import "./styles.css";
-import { deleteCompanyAPI, getListCompanyAPI } from "@/services/apis/company";
+import {
+  approveCompanyAPI,
+  deleteCompanyAPI,
+  getListCompanyAPI,
+  rejectCompanyAPI,
+} from "@/services/apis/company";
 import useFetchData from "@/hooks/useFetchData";
 import { getListProvinceAPI } from "@/services/apis/common";
 import {
@@ -29,13 +30,14 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "@/contexts/AuthContext";
 import type { TableRowSelection } from "antd/es/table/interface";
+import SelectCommon from "@/components/FormElement/SelectCommon";
 
 function CompanyPage() {
   const navigate = useNavigate();
 
   const { user } = useAuth();
-
   const [dataCompany, setDataCompany] = useState<any[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
   console.log("pagination: ", pagination);
   const [form] = Form.useForm();
@@ -47,9 +49,9 @@ function CompanyPage() {
 
     if (content.length > 0) {
       // Add unique key to each row - use taxCode as the key
-      const dataWithKeys = content.map((item: any, index: number) => ({
+      const dataWithKeys = content.map((item: any) => ({
         ...item,
-        key: `${item.shortName}-${index}`, // or item.id if you have an id field
+        key: item.companyDraftId, // or item.id if you have an id field
       }));
       setDataCompany(dataWithKeys);
     }
@@ -91,8 +93,7 @@ function CompanyPage() {
       key: "name",
       width: 800,
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      render(specificData: any, record: any) {
-        console.log("specificData: ", specificData);
+      render(_: any, record: any) {
         return (
           <Row>
             <Col span={3} style={{ display: "flex", alignItems: "center" }}>
@@ -148,12 +149,12 @@ function CompanyPage() {
       key: "action",
       width: 160,
       render: (_: any, record: any) => {
-        console.log("record: ", record);
+        const { companyDraftId } = record;
         return (
           <div className="flex gap-2 justify-center align-center">
             <Button
               type="link"
-              onClick={() => navigate(`/company/${record.taxCode}`)}
+              // onClick={() => navigate(`/company/${companyDraftId}`)}
               style={{ color: "grey", padding: 0 }} // Primary color
             >
               <div className="flex flex-col items-center">
@@ -163,7 +164,7 @@ function CompanyPage() {
             </Button>
             <Button
               type="link"
-              onClick={() => console.log("View details", record)}
+              onClick={() => navigate(`/company/${companyDraftId}/update`)}
               style={{ color: "grey", padding: 0 }} // Warning color
             >
               <div className="flex flex-col items-center">
@@ -189,12 +190,6 @@ function CompanyPage() {
     },
   ];
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -203,6 +198,44 @@ function CompanyPage() {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
+  const handleApprove = async () => {
+    if (selectedRowKeys.length === 0) {
+      return;
+    }
+    try {
+      // Call your API to approve the selected companies
+      // await approveCompaniesAPI(selectedRowKeys);
+      await approveCompanyAPI(selectedRowKeys as string[]);
+
+      message.success("Phê duyệt thành công");
+      fetchData();
+      setSelectedRowKeys([]); // Clear selection after approval
+    } catch (error) {
+      console.error("Error approving companies:", error);
+    }
+  };
+
+  const handleReject = async () => {
+    if (selectedRowKeys.length === 0) {
+      return;
+    }
+    try {
+      // Call your API to reject the selected companies
+      // await rejectCompaniesAPI(selectedRowKeys);
+      await rejectCompanyAPI(selectedRowKeys as string[]);
+      message.success("Từ chối thành công");
+      setSelectedRowKeys([]); // Clear selection after approval
+      fetchData();
+    } catch (error) {
+      console.error("Error rejecting companies:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="p-6 overflow-y-auto">
       <Form
@@ -219,6 +252,7 @@ function CompanyPage() {
               style={{ height: HEIGHT_ACTION_BUTTON, marginRight: "8px" }}
               type="primary"
               icon={<GoCheck />}
+              onClick={handleApprove}
               disabled={selectedRowKeys.length === 0}
             >
               Phê duyệt
@@ -227,6 +261,7 @@ function CompanyPage() {
               style={{ height: HEIGHT_ACTION_BUTTON, marginRight: "8px" }}
               type="primary"
               danger
+              onClick={handleReject}
               icon={<GoX />}
               disabled={selectedRowKeys.length === 0}
             >
@@ -255,50 +290,26 @@ function CompanyPage() {
             <InputCommon name="companyName" label="Tên viết tắt" fullWidth />
           </Col>
           <Col span={5}>
-            <Form.Item label="Tỉnh/Thành phố" name="province">
-              <Select
-                style={{ height: HEIGHT_INPUT, width: "100%" }}
-                // onChange={handleChange}
-                options={provinceOptions}
-              />
-            </Form.Item>
+            <SelectCommon
+              label="Tỉnh/Thành phố"
+              name="province"
+              options={provinceOptions}
+              fullWidth
+            />
           </Col>
+
           <Col span={5}>
-            <Form.Item label="Trạng thái" name="status">
-              <Select
-                style={{ height: HEIGHT_INPUT, width: "100%" }}
-                options={WORKING_STATUS_OPTIONS}
-              />
-            </Form.Item>
+            <SelectCommon
+              label="Trạng thái"
+              name="status"
+              options={WORKING_STATUS_OPTIONS}
+              fullWidth
+            />
           </Col>
-          {/* <Col span={5}>
-            <Form.Item label="Đánh giá" name="averageRating">
-              <Select
-                style={{ height: HEIGHT_INPUT, width: "100%" }}
-                // onChange={handleChange}
-                options={[
-                  { value: "jack", label: "Jack" },
-                  { value: "lucy", label: "Lucy" },
-                  { value: "Yiminghe", label: "yiminghe" },
-                ]}
-              />
-            </Form.Item>
-          </Col> */}
+
           <Col span={9}>
             <Form.Item label="" name="" style={{ textAlign: "right" }}>
-              {/* <Button
-                style={{ height: HEIGHT_INPUT }}
-                type="primary"
-                icon={<GoSearch />}
-                htmlType="submit"
-              >
-                Tìm kiếm
-              </Button> */}
-              <Button
-                style={{ height: HEIGHT_INPUT }}
-                className="ml-2"
-                icon={<GoSync />}
-              >
+              <Button className="ml-2" icon={<GoSync />}>
                 Đặt lại
               </Button>
             </Form.Item>

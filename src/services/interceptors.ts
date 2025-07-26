@@ -42,7 +42,7 @@ export const setupInterceptorsResponse = (axiosInstance: AxiosInstance) => {
       if (response?.data?.content !== undefined) {
         return response.data.content;
       }
-      return response.data;
+      return response;
     },
     async (error) => {
       const { status } = error;

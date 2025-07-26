@@ -60,7 +60,9 @@ export const ROUTE_PATH = {
   PROFILE: "/profile",
   INTRO: "/intro",
   COMPANY: "/company",
+  COMPANY_LIST: "/company/list",
   COMPANY_DETAIL: "/company/:id",
+  COMPANY_DETAIL_UPDATE: "/company/:id/update",
   REGISTER_COMPANY: "/register-company",
 };
 
@@ -106,14 +108,13 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
     roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
     children: [
       {
-        name: "news",
-        url: ROUTE_PATH.NEWS,
+        name: "listCompany",
+        url: ROUTE_PATH.COMPANY_LIST,
         element: <CompanyPage />,
         icon: <FaDatabase />,
         requireAuth: true,
         roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
       },
-
       {
         name: "registerCompany",
         url: ROUTE_PATH.REGISTER_COMPANY,
@@ -121,6 +122,20 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         icon: <FaDatabase />,
         requireAuth: true,
         roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
+      },
+      {
+        name: "companyDetail",
+        url: ROUTE_PATH.COMPANY_DETAIL,
+        element: <CompanyDetailPage />,
+        hiddenInMenu: true, // Don't show in navigation menu
+        requireAuth: false,
+      },
+      {
+        name: "companyDetailUpdate",
+        url: `${ROUTE_PATH.COMPANY_DETAIL_UPDATE}`,
+        element: <RegisterCompanyPage isUpdate />,
+        hiddenInMenu: true, // Don't show in navigation menu
+        requireAuth: true,
       },
     ],
   },
@@ -166,32 +181,10 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
       },
     ],
   },
-  {
-    name: "company",
-    url: ROUTE_PATH.COMPANY_DETAIL,
-    element: <CompanyDetailPage />,
-    hiddenInMenu: true, // Don't show in navigation menu
-    requireAuth: false,
-  },
 ];
 
 // Legacy LIST_ROUTES for backward compatibility (will be deprecated)
 export const LIST_ROUTES = ROUTE_CONFIGS;
-
-export const ROUTES_WITHOUT_LAYOUT = {
-  LOGIN: ROUTE_PATH.LOGIN,
-  REGISTER: ROUTE_PATH.REGISTER,
-  FORGOT_PASSWORD: ROUTE_PATH.FORGOT_PASSWORD,
-  RESET_PASSWORD: ROUTE_PATH.RESET_PASSWORD,
-};
-
-export const ROUTES_WITH_LAYOUT = {
-  HOME: "/",
-  MAP: "/map",
-  CONTACT: "/contact",
-  DASHBOARD: "/dashboard",
-  PROFILE: "/profile",
-};
 
 // Utility function to filter routes based on authentication state and roles
 export function getVisibleRoutes(

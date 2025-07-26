@@ -1,14 +1,16 @@
-import { Form, Select, } from 'antd';
-import { HEIGHT_INPUT } from "@/constants/color";
+import { Form, Select } from "antd";
 
 export interface SelectCommonProps {
   name: string;
   label?: string;
   required?: boolean;
   onChange?: (value: any) => void;
-  className?: string;
   options: { value: string | number; label: string }[];
   helpText?: string;
+  fullWidth?: boolean; // Add fullWidth prop
+  labelAlign?: "left" | "right"; // Add label alignment prop
+  labelCol?: any; // Additional props for Form.Item
+  isMultiple?: boolean; // Add isMultiple prop if needed
 }
 
 function SelectCommon({
@@ -16,9 +18,12 @@ function SelectCommon({
   label,
   required = false,
   onChange,
-  className,
   options,
   helpText,
+  fullWidth = false,
+  labelAlign = "left", // Default label alignment
+  labelCol = 6,
+  isMultiple = false, // Add isMultiple prop if needed
   ...rest
 }: SelectCommonProps) {
   // Style to make the label display in one line and align properly
@@ -31,24 +36,26 @@ function SelectCommon({
   return (
     <Form.Item
       name={name}
-      label={label && (
-        <span>
-          {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
-        </span>
-      )}
+      label={label}
       required={required}
       help={helpText}
       colon={false}
-      labelCol={{ span: 6, style: labelStyle }}
-      wrapperCol={{ span: 18 }}
+      labelAlign={labelAlign}
+      {...(fullWidth
+        ? {}
+        : {
+            labelCol: { span: labelCol, style: labelStyle },
+            wrapperCol: { span: 24 - labelCol },
+          })}
     >
       <Select
-        id={name}
-        className={className}
-        style={{ height: HEIGHT_INPUT }}
+        // id={name}
+        // className={className}
+        // style={{ minHeight: HEIGHT_INPUT }}
         options={options}
         onChange={onChange}
+        placeholder={label ? `Chọn ${label.toLowerCase()}` : "Chọn"}
+        mode={isMultiple ? "multiple" : undefined} // Use multiple mode if isMultiple is true
         {...rest}
       />
     </Form.Item>

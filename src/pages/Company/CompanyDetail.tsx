@@ -2,10 +2,10 @@ import { STYLE_CONTAINER_BORDER, STYLE_TITLE_COMMON } from "@/constants/color";
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { MOCKDATA_COMPANY } from "./mockdata";
 import prod1 from "@/assets/imgs/products/prod_1.png"; // Example image import, adjust as needed
 import prod2 from "@/assets/imgs/products/prod_2.png"; // Example image import, adjust as needed
 import prod3 from "@/assets/imgs/products/prod_3.png"; // Example image import, adjust as needed
+import { getViewDetailApi } from "@/services/apis/company";
 
 const LIST_TYPE = [
   {
@@ -37,11 +37,17 @@ const LIST_TYPE = [
 function CompanyDetailPage() {
   const [dataDetail, setDataDetail] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
-  console.log("id: ", id);
+
+  const fetchData = async (id: string) => {
+    const { data } = await getViewDetailApi(id);
+    setDataDetail(data);
+  };
 
   useEffect(() => {
-    setDataDetail(MOCKDATA_COMPANY[0]);
-  }, []);
+    if (id) {
+      fetchData(id);
+    }
+  }, [id]);
 
   return (
     <div className={`${STYLE_CONTAINER_BORDER} my-5 `}>
@@ -75,7 +81,7 @@ function CompanyDetailPage() {
                       <p>
                         <strong>Hotline:</strong>{" "}
                         <span className="text-blue-500">
-                          {dataDetail.hotline}
+                          {dataDetail.phoneNumber}
                         </span>
                       </p>
                       <p>
@@ -94,21 +100,23 @@ function CompanyDetailPage() {
                   </div>
                 </Col>
               </Row>
-              <div className="py-1 flex justify-between items-center">
+              {/* <div className="py-1 flex justify-between items-center">
                 <p>
-                  <strong>Mở cửa:</strong> {dataDetail.workingHours?.opening || 8} -{" "}
-                  <strong>Đóng cửa:</strong> {dataDetail.workingHours?.closing || 17}
+                  <strong>Mở cửa:</strong>{" "}
+                  {dataDetail.workingHours?.opening || 8} -{" "}
+                  <strong>Đóng cửa:</strong>{" "}
+                  {dataDetail.workingHours?.closing || 17}
                 </p>
                 <p>({dataDetail.workingHours?.workingDays || 8})</p>
-              </div>
-              <p>
+              </div> */}
+              {/* <p>
                 <strong>Văn phòng: </strong>
                 {dataDetail.office}
               </p>
               <p>
                 <strong>Nhà máy: </strong>
                 {dataDetail.factory}
-              </p>
+              </p> */}
               {/* Left column content TEMP */}
               <p className={`${STYLE_TITLE_COMMON} my-2`}>Giới thiệu</p>
               <p>
@@ -228,7 +236,7 @@ function CompanyDetailPage() {
                     <img
                       src={type.image}
                       alt={type.name}
-                    // className="w-[200px] h-[30px] mr-2"
+                      // className="w-[200px] h-[30px] mr-2"
                     />
                     <p className="text-center">{type.name}</p>
                   </div>

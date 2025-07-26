@@ -7,9 +7,9 @@ export const LOCAL_STORAGE_KEY = {
 };
 
 export const ROLE_USER = {
-  ADMIN: "admin",
-  COMPANY: "company",
-  USER: "user",
+  ADMIN: "ADMIN",
+  COMPANY: "COMPANY",
+  USER: "USER",
 };
 
 export const SIZE_OPTIONS = [
@@ -42,13 +42,24 @@ export const MARKET_OPTIONS = [
 export const HEIGHT_INPUT = "40px";
 
 export const WORKING_STATUS = {
-  1: "Active",
-  2: "Inactive",
+  1: "PENDING_APPROVAL",
+  2: "APPROVED",
+  3: "PENDING_UPDATE_APPROVAL",
+  4: "UPDATED_APPROVED",
+  5: "REJECTED",
+};
+
+export const WORKING_STATUS_TEXT = {
+  PENDING_APPROVAL: 1,
+  APPROVED: 2,
+  PENDING_UPDATE_APPROVAL: 3,
+  UPDATED_APPROVED: 4,
+  REJECTED: 5,
 };
 
 export const WORKING_STATUS_OPTIONS = [
-  { label: "Đang hoạt động", value: 2 },
-  { label: "Ngừng hoạt động", value: 1 },
+  { label: "Hoạt động", value: WORKING_STATUS_TEXT.APPROVED },
+  { label: "Ngừng hoạt động", value: WORKING_STATUS_TEXT.REJECTED },
 ];
 
 export const DEFAULT_PAGINATION = {

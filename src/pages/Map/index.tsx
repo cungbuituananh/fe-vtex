@@ -7,6 +7,7 @@ import MapFilterSidebar from "./MapFilterSidebar";
 import SearchResult from "./SearchResult";
 import "./map.css";
 import { getListCompanyPublicAPI } from "@/services/apis/common";
+import { Form, Spin } from "antd";
 
 interface MapPageProps {
   isSelectScreen?: boolean; // Optional prop to determine if it's a selection screen
@@ -18,7 +19,8 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  console.log("markers: ", markers);
+  const [isMapLoading, setIsMapLoading] = useState(true);
+  const [form] = Form.useForm();
 
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -26,18 +28,17 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   //   setSearchResults((prev) => [...prev, result]);
   // };
 
-  // Function to search in MOCK_DATA - only triggered on explicit search
-  const handleLocalSearch = async (values: any) => {
+  const handleLocalSearch = async (values: any, page = 0, size = 10) => {
     const {
       data: { content },
-    } = await getListCompanyPublicAPI(values);
+    } = await getListCompanyPublicAPI({ ...values, page, size });
 
     if (content?.length > 0) {
       const temp = content.map((item: any) => ({
         ...item,
         coordinates: [Number(item.latitude), Number(item.longitude)],
       }));
-      setFilteredData(temp);
+      setFilteredData((prev) => [...prev, ...temp]);
 
       // Add markers for filtered results
       if (mapRef.current) {
@@ -92,17 +93,12 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
 
   // Function to add multiple markers
   const addMarkersToMap = (map: mapboxgl.Map, locations: any[]) => {
-    console.log("locations: ", locations);
     // Clear existing markers first
-    clearAllMarkers();
+    // clearAllMarkers();
 
     const newMarkers: mapboxgl.Marker[] = [];
 
     locations.forEach((location) => {
-      // const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"];
-      // const markerColor = colors[index % colors.length];
-      console.log("location.coordinates: ", location.coordinates);
-
       const marker = new mapboxgl.Marker({ color: "#0000FF" })
         .setLngLat(location.coordinates as [number, number])
         // .setPopup(new mapboxgl.Popup().setHTML(`<h3>${location.label}</h3>`))
@@ -125,18 +121,44 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current!,
-      center: [105.854444, 21.028511],
-      zoom: 6, // Increased zoom to better see Vietnam
+      center: [107.5, 16.0], // More centered coordinates for Vietnam
+      zoom: 5.5, // Lower zoom to see entire country
       minZoom: 1,
-      // maxBounds: [
-      //   [102.14441, 8.1952],
-      //   [109.4642, 23.3934],
-      // ],
+      maxBounds: [
+        [102.14441, 8.1952], // Southwest coordinates
+        [109.4642, 23.3934], // Northeast coordinates
+      ],
       style: "mapbox://styles/mapbox/streets-v12",
     });
 
     // Store map reference
     mapRef.current = map;
+
+    // Wait for map to load, then fit to Vietnam bounds
+    map.on("load", () => {
+      // Define Vietnam's geographical bounds
+      const vietnamBounds = new mapboxgl.LngLatBounds(
+        [102.14441, 8.1952], // Southwest corner
+        [109.4642, 23.3934] // Northeast corner
+      );
+
+      // Fit the map to Vietnam's bounds with padding
+      map.fitBounds(vietnamBounds, {
+        padding: 50, // Add some padding around the edges
+        duration: 1000, // Smooth animation duration
+      });
+
+      // Set loading to false after map is fully loaded and fitted
+      setTimeout(() => {
+        setIsMapLoading(false);
+      }, 1100); // Slightly longer than fitBounds duration
+    });
+
+    // Optional: Handle if map fails to load
+    map.on("error", () => {
+      setIsMapLoading(false);
+      console.error("Map failed to load");
+    });
 
     // Add navigation controls to avoid conflict with search
     map.addControl(
@@ -177,30 +199,63 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
         position: "relative",
       }}
     >
+      {/* Map Loading Overlay */}
+      {isMapLoading && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div style={{ textAlign: "center" }}>
+            <Spin size="large" />
+            <div style={{ marginTop: 16, fontSize: 16, color: "#666" }}>
+              Loading Map...
+            </div>
+          </div>
+        </div>
+      )}
+
       <div
         className="container-map"
         ref={mapContainerRef}
         style={{ width: "100%", height: "100%" }}
       >
-        {isSelectScreen ? (
-          <div className="relative h-[500px] w-[1000px]"></div>
-        ) : (
-          <MapFilterSidebar onSearch={handleLocalSearch} />
-        )}
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleLocalSearch}
+          // className="space-y-3"
+        >
+          {isSelectScreen ? (
+            <div className="relative h-[500px] w-[1000px]"></div>
+          ) : (
+            <MapFilterSidebar />
+          )}
 
-        {filteredData.length > 0 && (
-          <SearchResult
-            results={filteredData}
-            onResultClick={(location) => {
-              if (mapRef.current) {
-                mapRef.current.flyTo({
-                  center: location.coordinates as [number, number],
-                  zoom: 12,
-                });
-              }
-            }}
-          />
-        )}
+          {filteredData.length > 0 && (
+            <SearchResult
+              results={filteredData}
+              onResultClick={(location) => {
+                if (mapRef.current) {
+                  mapRef.current.flyTo({
+                    center: location.coordinates as [number, number],
+                    zoom: 12,
+                  });
+                }
+              }}
+              loadMore={handleLocalSearch}
+            />
+          )}
+        </Form>
       </div>
     </div>
   );

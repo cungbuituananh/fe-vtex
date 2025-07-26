@@ -1,5 +1,5 @@
 import { STYLE_NAV_LINK, STYLE_SUB_TITLE_COMMON } from "@/constants/color";
-import { Button } from "antd";
+import { Button, Form } from "antd";
 import { useEffect, useState } from "react";
 import { FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,10 +8,15 @@ import logo_company from "@/assets/imgs/company/logo_company.png";
 interface SearchResultProps {
   results: any[];
   onResultClick: (location: any) => void;
+  loadMore: (values: any, page?: number, size?: number) => void;
 }
 
-function SearchResult({ results, onResultClick }: SearchResultProps) {
+function SearchResult({ results, onResultClick, loadMore }: SearchResultProps) {
   const [show, setShow] = useState(false);
+
+  const [pagination, setPagination] = useState({ page: 0, size: 10 });
+
+  const form = Form.useFormInstance();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +26,15 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
       setShow(false);
     }
   }, [results]);
+
+  const handleLoadMore = async () => {
+    const values = form.getFieldsValue();
+    const nextPage = pagination.page + 1;
+    setPagination({ page: nextPage, size: pagination.size });
+
+    // Call the loadMore function passed from props
+    await loadMore(values, nextPage, pagination.size);
+  };
 
   return (
     <div
@@ -70,14 +84,14 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
           animationFillMode: "forwards",
         }}
       >
-        {results.map((location) => (
+        {results.map((location, index) => (
           <div
             style={{
               cursor: "pointer",
               borderBottom: "1px solid #eee",
               transition: "background-color 0.2s",
             }}
-            key={location.id}
+            key={`${location.companyDraftId}-${index}`}
           >
             <div
               onClick={() => onResultClick(location)}
@@ -92,10 +106,10 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
               <div className="flex justify-between gap-6">
                 <div className="col-8">
                   <Link
-                    to={`/company/${location.id}`}
+                    to={`/company/${location.companyDraftId}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/company/${location.id}`);
+                      navigate(`/company/${location.companyDraftId}`);
                     }}
                     className={`${STYLE_NAV_LINK} ${STYLE_SUB_TITLE_COMMON}`}
                   >
@@ -172,6 +186,22 @@ function SearchResult({ results, onResultClick }: SearchResultProps) {
             </div>
           </div>
         ))}
+        {/* Handle loadmore button here */}
+        {results.length > 1 && (
+          <div className="text-center p-2">
+            <Button
+              type="primary"
+              onClick={handleLoadMore}
+              style={{
+                width: "100%",
+                borderRadius: "9999px",
+                fontSize: "14px",
+              }}
+            >
+              Xem thêm
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

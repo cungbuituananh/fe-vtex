@@ -78,22 +78,22 @@ function Navbar() {
                 onMouseEnter={() => setOpenDropdown(route.name)}
                 onMouseLeave={() => setOpenDropdown(null)}
                 onFocus={() => setOpenDropdown(route.name)}
-                onBlur={(e) => {
-                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                    setOpenDropdown(null);
-                  }
-                }}
+                // onBlur={(e) => {
+                //   if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                //     setOpenDropdown(null);
+                //   }
+                // }}
                 tabIndex={0} // Make the li focusable for keyboard users
               >
                 {route.children ? (
                   <button
                     type="button"
                     className="hover:text-blue-600  flex items-center gap-2 focus:outline-none group"
-                    onClick={() =>
+                    onClick={() => {
                       setOpenDropdown(
                         openDropdown === route.name ? null : route.name
-                      )
-                    }
+                      );
+                    }}
                     aria-haspopup="true"
                     aria-expanded={openDropdown === route.name}
                   >
