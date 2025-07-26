@@ -50,7 +50,7 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
         container: mapContainerRef.current!,
         style: "mapbox://styles/mapbox/streets-v12",
         center: _location || [105.854444, 21.028511], // Default to Vietnam if no location
-        zoom: 13,
+        zoom: 6,
       });
 
       mapRef.current = map;
@@ -167,7 +167,7 @@ const MapClickable = ({ visible, name, index }: MapClickableProps) => {
   }, []);
 
   return (
-    <div ref={mapContainerRef} className="w-full min-h-[400px] rounded-lg" />
+    <div ref={mapContainerRef} className="w-full min-h-[700px] rounded-lg" />
   );
 };
 

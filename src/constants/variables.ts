@@ -60,6 +60,15 @@ export const WORKING_STATUS_TEXT = {
 export const WORKING_STATUS_OPTIONS = [
   { label: "Hoạt động", value: WORKING_STATUS_TEXT.APPROVED },
   { label: "Ngừng hoạt động", value: WORKING_STATUS_TEXT.REJECTED },
+  { label: "Chờ phê duyệt", value: WORKING_STATUS_TEXT.PENDING_APPROVAL },
+  {
+    label: "Chờ phê duyệt cập nhật",
+    value: WORKING_STATUS_TEXT.PENDING_UPDATE_APPROVAL,
+  },
+  {
+    label: "Đã phê duyệt cập nhật",
+    value: WORKING_STATUS_TEXT.UPDATED_APPROVED,
+  },
 ];
 
 export const DEFAULT_PAGINATION = {

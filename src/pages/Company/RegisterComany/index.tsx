@@ -7,43 +7,57 @@ import useGetOptions from "@/hooks/useGetOptions";
 import MapClickable from "@/pages/Map/MapClickable";
 import { getListGroupAPI, getListUserAPI } from "@/services/apis/common";
 import {
+  approveCompanyAPI,
   createCompanyAPI,
   getCompanyDetailAPI,
+  rejectCompanyAPI,
   updateCompanyAPI,
 } from "@/services/apis/company";
 import { getBase64 } from "@/utils/utilsCommon";
 import {
   AimOutlined,
+  CheckOutlined,
+  CloseOutlined,
   DeleteOutlined,
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Upload } from "antd";
+import { Button, Col, Form, Input, message, Modal, Row, Upload } from "antd";
 import Title from "antd/es/typography/Title";
 import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./register.css";
+import { ROUTE_PATH } from "@/routes/routes";
+import StatusBadge from "./StatusBadge";
 
 interface RegisterCompanyProps {
   isUpdate?: boolean;
+  isApprove?: boolean;
 }
 
-function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
+function RegisterCompany({
+  isUpdate = false,
+  isApprove = false,
+}: RegisterCompanyProps) {
   const [isOpenMap, setIsOpenMap] = useState(false);
   const navigate = useNavigate();
   const [nameLocation, setNameLocation] = useState("");
   const selectedBranchIndex = useRef(0);
   const [form] = Form.useForm();
   const { id: companyId } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [resultData, setResultData] = useState<any>(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const fetchDetailData = async (id: string) => {
+    setIsLoading(true);
     const { data } = await getCompanyDetailAPI(id);
     if (data) {
-      console.log("data: ", data);
       form.setFieldsValue(data);
-
-      console.log("Form values after set: ", form.getFieldsValue());
+      setResultData(data);
+      setIsLoading(false);
+      // Set the location field to the first branch's location if available
       return data;
     }
     return null;
@@ -67,11 +81,11 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
     labelValueType: ["name", "code"],
   });
 
-  const { options: majorOptions } = useGetOptions({
-    api: () => getListGroupAPI("MAJOR"), // Fetch major categories
-    queryKey: "getMajorOptions",
-    labelValueType: ["name", "code"],
-  });
+  // const { options: majorOptions } = useGetOptions({
+  //   api: () => getListGroupAPI("MAJOR"), // Fetch major categories
+  //   queryKey: "getMajorOptions",
+  //   labelValueType: ["name", "code"],
+  // });
 
   const { options: marketOptions } = useGetOptions({
     api: () => getListGroupAPI("MARKET"), // Fetch major categories
@@ -87,6 +101,7 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
   const { user } = useAuth();
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const values = form.getFieldsValue();
 
     const headOffice = {
@@ -151,25 +166,59 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
     const convertedRequestParams = {
       ...requestParams,
       manufacturingMarket: requestParams.manufacturingMarket?.join(","),
-      productionModels: requestParams.productionModels?.join(","),
+      productionModels: _.isArray(requestParams.productionModels)
+        ? requestParams.productionModels?.join(",")
+        : requestParams.productionModels,
       manufacturingSector: requestParams.manufacturingSector?.join(","),
       keyProducts: requestParams.keyProducts?.join(","),
       fileDtoList,
     };
 
-    const response = isUpdate
-      ? await updateCompanyAPI(convertedRequestParams)
-      : await createCompanyAPI(convertedRequestParams);
-    if (response.data?.code === 200) {
-      navigate("/news");
+    try {
+      const { data } = isUpdate
+        ? await updateCompanyAPI(convertedRequestParams)
+        : await createCompanyAPI(convertedRequestParams);
+      console.log("data: ", data);
+
+      navigate(ROUTE_PATH.COMPANY_LIST);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Get the current location from the form
   const currentLocation = Form.useWatch("location", form);
 
+  const handleApprove = async () => {
+    try {
+      if (companyId) {
+        await approveCompanyAPI([companyId]);
+      }
+
+      message.success("Phê duyệt thành công");
+      navigate(ROUTE_PATH.COMPANY_LIST);
+    } catch (error) {
+      console.error("Error approving companies:", error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      if (companyId) {
+        await rejectCompanyAPI([companyId]);
+      }
+
+      message.success("Từ chối thành công");
+      navigate(ROUTE_PATH.COMPANY_LIST);
+    } catch (error) {
+      console.error("Error rejecting companies:", error);
+    }
+  };
+
   useEffect(() => {
-    if (isUpdate && companyId) {
+    if ((isUpdate || isApprove) && companyId) {
       fetchDetailData(companyId);
     }
   }, [companyId]);
@@ -186,19 +235,51 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
         onFinish={handleSubmit}
       >
         <div className="flex items-center justify-between  ">
-          <Title level={3}>Tạo mới thông tin doanh nghiệp</Title>
+          <Title level={3}>
+            <span>
+              {isApprove ? "Chi tiết" : "Tạo mới"} thông tin doanh nghiệp
+            </span>
+          </Title>
           <div>
-            <Button type="primary" icon={<PlusOutlined />} htmlType="submit">
-              Lưu
-            </Button>
-            <Button className="ml-2" danger icon={<DeleteOutlined />}>
-              Hủy bỏ
-            </Button>
+            {isApprove && (
+              <>
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  onClick={handleApprove}
+                  disabled={isLoading}
+                >
+                  Phê duyệt
+                </Button>
+                <Button className="ml-2" danger icon={<CloseOutlined />}>
+                  Từ chối
+                </Button>
+              </>
+            )}
+
+            {!isApprove && (
+              <>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  htmlType="submit"
+                  disabled={isLoading}
+                >
+                  Lưu
+                </Button>
+                <Button className="ml-2" danger icon={<DeleteOutlined />}>
+                  Hủy bỏ
+                </Button>
+              </>
+            )}
           </div>
         </div>
-        <p className="text-gray-700 text-[18px] font-bold my-5">
-          Thông tin doanh nghiệp
-        </p>
+        <div className="flex items-center gap-2  my-4">
+          <p className="text-gray-700 text-[18px] font-bold ">
+            Thông tin doanh nghiệp{" "}
+          </p>
+          {resultData?.status && <StatusBadge status={resultData.status} />}
+        </div>
         <Row gutter={[26, 2]}>
           {/* Left Column */}
 
@@ -284,6 +365,7 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
                               label="Tên chi nhánh"
                               name={[name, "branchName"]}
                               required
+                              disabled={isApprove}
                             />
                           </Col>
                           <Col span={12}>
@@ -292,6 +374,7 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
                               name={[name, "address"]}
                               required
                               {...restField}
+                              disabled={isApprove}
                             >
                               <div className="flex items-center gap-2">
                                 {branchLocation.length > 0 && (
@@ -407,22 +490,24 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
           </Col>
 
           {/* Modal for map */}
-          <Modal
-            title="Chọn vị trí trên bản đồ"
-            open={isOpenMap}
-            onCancel={() => setIsOpenMap(false)}
-            footer={null}
-            centered={true}
-            width={1000}
-            style={{ zIndex: 1000 }}
-            wrapClassName="map-modal"
-          >
-            <MapClickable
-              visible={isOpenMap}
-              name={nameLocation}
-              index={selectedBranchIndex.current}
-            />
-          </Modal>
+          {isOpenMap && (
+            <Modal
+              title="Chọn vị trí trên bản đồ"
+              open={isOpenMap}
+              onCancel={() => setIsOpenMap(false)}
+              footer={null}
+              centered={true}
+              width={1000}
+              style={{ zIndex: 1000 }}
+              wrapClassName="map-modal"
+            >
+              <MapClickable
+                visible={isOpenMap}
+                name={nameLocation}
+                index={selectedBranchIndex.current}
+              />
+            </Modal>
+          )}
 
           {/* ============================== */}
           <Col span={24}>
@@ -440,13 +525,14 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
             />
           </Col>
           <Col span={12}>
-            <SelectCommon
+            {/* <SelectCommon
               label="Mô hình sản xuất"
               options={majorOptions}
               name="productionModels"
               required
               isMultiple
-            />
+            /> */}
+            <InputCommon label="Mô hình sản xuất" name="productionModels" />
           </Col>
           <Col span={12}>
             <SelectCommon
@@ -537,6 +623,20 @@ function RegisterCompany({ isUpdate = false }: RegisterCompanyProps) {
             </Col>
           )}
         </Row>
+        {/* This is modal when click reject button */}
+        {isOpenModal && (
+          <Modal
+            title="Xác nhận từ chối"
+            open={isOpenModal}
+            onOk={handleReject}
+            onCancel={() => setIsOpenModal(false)}
+          >
+            {/* textarea for rejection reason */}
+            <Form.Item label="Lý do từ chối" name="reason">
+              <Input.TextArea rows={4} placeholder="Nhập lý do từ chối" />
+            </Form.Item>
+          </Modal>
+        )}
       </Form>
     </div>
   );

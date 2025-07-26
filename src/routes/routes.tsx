@@ -63,6 +63,7 @@ export const ROUTE_PATH = {
   COMPANY_LIST: "/company/list",
   COMPANY_DETAIL: "/company/:id",
   COMPANY_DETAIL_UPDATE: "/company/:id/update",
+  COMPANY_DETAIL_APPROVE: "/company/:id/approve",
   REGISTER_COMPANY: "/register-company",
 };
 
@@ -113,7 +114,7 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         element: <CompanyPage />,
         icon: <FaDatabase />,
         requireAuth: true,
-        roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
+        roles: [USER_ROLE.ADMIN],
       },
       {
         name: "registerCompany",
@@ -132,8 +133,15 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
       },
       {
         name: "companyDetailUpdate",
-        url: `${ROUTE_PATH.COMPANY_DETAIL_UPDATE}`,
+        url: ROUTE_PATH.COMPANY_DETAIL_UPDATE,
         element: <RegisterCompanyPage isUpdate />,
+        hiddenInMenu: true, // Don't show in navigation menu
+        requireAuth: true,
+      },
+      {
+        name: "companyDetailApprove",
+        url: ROUTE_PATH.COMPANY_DETAIL_APPROVE,
+        element: <RegisterCompanyPage isApprove />,
         hiddenInMenu: true, // Don't show in navigation menu
         requireAuth: true,
       },

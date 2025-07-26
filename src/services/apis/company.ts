@@ -65,11 +65,11 @@ const approveCompanyAPI = async (companyDraftIds: string[]) => {
   });
 };
 
-const rejectCompanyAPI = async (companyDraftIds: string[]) => {
+const rejectCompanyAPI = async (companyDraftIds: string[], reason = "") => {
   return await axiosInstance.post(`/company/approval`, {
     companyDraftIds,
     type: "reject",
-    reason: "Reject",
+    reason,
   });
 };
 

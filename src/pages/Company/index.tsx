@@ -26,6 +26,7 @@ import { getListProvinceAPI } from "@/services/apis/common";
 import {
   DEFAULT_PAGINATION,
   WORKING_STATUS_OPTIONS,
+  WORKING_STATUS_TEXT,
 } from "@/constants/variables";
 import { PlusOutlined } from "@ant-design/icons";
 import { useAuth } from "@/contexts/AuthContext";
@@ -164,7 +165,14 @@ function CompanyPage() {
             </Button>
             <Button
               type="link"
-              onClick={() => navigate(`/company/${companyDraftId}/update`)}
+              onClick={() => {
+                const url =
+                  record.status === WORKING_STATUS_TEXT.PENDING_APPROVAL
+                    ? `/company/${companyDraftId}/approve`
+                    : `/company/${companyDraftId}/update`;
+
+                navigate(url);
+              }}
               style={{ color: "grey", padding: 0 }} // Warning color
             >
               <div className="flex flex-col items-center">
