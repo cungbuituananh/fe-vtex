@@ -54,7 +54,17 @@ function RegisterCompany({
     setIsLoading(true);
     const { data } = await getCompanyDetailAPI(id);
     if (data) {
-      form.setFieldsValue(data);
+      const headOffie = data.companyBranchList.find(
+        (item: any) => item.headOffice === true)
+
+      form.setFieldsValue({
+        ...data,
+        manufacturingMarket: data.manufacturingMarket?.map((item: any) => item.code),
+        productionModels: data.productionModels?.map((item: any) => item.code),
+        manufacturingSector: data.manufacturingSector?.map((item: any) => item.code),
+        keyProducts: data.keyProducts?.map((item: any) => item.code),
+        location: [Number(headOffie.latitude), Number(headOffie.longitude)],
+      });
       setResultData(data);
       setIsLoading(false);
       // Set the location field to the first branch's location if available
@@ -72,7 +82,7 @@ function RegisterCompany({
   const { options: userOptions } = useGetOptions({
     api: () => getListUserAPI(), // Fetch major categories
     queryKey: "users",
-    labelValueType: ["email", "id"],
+    labelValueType: ["email", "email"],
   });
 
   const { options: modelOptions } = useGetOptions({
@@ -81,17 +91,18 @@ function RegisterCompany({
     labelValueType: ["name", "code"],
   });
 
-  // const { options: majorOptions } = useGetOptions({
-  //   api: () => getListGroupAPI("MAJOR"), // Fetch major categories
-  //   queryKey: "getMajorOptions",
-  //   labelValueType: ["name", "code"],
-  // });
+  const { options: majorOptions } = useGetOptions({
+    api: () => getListGroupAPI("MAJOR"), // Fetch major categories
+    queryKey: "getMajorOptions",
+    labelValueType: ["name", "code"],
+  });
 
   const { options: marketOptions } = useGetOptions({
     api: () => getListGroupAPI("MARKET"), // Fetch major categories
     queryKey: "getMarketOptions",
     labelValueType: ["name", "code"],
   });
+
   const { options: productKeyOptions } = useGetOptions({
     api: () => getListGroupAPI("P_KEY"), // Fetch major categories
     queryKey: "getProductKeyOptions",
@@ -122,11 +133,11 @@ function RegisterCompany({
     if (values.companyBranchDtoList?.length > 0) {
       const listBranch = _.cloneDeep(values.companyBranchDtoList).map(
         (item: any) => {
-          const { branchName, location, adress } = item;
+          const { branchName, location, address } = item;
           const [latitude, longitude] = location || [];
           return {
             branchName,
-            adress,
+            address,
             longitude,
             latitude,
             headOffice: false,
@@ -176,10 +187,14 @@ function RegisterCompany({
 
     try {
       const { data } = isUpdate
-        ? await updateCompanyAPI(convertedRequestParams)
+        ? await updateCompanyAPI({ companyDraftId: companyId, ...convertedRequestParams })
         : await createCompanyAPI(convertedRequestParams);
-      console.log("data: ", data);
 
+      if (data) {
+        message.success(
+          isUpdate ? "Cập nhật doanh nghiệp thành công" : "Tạo mới doanh nghiệp thành công"
+        );
+      }
       navigate(ROUTE_PATH.COMPANY_LIST);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -267,7 +282,7 @@ function RegisterCompany({
                 >
                   Lưu
                 </Button>
-                <Button className="ml-2" danger icon={<DeleteOutlined />}>
+                <Button className="ml-2" danger icon={<DeleteOutlined />} onClick={() => navigate(ROUTE_PATH.COMPANY_LIST)}>
                   Hủy bỏ
                 </Button>
               </>
@@ -518,21 +533,20 @@ function RegisterCompany({
           <Col span={12}>
             <SelectCommon
               label="Lĩnh vực sản xuất"
-              options={modelOptions}
+              options={majorOptions}
               name="manufacturingSector"
               required
               isMultiple
             />
           </Col>
           <Col span={12}>
-            {/* <SelectCommon
+            <SelectCommon
               label="Mô hình sản xuất"
-              options={majorOptions}
+              options={modelOptions}
               name="productionModels"
               required
               isMultiple
-            /> */}
-            <InputCommon label="Mô hình sản xuất" name="productionModels" />
+            />
           </Col>
           <Col span={12}>
             <SelectCommon
@@ -609,8 +623,8 @@ function RegisterCompany({
               labelCol={{ span: 6 }}
               colon={false}
             >
-              <Upload>
-                <Button type="primary" icon={<UploadOutlined />}>
+              <Upload disabled>
+                <Button type="primary" icon={<UploadOutlined />} disabled>
                   Tải lên hồ sơ
                 </Button>
               </Upload>
@@ -619,7 +633,7 @@ function RegisterCompany({
 
           {user?.roles?.includes(ROLE_USER.ADMIN) && (
             <Col span={12}>
-              <SelectCommon options={userOptions} label="User" name="user" />
+              <SelectCommon options={userOptions} label="Email đăng kí" name="emailOwner" />
             </Col>
           )}
         </Row>

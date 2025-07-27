@@ -26,6 +26,8 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
+  isAdmin: boolean;
+  isUser: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -93,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     localStorage.removeItem("isLogin");
     localStorage.removeItem("userData");
+    localStorage.removeItem("accessToken");
     navigate("/login");
   };
 
@@ -101,6 +104,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return roles.some((role) => user.roles.includes(role));
   };
 
+  const isAdmin = user?.roles.includes("ADMIN") || false;
+  const isUser = user?.roles.includes("USER") || false;
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -108,6 +114,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     hasRole,
+    isAdmin,
+    isUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

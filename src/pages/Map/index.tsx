@@ -19,26 +19,34 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [form] = Form.useForm();
 
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  // const handleMapboxSearch = (result: any) => {
-  //   setSearchResults((prev) => [...prev, result]);
-  // };
-
-  const handleLocalSearch = async (values: any, page = 0, size = 10) => {
+  const handleLocalSearch = async (values: any, page = 0, size = 10, isLoadmore = false) => {
     const {
-      data: { content },
+      data
     } = await getListCompanyPublicAPI({ ...values, page, size });
 
-    if (content?.length > 0) {
-      const temp = content.map((item: any) => ({
+    if (data.totalElements) {
+      setTotalElements(data.totalElements);
+    }
+
+    if (data?.content?.length > 0) {
+      const temp = data.content.map((item: any) => ({
         ...item,
         coordinates: [Number(item.latitude), Number(item.longitude)],
       }));
-      setFilteredData((prev) => [...prev, ...temp]);
+
+      if (isLoadmore) {
+        // If it's a load more action, append to existing data
+        setFilteredData((prev) => [...prev, ...temp]);
+      } else {
+        // If it's a new search, replace existing data
+        setFilteredData(temp);
+      }
 
       // Add markers for filtered results
       if (mapRef.current) {
@@ -56,45 +64,45 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   };
 
   // Handle map click to add a marker
-  const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
-    const { lng, lat } = e.lngLat;
+  // const handleMapClick = (e: mapboxgl.MapMouseEvent) => {
+  //   const { lng, lat } = e.lngLat;
 
-    // Remove existing selected marker if any
-    if (selectedMarkerRef.current) {
-      selectedMarkerRef.current.remove();
-    }
+  //   // Remove existing selected marker if any
+  //   if (selectedMarkerRef.current) {
+  //     selectedMarkerRef.current.remove();
+  //   }
 
-    // Create and add new marker at clicked position
-    const newMarker = new mapboxgl.Marker({
-      color: "#FF0000", // Red color for the selected marker
-      draggable: true, // Make it draggable if needed
-    })
-      .setLngLat([lng, lat])
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 }).setHTML(`
-            <div>
-              <h4>Selected Location</h4>
-              <p>Lat: ${lat.toFixed(6)}</p>
-              <p>Lng: ${lng.toFixed(6)}</p>
-            </div>
-          `)
-      )
-      .addTo(mapRef.current!);
+  //   // Create and add new marker at clicked position
+  //   const newMarker = new mapboxgl.Marker({
+  //     color: "#FF0000", // Red color for the selected marker
+  //     draggable: true, // Make it draggable if needed
+  //   })
+  //     .setLngLat([lng, lat])
+  //     .setPopup(
+  //       new mapboxgl.Popup({ offset: 25 }).setHTML(`
+  //           <div>
+  //             <h4>Selected Location</h4>
+  //             <p>Lat: ${lat.toFixed(6)}</p>
+  //             <p>Lng: ${lng.toFixed(6)}</p>
+  //           </div>
+  //         `)
+  //     )
+  //     .addTo(mapRef.current!);
 
-    // Store the reference to the selected marker
-    selectedMarkerRef.current = newMarker;
+  //   // Store the reference to the selected marker
+  //   selectedMarkerRef.current = newMarker;
 
-    // Optional: Add event listener for when marker is dragged
-    newMarker.on("dragend", () => {
-      const lngLat = newMarker.getLngLat();
-      console.log("Marker dragged to:", { lng: lngLat.lng, lat: lngLat.lat });
-    });
-  };
+  //   // Optional: Add event listener for when marker is dragged
+  //   newMarker.on("dragend", () => {
+  //     const lngLat = newMarker.getLngLat();
+  //     console.log("Marker dragged to:", { lng: lngLat.lng, lat: lngLat.lat });
+  //   });
+  // };
 
   // Function to add multiple markers
   const addMarkersToMap = (map: mapboxgl.Map, locations: any[]) => {
     // Clear existing markers first
-    // clearAllMarkers();
+    clearAllMarkers();
 
     const newMarkers: mapboxgl.Marker[] = [];
 
@@ -107,7 +115,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
       newMarkers.push(marker);
     });
 
-    // setMarkers(newMarkers);
+    setMarkers(newMarkers);
   };
 
   // Function to clear all markers
@@ -166,7 +174,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
       "bottom-left"
     );
 
-    map.on("click", (e) => handleMapClick(e));
+    // map.on("click", (e) => handleMapClick(e));
     // Add the geocoder
     // const geocoder = new MapboxGeocoder({
     //   accessToken: mapboxgl.accessToken as string,
@@ -233,7 +241,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
           form={form}
           layout="vertical"
           onFinish={handleLocalSearch}
-          // className="space-y-3"
+        // className="space-y-3"
         >
           {isSelectScreen ? (
             <div className="relative h-[500px] w-[1000px]"></div>
@@ -252,6 +260,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
                   });
                 }
               }}
+              totalElements={totalElements}
               loadMore={handleLocalSearch}
             />
           )}

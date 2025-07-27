@@ -8,10 +8,11 @@ import logo_company from "@/assets/imgs/company/logo_company.png";
 interface SearchResultProps {
   results: any[];
   onResultClick: (location: any) => void;
-  loadMore: (values: any, page?: number, size?: number) => void;
+  loadMore: (values: any, page?: number, size?: number, isLoadmore?: boolean) => void;
+  totalElements?: number;
 }
 
-function SearchResult({ results, onResultClick, loadMore }: SearchResultProps) {
+function SearchResult({ results, onResultClick, loadMore, totalElements }: SearchResultProps) {
   const [show, setShow] = useState(false);
 
   const [pagination, setPagination] = useState({ page: 0, size: 10 });
@@ -33,7 +34,7 @@ function SearchResult({ results, onResultClick, loadMore }: SearchResultProps) {
     setPagination({ page: nextPage, size: pagination.size });
 
     // Call the loadMore function passed from props
-    await loadMore(values, nextPage, pagination.size);
+    await loadMore(values, nextPage, pagination.size, true);
   };
 
   return (
@@ -187,7 +188,7 @@ function SearchResult({ results, onResultClick, loadMore }: SearchResultProps) {
           </div>
         ))}
         {/* Handle loadmore button here */}
-        {results.length > 1 && (
+        {(totalElements && results.length < totalElements) && (
           <div className="text-center p-2">
             <Button
               type="primary"

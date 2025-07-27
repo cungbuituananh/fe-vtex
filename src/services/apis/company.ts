@@ -77,6 +77,10 @@ const getViewDetailApi = async (id: string) => {
   return await axiosInstance.get(`/public/detail/${id}`);
 };
 
+const getListUserCompanyAPI = async (params: any) => {
+  return await axiosInstance.get(`/company/list-user`, { params });
+};
+
 export {
   createCompanyAPI,
   updateCompanyAPI,
@@ -86,4 +90,5 @@ export {
   getListCompanyAPI,
   getCompanyDetailAPI,
   getViewDetailApi,
+  getListUserCompanyAPI,
 };

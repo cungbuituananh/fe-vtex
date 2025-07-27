@@ -1,9 +1,5 @@
 import axiosInstance from "../axiosConfig";
 
-const getListMajorAPI = async () => {
-  return await axiosInstance.get(`category/list?groupCategory=MARJOR`);
-};
-
 const getListGroupAPI = async (type: string) => {
   return await axiosInstance.get(`category/list?groupCategory=${type}`);
 };
@@ -21,7 +17,6 @@ const getListUserAPI = async () => {
 };
 
 export {
-  getListMajorAPI,
   getListGroupAPI,
   getListProvinceAPI,
   getListCompanyPublicAPI,

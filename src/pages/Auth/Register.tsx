@@ -1,15 +1,31 @@
 import InputCommon from "@/components/FormElement/InputCommon";
-import { Button, Form } from "antd";
+import { Button, Form, message } from "antd";
 import Title from "antd/es/typography/Title";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/routes/routes";
 import PasswordInput from "@/components/FormElement/PasswordInput";
 import { registerAPI } from "@/services/apis/auth";
+import { useState } from "react";
 
 function RegisterComponent() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const onFinish = async (values: any) => {
-    const data = await registerAPI(values);
-    console.log("data: ", data);
+    setIsLoading(true);
+    try {
+      const data = await registerAPI(values);
+      if (data) {
+        message.success("Đăng ký thành công!");
+        navigate(ROUTE_PATH.LOGIN)
+      }
+
+    } catch (error) {
+      console.error("Error during registration:", error);
+      // Handle error appropriately, e.g., show a notification or message to the user
+      return;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,9 +58,9 @@ function RegisterComponent() {
           />
 
           <PasswordInput
-            label="Mật khẩu mới"
+            label="Mật khẩu"
             name="password"
-            placeholder="Nhập mật khẩu mới"
+            placeholder="Nhập mật khẩu"
             rules={[
               { required: true, message: "Bạn phải nhập mật khẩu" },
               { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
@@ -82,6 +98,7 @@ function RegisterComponent() {
                 height: "35px",
                 width: "180px",
               }}
+              loading={isLoading}
             >
               Đăng ký
             </Button>

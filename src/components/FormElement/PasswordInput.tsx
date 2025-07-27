@@ -1,4 +1,3 @@
-import { HEIGHT_INPUT } from "@/constants/color";
 import { Form, Input, Progress } from "antd";
 import { useState } from "react";
 
@@ -55,7 +54,7 @@ const PasswordInput = ({
         <Input.Password
           placeholder={placeholder}
           style={{
-            height: `${HEIGHT_INPUT}`,
+            // height: `${HEIGHT_INPUT}`,
             borderRadius: "8px",
           }}
           onChange={(e) => setPassword(e.target.value)}

@@ -17,12 +17,13 @@ function useGetOptions({
     queryKey,
     queryFn: api,
   });
+  const [label, value] = labelValueType;
 
   useEffect(() => {
     if (data?.data) {
       const formattedOptions = data.data.map((item: any) => ({
-        label: item[labelValueType[0]],
-        value: item[labelValueType[1]],
+        label: item[label],
+        value: item[value],
       }));
       setOptions(formattedOptions);
     }

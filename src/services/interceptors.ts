@@ -66,8 +66,9 @@ export const setupInterceptorsResponse = (axiosInstance: AxiosInstance) => {
           }
         }
       }
-      message.error(error?.response?.data?.message || "Request failed"); // Show error message
+      // message.error(error?.response?.data?.message || "Request failed"); // Show error message
       // Handle response errors
+      message.error("Đã có lỗi xảy ra");
       return Promise.reject(error);
     }
   );
