@@ -33,6 +33,8 @@ function InputCommon(props: InputCommonProps) {
     ...restProps // Extract other props
   } = props;
 
+  const form = Form.useFormInstance();
+
   // Build rules based on type and required
   const buildRules = () => {
     const baseRules = [];
@@ -72,12 +74,19 @@ function InputCommon(props: InputCommonProps) {
     textOverflow: "ellipsis",
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    form.setFieldsValue({
+      [name]: inputValue.trim(), // Trim whitespace on blur
+    });
+  };
+
   // If no children, render Input directly without wrapper div
   const renderInput = () => {
     if (type === "password") {
-      return <Input.Password {...inputProps} />;
+      return <Input.Password {...inputProps} onBlur={handleBlur} />;
     }
-    return <Input type={type} {...inputProps} />;
+    return <Input type={type} {...inputProps} onBlur={handleBlur} />;
   };
 
   return (

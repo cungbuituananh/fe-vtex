@@ -1,5 +1,5 @@
 import { STYLE_NAV_LINK, STYLE_SUB_TITLE_COMMON } from "@/constants/color";
-import { Button, Form } from "antd";
+import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { FiArrowLeftCircle, FiArrowRightCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,16 +8,21 @@ import logo_company from "@/assets/imgs/company/logo_company.png";
 interface SearchResultProps {
   results: any[];
   onResultClick: (location: any) => void;
-  loadMore: (values: any, page?: number, size?: number, isLoadmore?: boolean) => void;
+  loadMore: () => void;
   totalElements?: number;
 }
 
-function SearchResult({ results, onResultClick, loadMore, totalElements }: SearchResultProps) {
+function SearchResult({
+  results,
+  onResultClick,
+  loadMore,
+  totalElements,
+}: SearchResultProps) {
   const [show, setShow] = useState(false);
 
-  const [pagination, setPagination] = useState({ page: 0, size: 10 });
+  // const [pagination, setPagination] = useState({ page: 0, size: 10 });
 
-  const form = Form.useFormInstance();
+  // const form = Form.useFormInstance();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,14 +33,14 @@ function SearchResult({ results, onResultClick, loadMore, totalElements }: Searc
     }
   }, [results]);
 
-  const handleLoadMore = async () => {
-    const values = form.getFieldsValue();
-    const nextPage = pagination.page + 1;
-    setPagination({ page: nextPage, size: pagination.size });
+  // const handleLoadMore = async () => {
+  //   const values = form.getFieldsValue();
+  //   const nextPage = pagination.page + 1;
+  //   setPagination({ page: nextPage, size: pagination.size });
 
-    // Call the loadMore function passed from props
-    await loadMore(values, nextPage, pagination.size, true);
-  };
+  //   // Call the loadMore function passed from props
+  //   await loadMore(values, nextPage, pagination.size, true);
+  // };
 
   return (
     <div
@@ -188,11 +193,11 @@ function SearchResult({ results, onResultClick, loadMore, totalElements }: Searc
           </div>
         ))}
         {/* Handle loadmore button here */}
-        {(totalElements && results.length < totalElements) && (
+        {totalElements && results.length < totalElements && (
           <div className="text-center p-2">
             <Button
               type="primary"
-              onClick={handleLoadMore}
+              onClick={loadMore}
               style={{
                 width: "100%",
                 borderRadius: "9999px",

@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
+import UserCompany from "@/pages/Company/RegisterComany/UserCompany";
 
 const MapPage = lazy(() => import("../pages/Map"));
 const ContactPage = lazy(() => import("../pages/Contact"));
@@ -65,6 +66,7 @@ export const ROUTE_PATH = {
   COMPANY_DETAIL_UPDATE: "/company/:id/update",
   COMPANY_DETAIL_APPROVE: "/company/:id/approve",
   REGISTER_COMPANY: "/register-company",
+  USER_COMPANY: "/user-company",
 };
 
 export const USER_ROLE = {
@@ -123,6 +125,14 @@ export const ROUTE_CONFIGS: RouteConfig[] = [
         icon: <FaDatabase />,
         requireAuth: true,
         roles: [USER_ROLE.ADMIN, USER_ROLE.USER],
+      },
+      {
+        name: "companyUserDetail",
+        url: ROUTE_PATH.USER_COMPANY,
+        element: <UserCompany />,
+        icon: <FaDatabase />,
+        requireAuth: true,
+        roles: [USER_ROLE.USER],
       },
       {
         name: "companyDetail",

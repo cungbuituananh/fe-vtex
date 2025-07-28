@@ -22,13 +22,23 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
   const [totalElements, setTotalElements] = useState(0);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [form] = Form.useForm();
+  const [page, setPage] = useState(0);
 
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-  const handleLocalSearch = async (values: any, page = 0, size = 10, isLoadmore = false) => {
-    const {
-      data
-    } = await getListCompanyPublicAPI({ ...values, page, size });
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    handleLocalSearch(form.getFieldsValue(), nextPage, 10, true);
+  };
+
+  const handleLocalSearch = async (
+    values: any,
+    page = 0,
+    size = 10,
+    isLoadmore = false
+  ) => {
+    const { data } = await getListCompanyPublicAPI({ ...values, page, size });
 
     if (data.totalElements) {
       setTotalElements(data.totalElements);
@@ -57,7 +67,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
           temp.forEach((location: any) => {
             bounds.extend(location.coordinates as [number, number]);
           });
-          mapRef.current.fitBounds(bounds, { padding: 50 });
+          // mapRef.current.fitBounds(bounds, { padding: 50 });
         }
       }
     }
@@ -241,7 +251,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
           form={form}
           layout="vertical"
           onFinish={handleLocalSearch}
-        // className="space-y-3"
+          // className="space-y-3"
         >
           {isSelectScreen ? (
             <div className="relative h-[500px] w-[1000px]"></div>
@@ -261,7 +271,7 @@ function MapPage({ isSelectScreen = false }: MapPageProps) {
                 }
               }}
               totalElements={totalElements}
-              loadMore={handleLocalSearch}
+              loadMore={handleLoadMore}
             />
           )}
         </Form>

@@ -58,6 +58,10 @@ const getCompanyDetailAPI = async (id: string) => {
   return await axiosInstance.get(`/company/detail/${id}`);
 };
 
+const getUserCompanyAPI = async () => {
+  return await axiosInstance.get(`/company/user/detail`);
+};
+
 const approveCompanyAPI = async (companyDraftIds: string[]) => {
   return await axiosInstance.post(`/company/approval`, {
     companyDraftIds,
@@ -91,4 +95,5 @@ export {
   getCompanyDetailAPI,
   getViewDetailApi,
   getListUserCompanyAPI,
+  getUserCompanyAPI,
 };

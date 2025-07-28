@@ -1,9 +1,8 @@
 import InputCommon from "@/components/FormElement/InputCommon";
 import { HEIGHT_ACTION_BUTTON, PRIMARY_COLOR } from "@/constants/color";
-import { Button, Col, Form, message, Rate, Row, Table } from "antd";
+import { Button, Col, Form, message, Modal, Rate, Row, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import {
-  GoEye,
   GoSearch,
   GoPencil,
   GoSync,
@@ -38,10 +37,12 @@ function CompanyPage() {
 
   const { user } = useAuth();
   const [dataCompany, setDataCompany] = useState<any[]>([]);
+  const [dataWaitingApproval, setDataWaitingApproval] = useState<any[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
   console.log("pagination: ", pagination);
   const [form] = Form.useForm();
+  const [modal, contextHolder] = Modal.useModal();
 
   const fetchData = async (params = {}) => {
     const {
@@ -54,6 +55,12 @@ function CompanyPage() {
         ...item,
         key: item.companyDraftId, // or item.id if you have an id field
       }));
+      const dataWaitingApproval = dataWithKeys.filter(
+        (item: any) =>
+          item.status === WORKING_STATUS_TEXT.PENDING_APPROVAL ||
+          item.status === WORKING_STATUS_TEXT.PENDING_UPDATE_APPROVAL
+      );
+      setDataWaitingApproval(dataWaitingApproval);
       setDataCompany(dataWithKeys);
     }
   };
@@ -72,8 +79,11 @@ function CompanyPage() {
 
   const handleDeleteCompany = async (taxCode: string) => {
     try {
-      await deleteCompanyAPI(taxCode);
-      fetchData();
+      const { data } = await deleteCompanyAPI(taxCode);
+      if (data) {
+        fetchData();
+        message.success("Xóa doanh nghiệp thành công");
+      }
       // setDataCompany((prevData) =>
       //   prevData.filter((company) => company.taxCode !== taxCode)
       // );
@@ -152,8 +162,8 @@ function CompanyPage() {
       render: (_: any, record: any) => {
         const { companyDraftId } = record;
         return (
-          <div className="flex gap-2 justify-center align-center">
-            <Button
+          <div className="flex gap-4 justify-center align-center">
+            {/* <Button
               type="link"
               // onClick={() => navigate(`/company/${companyDraftId}`)}
               style={{ color: "grey", padding: 0 }} // Primary color
@@ -162,7 +172,7 @@ function CompanyPage() {
                 <GoEye className="text-lg font-bold" />
                 <span className="font-medium">Xem</span>
               </div>
-            </Button>
+            </Button> */}
             <Button
               type="link"
               onClick={() => {
@@ -183,7 +193,16 @@ function CompanyPage() {
             {user?.roles?.includes("ADMIN") && (
               <Button
                 type="link"
-                onClick={() => handleDeleteCompany(record.companyDraftId)}
+                // onClick={() => handleDeleteCompany(record.companyDraftId)}
+                onClick={() => {
+                  modal.confirm({
+                    title: "Xác nhận xóa thông tin doanh nghiệp",
+                    content: "Bạn có chắc chắn muốn xóa doanh nghiệp này?",
+                    onOk: () => handleDeleteCompany(record.companyDraftId),
+                    cancelText: "Hủy",
+                    okText: "Xóa",
+                  });
+                }}
                 style={{ color: "grey", padding: 0 }} // Danger color
               >
                 <div className="flex flex-col items-center">
@@ -199,7 +218,10 @@ function CompanyPage() {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+    const filteredKeys = newSelectedRowKeys.filter((key) =>
+      dataWaitingApproval.some((item) => item.companyDraftId === key)
+    );
+    setSelectedRowKeys(filteredKeys);
   };
 
   const rowSelection: TableRowSelection<any> = {
@@ -323,19 +345,22 @@ function CompanyPage() {
             </Form.Item>
           </Col>
         </Row>
+        <Table
+          rowSelection={
+            user?.roles?.includes("ADMIN") ? rowSelection : undefined
+          }
+          className="my-custom-table"
+          dataSource={dataCompany}
+          columns={columns}
+          onChange={(tablePagination) => {
+            setPagination({
+              page: tablePagination.current ? tablePagination.current - 1 : 0,
+              pageSize: tablePagination.pageSize || DEFAULT_PAGINATION.pageSize,
+            });
+          }}
+        />
+        {contextHolder}
       </Form>
-      <Table
-        rowSelection={user?.roles?.includes("ADMIN") ? rowSelection : undefined}
-        className="my-custom-table"
-        dataSource={dataCompany}
-        columns={columns}
-        onChange={(tablePagination) => {
-          setPagination({
-            page: tablePagination.current ? tablePagination.current - 1 : 0,
-            pageSize: tablePagination.pageSize || DEFAULT_PAGINATION.pageSize,
-          });
-        }}
-      />
     </div>
   );
 }
