@@ -19,6 +19,7 @@ function SearchResult({
   totalElements,
 }: SearchResultProps) {
   const [show, setShow] = useState(false);
+  const isLogin = Boolean(localStorage.getItem("isLogin"));
 
   // const [pagination, setPagination] = useState({ page: 0, size: 10 });
 
@@ -112,10 +113,16 @@ function SearchResult({
               <div className="flex justify-between gap-6">
                 <div className="col-8">
                   <Link
-                    to={`/company/${location.companyId}`}
+                    to={`/company/${
+                      isLogin ? location.companyDraftId : location.companyId
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/company/${location.companyId}`);
+                      navigate(
+                        `/company/${
+                          isLogin ? location.companyDraftId : location.companyId
+                        }`
+                      );
                     }}
                     className={`${STYLE_NAV_LINK} ${STYLE_SUB_TITLE_COMMON}`}
                   >

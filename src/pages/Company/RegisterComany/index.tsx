@@ -73,6 +73,10 @@ function RegisterCompany({
         ),
         keyProducts: data.keyProducts.map((item: any) => item.code),
         location: [Number(headOffie.latitude), Number(headOffie.longitude)],
+        companyCertification: data.companyCertification.map(
+          (item: any) => item.code
+        ),
+        address: headOffie.address,
       });
       setResultData(data);
       setIsLoading(false);
@@ -257,6 +261,9 @@ function RegisterCompany({
   useEffect(() => {
     if ((isUpdate || isApprove) && companyId) {
       fetchDetailData(companyId);
+    } else {
+      form.resetFields();
+      setResultData(null);
     }
   }, [companyId, isUpdate, isApprove]);
 

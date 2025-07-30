@@ -6,11 +6,11 @@ import { getDetailCompanyPublicAPI } from "@/services/apis/public";
 
 function CompanyDetailPage() {
   const [dataDetail, setDataDetail] = useState<any>(null);
+
   const { id } = useParams<{ id: string }>();
 
   const fetchData = async (id: string) => {
     const { data } = await getDetailCompanyPublicAPI(id);
-    console.log("data: ", data);
     setDataDetail(data);
   };
 
