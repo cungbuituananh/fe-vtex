@@ -425,12 +425,6 @@ function UserCompany() {
                               {...restField}
                             >
                               <div className="flex items-center gap-2">
-                                {/* {branchLocation.length > 0 && (
-                                  <span className="ml-2">
-                                    {branchLocation[0]?.toFixed(6)},{" "}
-                                    {branchLocation[1]?.toFixed(6)}
-                                  </span>
-                                )} */}
                                 <Button
                                   className=""
                                   type="primary"
@@ -640,9 +634,12 @@ function UserCompany() {
                   label="Quy mô sản xuất"
                   name="productionScale"
                   labelCol={12}
-                >
-                  m<sup>2</sup>
-                </InputCommon>
+                  suffix={
+                    <span>
+                      m<sup>2</sup>
+                    </span>
+                  }
+                />
               </Col>
               <Col span={12}>
                 <InputCommon
@@ -652,9 +649,8 @@ function UserCompany() {
                   labelAlign="right"
                   type="number"
                   disabled={!isEdit}
-                >
-                  Xưởng
-                </InputCommon>
+                  suffix={"xưởng"}
+                />
               </Col>
             </Row>
           </Col>

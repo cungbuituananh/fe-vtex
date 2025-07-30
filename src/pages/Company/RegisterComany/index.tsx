@@ -34,6 +34,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./register.css";
 import { ROUTE_PATH } from "@/routes/routes";
 import StatusBadge from "./StatusBadge";
+import EditorCommon from "@/components/FormElement/EditorCommon";
 
 interface RegisterCompanyProps {
   isUpdate?: boolean;
@@ -62,6 +63,26 @@ function RegisterCompany({
         (item: any) => item.headOffice === true
       );
 
+      // Transform logo data for Upload component
+      const logoFileList =
+        data.images?.logo?.map((base64: string, index: number) => ({
+          uid: `logo-${index}`,
+          name: `logo-${index}.jpg`,
+          status: "done",
+          url: `data:image/jpeg;base64,${base64}`,
+          thumbUrl: `data:image/jpeg;base64,${base64}`,
+        })) || [];
+
+      // Transform product images data for Upload component
+      const productImageFileList =
+        data.images?.image?.map((base64: string, index: number) => ({
+          uid: `product-${index}`,
+          name: `product-${index}.jpg`,
+          status: "done",
+          url: `data:image/jpeg;base64,${base64}`,
+          thumbUrl: `data:image/jpeg;base64,${base64}`,
+        })) || [];
+
       form.setFieldsValue({
         ...data,
         manufacturingMarket: data.manufacturingMarket.map(
@@ -77,6 +98,8 @@ function RegisterCompany({
           (item: any) => item.code
         ),
         address: headOffie.address,
+        logo: { fileList: logoFileList },
+        productImage: { fileList: productImageFileList },
       });
       setResultData(data);
       setIsLoading(false);
@@ -363,7 +386,7 @@ function RegisterCompany({
             <SelectCommon
               label="Tỉnh/Thành phố"
               options={provinceOptions}
-              name="province"
+              name="provinceCode"
               required
             />
           </Col>
@@ -371,23 +394,9 @@ function RegisterCompany({
             <Form.Item
               label=""
               name="location"
-              // help={
-              //   currentLocation
-              //     ? `Tọa độ: [${currentLocation[0]?.toFixed(
-              //       6
-              //     )}, ${currentLocation[1]?.toFixed(6)}]`
-              //     : "Chưa chọn vị trí"
-              // }
               labelCol={{ span: 6 }}
               colon={false}
             >
-              {/* {currentLocation && (
-                  <span className="mr-3 ">
-                    {currentLocation[0]?.toFixed(6)},{" "}
-                    {currentLocation[1]?.toFixed(6)}
-                  </span>
-                )} */}
-
               <Button
                 className=""
                 type="primary"
@@ -503,6 +512,7 @@ function RegisterCompany({
               label="Giới thiệu"
               name="introduction"
               labelCol={{ span: 6 }}
+              wrapperCol={{ span: 18 }}
               rules={[
                 {
                   required: true,
@@ -511,18 +521,47 @@ function RegisterCompany({
               ]}
               colon={false}
             >
-              <Input.TextArea
-                rows={4}
-                placeholder="Giới thiệu/mô tả về doanh nghiệp"
-              />
+              <EditorCommon name="introduction" />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <InputCommon label="Video đính kèm" name="urlVideo" />
           </Col>
+
           <Col span={12}>
             <Form.Item label="Ảnh logo" name="logo" labelCol={{ span: 6 }}>
+              {/* <Upload
+                listType="picture-card"
+                showUploadList={true}
+                maxCount={1}
+                fileList={form.getFieldValue("logo")?.fileList || []}
+                onChange={({ fileList }) => {
+                  form.setFieldValue("logo", { fileList });
+                }}
+                beforeUpload={async (file) => {
+                  const base64 = await getBase64(file);
+                  // Add thumbUrl for preview
+                  (file as any).thumbUrl = base64;
+                  return false;
+                }}
+                accept="image/*"
+                onRemove={(file) => {
+                  const currentFileList =
+                    form.getFieldValue("logo")?.fileList || [];
+                  const newFileList = currentFileList.filter(
+                    (item: any) => item.uid !== file.uid
+                  );
+                  form.setFieldValue("logo", { fileList: newFileList });
+                }}
+              >
+                {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
+                  <div className="flex flex-col items-center justify-center">
+                    <PlusOutlined />
+                    <div className="mt-2">Tải ảnh lên</div>
+                  </div>
+                )}
+              </Upload> */}
               <Upload
                 listType="picture-card"
                 showUploadList={true}
@@ -533,6 +572,7 @@ function RegisterCompany({
                   return false;
                 }}
                 accept="image/*"
+                fileList={form.getFieldValue("logo")?.fileList || []}
               >
                 {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
                   <div className="flex flex-col items-center justify-center">
@@ -546,8 +586,36 @@ function RegisterCompany({
 
           <Col span={12}>
             <Form.Item label="Ảnh" name="productImage" labelCol={{ span: 6 }}>
+              {/* <Upload
+                listType="picture-card"
+                showUploadList={true}
+                fileList={form.getFieldValue("productImage")?.fileList || []}
+                onChange={({ fileList }) => {
+                  form.setFieldValue("productImage", { fileList });
+                }}
+                beforeUpload={async (file) => {
+                  const base64 = await getBase64(file);
+                  (file as any).thumbUrl = base64;
+                  return false;
+                }}
+                onRemove={(file) => {
+                  const currentFileList =
+                    form.getFieldValue("productImage")?.fileList || [];
+                  const newFileList = currentFileList.filter(
+                    (item: any) => item.uid !== file.uid
+                  );
+                  form.setFieldValue("productImage", { fileList: newFileList });
+                }}
+                accept="image/*"
+              >
+                <div className="flex flex-col items-center justify-center">
+                  <PlusOutlined />
+                  <div className="mt-2">Tải ảnh lên</div>
+                </div>
+              </Upload> */}
               <Upload
                 listType="picture-card"
+                fileList={form.getFieldValue("productImage")?.fileList || []}
                 showUploadList={true}
                 beforeUpload={async (file) => {
                   await getBase64(file);
@@ -642,9 +710,12 @@ function RegisterCompany({
                   label="Quy mô sản xuất"
                   name="productionScale"
                   labelCol={12}
-                >
-                  m<sup>2</sup>
-                </InputCommon>
+                  suffix={
+                    <span>
+                      m<sup>2</sup>
+                    </span>
+                  }
+                />
               </Col>
               <Col span={12}>
                 <InputCommon
@@ -653,15 +724,14 @@ function RegisterCompany({
                   labelCol={8}
                   labelAlign="right"
                   type="number"
-                >
-                  Xưởng
-                </InputCommon>
+                  suffix={<span>xưởng</span>}
+                />
               </Col>
             </Row>
           </Col>
 
           <Col span={12}>
-            <InputCommon label="Thương hiệu xuất khẩu" name="workerCount" />
+            <InputCommon label="Thương hiệu xuất khẩu" name="exportBrand" />
           </Col>
 
           {/* ============================== */}

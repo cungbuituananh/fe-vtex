@@ -40,7 +40,6 @@ function CompanyPage() {
   const [dataWaitingApproval, setDataWaitingApproval] = useState<any[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION);
-  console.log("pagination: ", pagination);
   const [form] = Form.useForm();
   const [modal, contextHolder] = Modal.useModal();
 
@@ -264,7 +263,7 @@ function CompanyPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pagination]);
 
   return (
     <div className="p-6 overflow-y-auto">

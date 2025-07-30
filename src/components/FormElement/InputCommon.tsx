@@ -13,7 +13,8 @@ interface InputCommonProps {
   labelCol?: any; // Additional props for Form.Item
   fullWidth?: boolean; // Add fullWidth prop
   labelAlign?: "left" | "right"; // Add label alignment prop
-  children?: React.ReactNode; // Allow children to be passed in
+  children?: React.ReactNode; // Allow children for custom components
+  suffix?: React.ReactNode; // Add suffix prop for Input
 }
 
 function InputCommon(props: InputCommonProps) {
@@ -29,7 +30,8 @@ function InputCommon(props: InputCommonProps) {
     labelCol = 6,
     fullWidth = false,
     labelAlign = "left", // Default label alignment
-    children, // Allow children to be passed in
+    suffix,
+    children,
     ...restProps // Extract other props
   } = props;
 
@@ -86,7 +88,9 @@ function InputCommon(props: InputCommonProps) {
     if (type === "password") {
       return <Input.Password {...inputProps} onBlur={handleBlur} />;
     }
-    return <Input type={type} {...inputProps} onBlur={handleBlur} />;
+    return (
+      <Input type={type} {...inputProps} onBlur={handleBlur} suffix={suffix} />
+    );
   };
 
   return (

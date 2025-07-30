@@ -90,7 +90,14 @@ function CompanyDetailPage() {
               </p> */}
               {/* Left column content TEMP */}
               <p className={`${STYLE_TITLE_COMMON} my-2`}>Giới thiệu</p>
-              {dataDetail.introduction}
+              {/* {dataDetail.introduction} */}
+
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: dataDetail.introduction || "",
+                }}
+                className="html-content" // Optional: Add styling classes
+              />
 
               <p className={`${STYLE_TITLE_COMMON} my-2`}>Sản phẩm dịch vụ</p>
               <div className="grid grid-cols-2 gap-4">
