@@ -194,7 +194,7 @@ function RegisterCompany({
       const temp = values.logo.fileList.map((file: any) => {
         return {
           fileName: file.name,
-          fileType: file.type,
+          fileType: file.name.split(".").pop()?.toLowerCase() || "png",
           base64: file.thumbUrl,
           mediaTypeEnum: "LOGO",
         };
@@ -207,7 +207,7 @@ function RegisterCompany({
       const temp = values.productImage.fileList.map((file: any) => {
         return {
           fileName: file.name,
-          fileType: file.type,
+          fileType: file.name.split(".").pop()?.toLowerCase() || "png",
           base64: file.thumbUrl,
           mediaTypeEnum: "IMAGE",
         };
@@ -531,37 +531,6 @@ function RegisterCompany({
 
           <Col span={12}>
             <Form.Item label="Ảnh logo" name="logo" labelCol={{ span: 6 }}>
-              {/* <Upload
-                listType="picture-card"
-                showUploadList={true}
-                maxCount={1}
-                fileList={form.getFieldValue("logo")?.fileList || []}
-                onChange={({ fileList }) => {
-                  form.setFieldValue("logo", { fileList });
-                }}
-                beforeUpload={async (file) => {
-                  const base64 = await getBase64(file);
-                  // Add thumbUrl for preview
-                  (file as any).thumbUrl = base64;
-                  return false;
-                }}
-                accept="image/*"
-                onRemove={(file) => {
-                  const currentFileList =
-                    form.getFieldValue("logo")?.fileList || [];
-                  const newFileList = currentFileList.filter(
-                    (item: any) => item.uid !== file.uid
-                  );
-                  form.setFieldValue("logo", { fileList: newFileList });
-                }}
-              >
-                {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
-                  <div className="flex flex-col items-center justify-center">
-                    <PlusOutlined />
-                    <div className="mt-2">Tải ảnh lên</div>
-                  </div>
-                )}
-              </Upload> */}
               <Upload
                 listType="picture-card"
                 showUploadList={true}
@@ -572,50 +541,21 @@ function RegisterCompany({
                   return false;
                 }}
                 accept="image/*"
-                fileList={form.getFieldValue("logo")?.fileList || []}
+                fileList={Form.useWatch("logo", form)?.fileList || []}
               >
-                {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
-                  <div className="flex flex-col items-center justify-center">
-                    <PlusOutlined />
-                    <div className="mt-2">Tải ảnh lên</div>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center">
+                  <PlusOutlined />
+                  <div className="mt-2">Tải ảnh lên</div>
+                </div>
               </Upload>
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item label="Ảnh" name="productImage" labelCol={{ span: 6 }}>
-              {/* <Upload
-                listType="picture-card"
-                showUploadList={true}
-                fileList={form.getFieldValue("productImage")?.fileList || []}
-                onChange={({ fileList }) => {
-                  form.setFieldValue("productImage", { fileList });
-                }}
-                beforeUpload={async (file) => {
-                  const base64 = await getBase64(file);
-                  (file as any).thumbUrl = base64;
-                  return false;
-                }}
-                onRemove={(file) => {
-                  const currentFileList =
-                    form.getFieldValue("productImage")?.fileList || [];
-                  const newFileList = currentFileList.filter(
-                    (item: any) => item.uid !== file.uid
-                  );
-                  form.setFieldValue("productImage", { fileList: newFileList });
-                }}
-                accept="image/*"
-              >
-                <div className="flex flex-col items-center justify-center">
-                  <PlusOutlined />
-                  <div className="mt-2">Tải ảnh lên</div>
-                </div>
-              </Upload> */}
               <Upload
                 listType="picture-card"
-                fileList={form.getFieldValue("productImage")?.fileList || []}
+                fileList={Form.useWatch("productImage", form)?.fileList || []}
                 showUploadList={true}
                 beforeUpload={async (file) => {
                   await getBase64(file);
