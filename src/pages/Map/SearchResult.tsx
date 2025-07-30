@@ -112,10 +112,10 @@ function SearchResult({
               <div className="flex justify-between gap-6">
                 <div className="col-8">
                   <Link
-                    to={`/company/${location.companyDraftId}`}
+                    to={`/company/${location.companyId}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/company/${location.companyDraftId}`);
+                      navigate(`/company/${location.companyId}`);
                     }}
                     className={`${STYLE_NAV_LINK} ${STYLE_SUB_TITLE_COMMON}`}
                   >

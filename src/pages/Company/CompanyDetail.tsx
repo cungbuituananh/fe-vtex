@@ -2,44 +2,15 @@ import { STYLE_CONTAINER_BORDER, STYLE_TITLE_COMMON } from "@/constants/color";
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import prod1 from "@/assets/imgs/products/prod_1.png"; // Example image import, adjust as needed
-import prod2 from "@/assets/imgs/products/prod_2.png"; // Example image import, adjust as needed
-import prod3 from "@/assets/imgs/products/prod_3.png"; // Example image import, adjust as needed
-import { getViewDetailApi } from "@/services/apis/company";
-
-const LIST_TYPE = [
-  {
-    name: "Đồng phục công nhân",
-    image: prod1,
-  },
-  {
-    name: "Đồng phục học sinh",
-    image: prod2,
-  },
-  {
-    name: "Đồng phục nhà hàng",
-    image: prod3,
-  },
-  {
-    name: "Đồng phục khách sạn",
-    image: prod2,
-  },
-  {
-    name: "Đồng phục bảo hộ lao động",
-    image: prod3,
-  },
-  {
-    name: "Đồng phục văn phòng",
-    image: prod1,
-  },
-];
+import { getDetailCompanyPublicAPI } from "@/services/apis/public";
 
 function CompanyDetailPage() {
   const [dataDetail, setDataDetail] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
 
   const fetchData = async (id: string) => {
-    const { data } = await getViewDetailApi(id);
+    const { data } = await getDetailCompanyPublicAPI(id);
+    console.log("data: ", data);
     setDataDetail(data);
   };
 
@@ -57,9 +28,9 @@ function CompanyDetailPage() {
             <div className="p-3">
               <Row gutter={[16, 16]}>
                 <Col xs={24} md={4}>
-                  {dataDetail.hasLogo ? (
+                  {dataDetail.images?.logo?.length > 0 ? (
                     <img
-                      src={dataDetail.logoUrl}
+                      src={`data:image/jpeg;base64,${dataDetail.images.logo[0]}`}
                       alt={dataDetail.name}
                       className="w-[100px] h-auto rounded-lg shadow-sm object-cover"
                     />
@@ -119,47 +90,7 @@ function CompanyDetailPage() {
               </p> */}
               {/* Left column content TEMP */}
               <p className={`${STYLE_TITLE_COMMON} my-2`}>Giới thiệu</p>
-              <p>
-                Dony là công ty sản xuất may mặc theo đơn đặt hàng. Sản xuất
-                trọn gói từ nguyên liệu đến may in thêu hoàn thiện sản phẩm may
-                mặc.
-              </p>
-              <p className="mt-3">Dony hiện có 3 mảng kinh doanh chính:</p>
-              <ul className="list-disc pl-5">
-                <li>Sản xuất đồng phục cho các công ty, xí nghiệp, đội nhóm</li>
-                <li>
-                  Sản xuất thời trang cho các thương hiệu thời trang và các Shop
-                </li>
-                <li>Sản xuất hàng xuất khẩu EWX, FOB, CIF, DAT, DAP,..</li>
-              </ul>
-              <p className="mt-3">Với cả sản phẩm:</p>
-              <ul className="list-disc pl-5">
-                <li>
-                  Áo thun: Cổ tròn, cổ trụ, cổ điển, thời trang vải cá sấu, cá
-                  mập, cotton, polyester, lụa mè, cá sấu mè,..
-                </li>
-                <li>
-                  Áo sơ mi: Cổ điển, sơ mi kiểu vải Silk, Kate Việt Thắng, Kate
-                  Mỹ, ý, Kate thun,..
-                </li>
-                <li>
-                  Quần tây, Quần kaki, Quần short: Cashmere, kaki, Len ngựa,
-                  Terin,..
-                </li>
-                <li>
-                  Đầm váy: Chân váy, Đầm tuyết mưa, cotton lạnh, kaki thun, cát
-                  nhật, cát hàn, cát giấy, vải thun,..
-                </li>
-                <li>
-                  Nón mũ: Nón lưỡi trai (nón kết), nón tai bèo, nón nửa đầu,
-                  Kaki cotton, Samsung, Kaki 65/35, Dù, Thun,..
-                </li>
-                <li>
-                  Bảo hộ lao động: Quần túi hộp, quần bảo hộ, áo bảo hộ, bộ áo
-                  liền quần với các chất liệu: Kaki thường, vải chống cháy, vải
-                  Denim,..
-                </li>
-              </ul>
+              {dataDetail.introduction}
 
               <p className={`${STYLE_TITLE_COMMON} my-2`}>Sản phẩm dịch vụ</p>
               <div className="grid grid-cols-2 gap-4">
@@ -199,29 +130,31 @@ function CompanyDetailPage() {
                   <li>
                     <div className="grid grid-cols-3 gap-4">
                       <p className="col-span-1">Tên công ty: </p>
-                      <p className="col-span-2">
-                        May Mặc Dony - Công Ty TNHH May Mặc Dony
-                      </p>
+                      <p className="col-span-2">{dataDetail.name}</p>
                     </div>
                   </li>
                   <li>
                     <div className="grid grid-cols-3 gap-4 ">
                       <p className="col-span-1">Địa chỉ: </p>
                       <p className="col-span-2">
-                        123 Đường ABC, Phường 1, Quận 1, TP. HCM
+                        {dataDetail.address || "Chưa cập nhật"}
                       </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid grid-cols-3 gap-4 ">
                       <p className="col-span-1">Điện thoại: </p>
-                      <p className="col-span-2">(028) 1234 5678</p>
+                      <p className="col-span-2">
+                        {dataDetail.phone || "Chưa cập nhật"}
+                      </p>
                     </div>
                   </li>
                   <li>
                     <div className="grid grid-cols-3 gap-4 ">
                       <p className="col-span-1">Email: </p>
-                      <p className="col-span-2">info@maymacdony.com</p>
+                      <p className="col-span-2">
+                        {dataDetail.email || "Chưa cập nhật"}
+                      </p>
                     </div>
                   </li>
                 </ul>
@@ -230,19 +163,17 @@ function CompanyDetailPage() {
           </Col>
           <Col xs={24} md={14}>
             <div className="p-3 grid grid-cols-3 gap-4">
-              {LIST_TYPE.map((type, index) => {
-                return (
-                  <div key={index} className="flex flex-col items-center ">
+              {dataDetail.images?.image?.length > 0 &&
+                dataDetail.images.image.map((image: string, index: number) => {
+                  return (
                     <img
-                      src={type.image}
-                      alt={type.name}
-                      // className="w-[200px] h-[30px] mr-2"
+                      key={index}
+                      src={`data:image/jpeg;base64,${image}`}
+                      alt={`Product ${index + 1}`}
+                      className="w-full h-auto  shadow-sm object-cover"
                     />
-                    <p className="text-center">{type.name}</p>
-                  </div>
-                );
-              })}
-              {/* Right column content */}
+                  );
+                })}
             </div>
           </Col>
         </Row>

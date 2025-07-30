@@ -295,25 +295,23 @@ function RegisterCompany({
             )}
 
             {!isApprove && (
-              <>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  htmlType="submit"
-                  disabled={isLoading}
-                >
-                  Lưu
-                </Button>
-                <Button
-                  className="ml-2"
-                  danger
-                  icon={<DeleteOutlined />}
-                  onClick={() => navigate(ROUTE_PATH.COMPANY_LIST)}
-                >
-                  Hủy bỏ
-                </Button>
-              </>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                htmlType="submit"
+                disabled={isLoading}
+              >
+                Lưu
+              </Button>
             )}
+            <Button
+              className="ml-2"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => navigate(ROUTE_PATH.COMPANY_LIST)}
+            >
+              Hủy bỏ
+            </Button>
           </div>
         </div>
         <div className="flex items-center gap-2 my-4">

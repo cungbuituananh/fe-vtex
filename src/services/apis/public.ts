@@ -4,4 +4,8 @@ const getListGroupPublicAPI = async (type: string) => {
   return await axiosInstance.get(`public/category/list?groupCategory=${type}`);
 };
 
-export { getListGroupPublicAPI };
+const getDetailCompanyPublicAPI = async (id: string) => {
+  return await axiosInstance.get(`public/detail/${id}`);
+};
+
+export { getListGroupPublicAPI, getDetailCompanyPublicAPI };
