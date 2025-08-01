@@ -232,9 +232,9 @@ function RegisterCompany({
     try {
       const { data } = isUpdate
         ? await updateCompanyAPI({
-            companyDraftId: Number(companyId),
-            ...convertedRequestParams,
-          })
+          companyDraftId: Number(companyId),
+          ...convertedRequestParams,
+        })
         : await createCompanyAPI(convertedRequestParams);
 
       if (data) {

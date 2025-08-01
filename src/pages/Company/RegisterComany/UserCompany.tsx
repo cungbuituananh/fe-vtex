@@ -42,10 +42,29 @@ function UserCompany() {
     setIsLoading(true);
     const { data } = await getUserCompanyAPI();
 
-    if (data.code === 200) {
+    if (data) {
       const headOffie = data.companyBranchList.find(
         (item: any) => item.headOffice === true
       );
+
+      const logoFileList =
+        data.images?.logo?.map((base64: string, index: number) => ({
+          uid: `logo-${index}`,
+          name: `logo-${index}.jpg`,
+          status: "done",
+          url: `data:image/jpeg;base64,${base64}`,
+          thumbUrl: `data:image/jpeg;base64,${base64}`,
+        })) || [];
+
+      // Transform product images data for Upload component
+      const productImageFileList =
+        data.images?.image?.map((base64: string, index: number) => ({
+          uid: `product-${index}`,
+          name: `product-${index}.jpg`,
+          status: "done",
+          url: `data:image/jpeg;base64,${base64}`,
+          thumbUrl: `data:image/jpeg;base64,${base64}`,
+        })) || [];
 
       form.setFieldsValue({
         ...data,
@@ -58,6 +77,11 @@ function UserCompany() {
         ),
         keyProducts: data.keyProducts.map((item: any) => item.code),
         location: [Number(headOffie.latitude), Number(headOffie.longitude)],
+        companyCertification: data.companyCertification.map(
+          (item: any) => item.code
+        ),
+        logo: { fileList: logoFileList },
+        productImage: { fileList: productImageFileList },
       });
       setResultData(data);
       setIsLoading(false);
@@ -251,7 +275,7 @@ function UserCompany() {
               type="primary"
               icon={<EditFilled />}
               onClick={() => setIsEdit((prev) => !prev)}
-              // disabled={isLoading}
+            // disabled={isLoading}
             >
               Chỉnh sửa
             </Button>
@@ -512,13 +536,12 @@ function UserCompany() {
                 }}
                 disabled={!isEdit}
                 accept="image/*"
+                fileList={Form.useWatch("logo", form)?.fileList || []}
               >
-                {(form.getFieldValue("logo")?.fileList?.length || 0) === 0 && (
-                  <div className="flex flex-col items-center justify-center">
-                    <PlusOutlined />
-                    <div className="mt-2">Tải ảnh lên</div>
-                  </div>
-                )}
+                <div className="flex flex-col items-center justify-center">
+                  <PlusOutlined />
+                  <div className="mt-2">Tải ảnh lên</div>
+                </div>
               </Upload>
             </Form.Item>
           </Col>
@@ -535,6 +558,7 @@ function UserCompany() {
                   return false;
                 }}
                 accept="image/*"
+                fileList={Form.useWatch("productImage", form)?.fileList || []}
               >
                 <div className="flex flex-col items-center justify-center">
                   <PlusOutlined />

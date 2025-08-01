@@ -21,6 +21,13 @@ const EditorCommon = ({ name }: EditorCommonProps) => {
       ["bold", "italic", "underline"],
       ["blockquote", "code-block"],
       [{ list: "ordered" }, { list: "bullet" }],
+      // add control add link
+      ["link"],
+      [{ align: [] }],
+      ["clean"], // remove formatting button
+      ["undo", "redo"], // undo/redo buttons
+      // flex 
+      [{ indent: "-1" }, { indent: "+1" }], // indent buttons
     ],
   };
 
