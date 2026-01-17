@@ -1,13 +1,31 @@
 import InputCommon from "@/components/FormElement/InputCommon";
-import { Button, Form } from "antd";
+import { Button, Form, message } from "antd";
 import Title from "antd/es/typography/Title";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTE_PATH } from "@/routes/routes";
 import PasswordInput from "@/components/FormElement/PasswordInput";
+import { registerAPI } from "@/services/apis/auth";
+import { useState } from "react";
 
 function RegisterComponent() {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const onFinish = async (values: any) => {
+    setIsLoading(true);
+    try {
+      const data = await registerAPI(values);
+      if (data) {
+        message.success("Đăng ký thành công!");
+        navigate(ROUTE_PATH.LOGIN)
+      }
+
+    } catch (error) {
+      console.error("Error during registration:", error);
+      // Handle error appropriately, e.g., show a notification or message to the user
+      return;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -27,6 +45,7 @@ function RegisterComponent() {
             name="username"
             placeholder="Nhập tên tài khoản của bạn"
             rules={[{ required: true, message: "Bạn phải nhập tên tài khoản" }]}
+            fullWidth
           />
 
           <InputCommon
@@ -34,26 +53,23 @@ function RegisterComponent() {
             name="email"
             type="email"
             placeholder="Nhập email của bạn"
-            rules={[
-              { required: true, message: "Bạn phải nhập email" },
-              { type: "email", message: "Email không hợp lệ!" },
-            ]}
+            rules={[{ required: true, message: "Bạn phải nhập email" }]}
+            fullWidth
           />
 
           <PasswordInput
-            label="Mật khẩu mới"
+            label="Mật khẩu"
             name="password"
-            placeholder="Nhập mật khẩu mới"
+            placeholder="Nhập mật khẩu"
             rules={[
               { required: true, message: "Bạn phải nhập mật khẩu" },
               { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
             ]}
           />
 
-          <InputCommon
+          <PasswordInput
             label="Xác nhận mật khẩu mới"
             name="confirmPassword"
-            type="password"
             placeholder="Nhập lại mật khẩu mới"
             rules={[
               { required: true, message: "Bạn phải xác nhận mật khẩu" },
@@ -79,11 +95,10 @@ function RegisterComponent() {
               htmlType="submit"
               style={{
                 borderRadius: "9999px",
-                height: "51px",
-                width: "220px",
-                fontSize: "16px",
-                fontWeight: "500",
+                height: "35px",
+                width: "180px",
               }}
+              loading={isLoading}
             >
               Đăng ký
             </Button>

@@ -3,9 +3,9 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
-import "@ant-design/v5-patch-for-react-19";
 import "./i18n";
 import { ConfigProvider } from "antd";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const theme = {
   token: {
@@ -18,12 +18,17 @@ const theme = {
   },
 };
 
+// Create a client
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ConfigProvider theme={theme}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ConfigProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider theme={theme}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ConfigProvider>
+    </QueryClientProvider>
   </StrictMode>
 );

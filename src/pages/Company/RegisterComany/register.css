@@ -1,0 +1,7 @@
+.map-modal .ant-modal-content {
+  overflow: hidden;
+}
+
+.map-modal .mapboxgl-marker {
+  z-index: 1 !important;
+}

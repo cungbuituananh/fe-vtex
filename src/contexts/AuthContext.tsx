@@ -1,3 +1,4 @@
+import { loginAPI, logoutAPI } from "@/services/apis/auth";
 import React, {
   createContext,
   useContext,
@@ -5,12 +6,17 @@ import React, {
   useEffect,
   type ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   id: string;
   username: string;
-  role: "admin" | "user";
+  roles: string[];
+  role: string; // Assuming role is a single string, not an array
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  language?: string;
 }
 
 interface AuthContextType {
@@ -20,6 +26,8 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   hasRole: (roles: string[]) => boolean;
+  isAdmin: boolean;
+  isUser: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,8 +46,8 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  console.log("user: ", user);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Check if user is logged in on app start
   useEffect(() => {
@@ -68,42 +76,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string
   ): Promise<boolean> => {
     // Simulate API call
-    if (username === "admin" && password === "admin") {
-      const userData: User = {
-        id: "1",
-        username: "admin",
-        role: "admin",
-        email: "admin@example.com",
-      };
-      setUser(userData);
+    const { data } = await loginAPI({ username, password });
+
+    if (data) {
+      setUser(data);
       localStorage.setItem("isLogin", "true");
-      localStorage.setItem("userData", JSON.stringify(userData));
-      return true;
-    } else if (username === "user" && password === "user") {
-      const userData: User = {
-        id: "2",
-        username: "user",
-        role: "user",
-        email: "user@example.com",
-      };
-      setUser(userData);
-      localStorage.setItem("isLogin", "true");
-      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("userData", JSON.stringify(data));
+      localStorage.setItem("accessToken", data.accessToken || "");
       return true;
     }
+
     return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { data } = await logoutAPI();
+    console.log("data: ", data);
     setUser(null);
     localStorage.removeItem("isLogin");
     localStorage.removeItem("userData");
+    localStorage.removeItem("accessToken");
+    navigate("/login");
   };
 
   const hasRole = (roles: string[]): boolean => {
     if (!user) return false;
-    return roles.includes(user.role);
+    return roles.some((role) => user.roles.includes(role));
   };
+
+  const isAdmin = user?.roles.includes("ADMIN") || false;
+  const isUser = user?.roles.includes("USER") || false;
 
   const value: AuthContextType = {
     user,
@@ -112,6 +114,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     hasRole,
+    isAdmin,
+    isUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

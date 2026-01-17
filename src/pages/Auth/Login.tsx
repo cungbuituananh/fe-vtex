@@ -1,12 +1,11 @@
 import InputCommon from "@/components/FormElement/InputCommon";
 import { ROUTE_PATH } from "@/routes/routes";
-import { Button, Checkbox, Form, message, Typography } from "antd";
+import { Button, Checkbox, Form, message } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
-
-const { Title } = Typography;
+import logo from "../../assets/imgs/logo.png";
 
 function LoginComponent() {
   const navigate = useNavigate();
@@ -21,6 +20,7 @@ function LoginComponent() {
 
     try {
       const success = await login(username, password);
+      console.log("success: ", success);
 
       if (success) {
         messageApi.open({
@@ -51,9 +51,9 @@ function LoginComponent() {
   return (
     <>
       {contextHolder}
-      <Title level={2} className="login-title ">
-        Đăng nhập
-      </Title>
+      <div className="flex flex-col items-center justify-center py-10">
+        <img src={logo} alt="Logo" className="w-45" />
+      </div>
       <div className="px-[10px] mb-5">
         <Form
           name="login"
@@ -64,13 +64,15 @@ function LoginComponent() {
           <InputCommon
             label="Tên tài khoản"
             name="username"
-            rules={[{ required: true, message: "Vui lòng nhập username!" }]}
+            required
+            fullWidth
           />
           <InputCommon
             label="Mật khẩu"
             name="password"
             type="password"
-            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            required
+            fullWidth
           />
           <Form.Item>
             <div className="login-options">
@@ -83,34 +85,34 @@ function LoginComponent() {
             </div>
           </Form.Item>{" "}
           <Form.Item className="text-center">
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={isLoading}
-              style={{
-                borderRadius: "9999px",
-                height: "35px",
-                width: "180px",
-              }}
-            >
-              <FaSignInAlt className="inline" /> Đăng nhập
-            </Button>
-          </Form.Item>
-          <Form.Item className="text-center">
-            <Button
-              style={{
-                borderRadius: "9999px",
-                height: "35px",
-                width: "180px",
-              }}
-              onClick={() => navigate(ROUTE_PATH.REGISTER)}
-            >
-              Đăng ký
-            </Button>
+            <div className="flex justify-center mb-4 gap-4">
+              <Button
+                style={{
+                  borderRadius: "9999px",
+                  height: "35px",
+                  width: "180px",
+                }}
+                onClick={() => navigate(ROUTE_PATH.REGISTER)}
+              >
+                Đăng ký
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+                style={{
+                  borderRadius: "9999px",
+                  height: "35px",
+                  width: "180px",
+                }}
+              >
+                <FaSignInAlt className="inline" /> Đăng nhập
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>
-      <hr className="text-[#BDBDBD]" />
+      {/* <hr className="text-[#BDBDBD]" />
       <div className="mt-4 text-[#444] text-[14px]">
         <Title level={4} className="login-title ">
           Bạn có thể đăng nhập với
@@ -119,7 +121,7 @@ function LoginComponent() {
           <li>Quản trị viên (tài khoản="admin" và mật khẩu="admin")</li>
           <li>Người dùng (tài khoản="user" và mật khẩu="user")</li>
         </ul>
-      </div>
+      </div> */}
     </>
   );
 }

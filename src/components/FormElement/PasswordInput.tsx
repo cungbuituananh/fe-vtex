@@ -54,7 +54,7 @@ const PasswordInput = ({
         <Input.Password
           placeholder={placeholder}
           style={{
-            height: "45px",
+            // height: `${HEIGHT_INPUT}`,
             borderRadius: "8px",
           }}
           onChange={(e) => setPassword(e.target.value)}

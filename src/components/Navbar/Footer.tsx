@@ -3,13 +3,13 @@ import { BsTelephone } from "react-icons/bs";
 
 const Footer = () => {
   return (
-    <footer
+    <div
       style={{
-        background: "#324150",
+        // background: "#324150",
         color: "#bfc9d1",
         padding: "12px",
         // fontSize: 18,
-        position: "relative",
+        // position: "relative",
         width: "100%",
         boxSizing: "border-box",
       }}
@@ -48,7 +48,7 @@ const Footer = () => {
           <div>v0.0.2</div>
         </div>
       </div>
-    </footer>
+    </div>
   );
 };
 

@@ -17,7 +17,6 @@ function Navbar() {
   const { t, i18n } = useTranslation("menu");
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { user, isAuthenticated, logout } = useAuth();
-  // console.log("isAuthenticated: ", isAuthenticated);
   const location = useLocation();
 
   // Get current language
@@ -27,7 +26,7 @@ function Navbar() {
   const visibleRoutes = getVisibleRoutes(
     ROUTE_CONFIGS,
     isAuthenticated,
-    user ? [user.role] : []
+    user ? user.roles : []
   );
 
   // Helper to check if route is active
@@ -38,16 +37,13 @@ function Navbar() {
   const handleLogout = () => {
     logout();
     setOpenDropdown(null);
-    // navigate("/");
   };
 
   const handleMenuItemClick = (route: RouteConfig) => {
-    if (route.event) {
-      if (route.name === "logout") {
-        handleLogout();
-      } else {
-        route.event();
-      }
+    if (route.name === "logout") {
+      handleLogout();
+    } else if (route.event) {
+      route.event();
     }
   };
 
@@ -82,29 +78,29 @@ function Navbar() {
                 onMouseEnter={() => setOpenDropdown(route.name)}
                 onMouseLeave={() => setOpenDropdown(null)}
                 onFocus={() => setOpenDropdown(route.name)}
-                onBlur={(e) => {
-                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                    setOpenDropdown(null);
-                  }
-                }}
+                // onBlur={(e) => {
+                //   if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                //     setOpenDropdown(null);
+                //   }
+                // }}
                 tabIndex={0} // Make the li focusable for keyboard users
               >
                 {route.children ? (
                   <button
                     type="button"
                     className="hover:text-blue-600  flex items-center gap-2 focus:outline-none group"
-                    onClick={() =>
+                    onClick={() => {
                       setOpenDropdown(
                         openDropdown === route.name ? null : route.name
-                      )
-                    }
+                      );
+                    }}
                     aria-haspopup="true"
                     aria-expanded={openDropdown === route.name}
                   >
                     <span className="text-[16px]">{route.icon || null}</span>
                     {/* <span>{t(route.name)}</span> */}
                     {isAuthenticated && user && route.name === "account"
-                      ? `Welcome, ${user.username} (${user.role})`
+                      ? `Welcome, ${user.username || "Unknown"} `
                       : t(route.name)}
                     <IoMdArrowDropdown
                       className={`transition-colors group-hover:text-[#ED7D31] ${
